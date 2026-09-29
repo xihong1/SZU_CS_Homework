@@ -1,0 +1,61 @@
+func_average:
+# --- Function: average (2 params) ---
+    alloc a:int
+    alloc b:int
+    alloc sum:int
+    alloc result:float
+    t0 = a + b
+    sum = t0
+    t1 = toFloat(sum)
+    t2 = 2.0
+    t3 = t1 / t2
+    result = t3
+    return result
+func_main:
+# --- Function: main (0 params) ---
+    alloc m:int
+    alloc n:int
+    alloc avg:float
+    alloc rounded:int
+    t4 = 7
+    m = t4
+    t5 = 10
+    n = t5
+    param m
+    param n
+    t6 = call func_average, 2
+    avg = t6
+    t7 = toInt(avg)
+    rounded = t7
+    print rounded
+    return
+
+// ====== OPTIMIZED ======
+func_average:
+# --- Function: average (2 params) ---
+    alloc a:int
+    alloc b:int
+    alloc sum:int
+    alloc result:float
+    t0 = a + b
+    sum = t0
+    t1 = toFloat(sum)
+    t3 = t1 / 2.0
+    result = t3
+    return result
+func_main:
+# --- Function: main (0 params) ---
+    alloc m:int
+    alloc n:int
+    alloc avg:float
+    alloc rounded:int
+    m = 7
+    n = 10
+    param 7
+    param 10
+    t6 = call func_average, 2
+    avg = t6
+    t7 = toInt(avg)
+    rounded = t7
+    print rounded
+    return

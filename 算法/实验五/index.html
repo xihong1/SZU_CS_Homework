@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>桥查找算法 - DSU并查集可视化</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    padding: 16px 32px;
+    border-bottom: 1px solid #334155;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header .subtitle { color: #94a3b8; font-size: 13px; margin-top: 2px; }
+  .main-container {
+    display: flex;
+    height: calc(100vh - 64px);
+  }
+  .canvas-area {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0f172a;
+  }
+  canvas {
+    background: radial-gradient(ellipse at center, #1e293b 0%, #0f172a 70%);
+    border-radius: 8px;
+  }
+  .side-panel {
+    width: 440px;
+    background: #1e293b;
+    border-left: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .panel-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid #334155;
+  }
+  .panel-section h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .legend-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 10px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .legend-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-line {
+    width: 24px; height: 4px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .legend-dash {
+    width: 24px; height: 0;
+    border-top: 3px dashed #a78bfa;
+    flex-shrink: 0;
+  }
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .btn {
+    padding: 10px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn-primary { background: #3b82f6; color: white; }
+  .btn-primary:hover { background: #2563eb; }
+  .btn-secondary { background: #475569; color: white; }
+  .btn-secondary:hover { background: #64748b; }
+  .btn-success { background: #10b981; color: white; }
+  .btn-success:hover { background: #059669; }
+  .btn-warning { background: #f59e0b; color: white; }
+  .btn-warning:hover { background: #d97706; }
+  .btn-danger { background: #ef4444; color: white; }
+  .btn-danger:hover { background: #dc2626; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .speed-control {
+    display: flex; align-items: center; gap: 10px; margin-top: 12px;
+  }
+  .speed-control label { font-size: 13px; color: #94a3b8; }
+  .speed-control input[type=range] { flex: 1; accent-color: #3b82f6; }
+  .speed-val { font-size: 13px; color: #38bdf8; min-width: 30px; }
+  .state-info { font-size: 14px; line-height: 1.9; }
+  .state-info .label { color: #94a3b8; }
+  .state-info .value { color: #e2e8f0; font-weight: 600; }
+  .state-info .highlight { color: #38bdf8; }
+  .state-info .bridge-highlight { color: #ef4444; }
+  .step-desc {
+    background: #0f172a;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 80px;
+    border-left: 3px solid #3b82f6;
+  }
+  .progress-bar {
+    width: 100%; height: 6px;
+    background: #334155;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 12px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #818cf8);
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .phase-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .phase-idle { background: #334155; color: #94a3b8; }
+  .phase-build { background: #1e3a5f; color: #38bdf8; }
+  .phase-depth { background: #1e4f3f; color: #34d399; }
+  .phase-back { background: #3b1f4e; color: #c084fc; }
+  .phase-result { background: #3f1e1e; color: #f87171; }
+  .graph-selector { display: flex; gap: 6px; flex-wrap: wrap; }
+  .graph-btn {
+    padding: 7px 14px;
+    border: 1px solid #475569;
+    border-radius: 6px;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .graph-btn:hover { border-color: #3b82f6; color: #38bdf8; }
+  .graph-btn.active { background: #1e3a5f; border-color: #3b82f6; color: #38bdf8; }
+  .log-area {
+    max-height: 220px;
+    overflow-y: auto;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    background: #0f172a;
+    border-radius: 6px;
+    padding: 10px;
+    color: #64748b;
+  }
+  .log-area .log-build { color: #38bdf8; }
+  .log-area .log-depth { color: #34d399; }
+  .log-area .log-back { color: #c084fc; }
+  .log-area .log-mark { color: #10b981; }
+  .log-area .log-bridge { color: #ef4444; }
+  @media (max-width: 1000px) {
+    .main-container { flex-direction: column; }
+    .side-panel { width: 100%; max-height: 50vh; }
+    .canvas-area { min-height: 50vh; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🌉 桥查找算法可视化 — DSU并查集方法</h1>
+    <div class="subtitle">生成树构建 + 深度计算 + 反向边处理 | Build Tree + Depth + Back Edges</div>
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="canvas-area">
+    <canvas id="graphCanvas"></canvas>
+  </div>
+  <div class="side-panel">
+    <div class="panel-section">
+      <h3>📊 选择图</h3>
+      <div class="graph-selector" id="graphSelector"></div>
+    </div>
+    <div class="panel-section">
+      <h3>🎨 图例</h3>
+      <div class="legend-grid">
+        <div class="legend-item"><div class="legend-dot" style="background:#64748b"></div> 未处理节点</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#38bdf8"></div> 树中节点</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div> 当前处理节点</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div> 跳跃目标</div>
+        <div class="legend-item"><div class="legend-line" style="background:#475569"></div> 未处理边</div>
+        <div class="legend-item"><div class="legend-line" style="background:#3b82f6"></div> 树边</div>
+        <div class="legend-item"><div class="legend-line" style="background:#f59e0b"></div> 反向边</div>
+        <div class="legend-item"><div class="legend-line" style="background:#10b981"></div> 已标记(非桥)</div>
+        <div class="legend-item"><div class="legend-line" style="background:#ef4444; height:6px"></div> 🌉 桥</div>
+        <div class="legend-item"><div class="legend-dash"></div> 向上跳跃</div>
+      </div>
+    </div>
+    <div class="panel-section">
+      <h3>▶️ 控制</h3>
+      <div class="controls">
+        <button class="btn btn-success" id="btnPlay" onclick="togglePlay()">▶ 播放</button>
+        <button class="btn btn-primary" id="btnStep" onclick="stepForward()">⏭ 单步</button>
+        <button class="btn btn-secondary" id="btnPrev" onclick="stepBack()">⏮ 回退</button>
+        <button class="btn btn-warning" id="btnReset" onclick="resetAlgorithm()">↺ 重置</button>
+        <button class="btn btn-danger" id="btnSkip" onclick="skipToEnd()">⏩ 跳到结果</button>
+      </div>
+      <div class="speed-control">
+        <label>速度:</label>
+        <input type="range" id="speedSlider" min="1" max="20" value="8" oninput="updateSpeed()">
+        <span class="speed-val" id="speedVal">8x</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="panel-section">
+      <h3>📝 当前步骤</h3>
+      <div id="phaseBadge" class="phase-badge phase-idle">等待开始</div>
+      <div class="step-desc" id="stepDesc">点击 "播放" 或 "单步" 开始算法演示。</div>
+    </div>
+    <div class="panel-section">
+      <h3>📈 算法状态</h3>
+      <div class="state-info" id="stateInfo">
+        <div><span class="label">已处理边:</span> <span class="value" id="infoProcessed">0</span></div>
+        <div><span class="label">树边数:</span> <span class="value" id="infoTreeEdges">0</span></div>
+        <div><span class="label">反向边数:</span> <span class="value" id="infoBackEdges">0</span></div>
+        <div><span class="label">已标记非桥:</span> <span class="value" id="infoMarked">0</span></div>
+        <div><span class="label">桥数:</span> <span class="value bridge-highlight" id="infoBridges">?</span></div>
+      </div>
+    </div>
+    <div class="panel-section">
+      <h3>📋 执行日志</h3>
+      <div class="log-area" id="logArea"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============= DSU CLASSES (matching Python) =============
+class DSU {
+  constructor(n) {
+    this.parent = Array.from({length: n}, (_, i) => i);
+    this.rank = new Array(n).fill(0);
+  }
+  find(x) {
+    while (this.parent[x] !== x) {
+      this.parent[x] = this.parent[this.parent[x]];
+      x = this.parent[x];
+    }
+    return x;
+  }
+  union(a, b) {
+    let ra = this.find(a), rb = this.find(b);
+    if (ra === rb) return false;
+    if (this.rank[ra] < this.rank[rb]) [ra, rb] = [rb, ra];
+    this.parent[rb] = ra;
+    if (this.rank[ra] === this.rank[rb]) this.rank[ra]++;
+    return true;
+  }
+}
+
+class DSUJump {
+  constructor(n) {
+    this.parent = Array.from({length: n}, (_, i) => i);
+  }
+  find(x) {
+    if (this.parent[x] !== x) {
+      this.parent[x] = this.find(this.parent[x]);
+    }
+    return this.parent[x];
+  }
+  skipToParent(x, p) {
+    this.parent[x] = p;
+  }
+}
+
+// ============= GRAPH DATA =============
+// Two carefully designed graphs with exactly 1 or 2 bridges
+const GRAPHS = {
+  single: {
+    name: "单桥图 (7节点, 1桥)",
+    desc: "两个双连通分量由一座桥连接",
+    nodes: [
+      {id:0, x:120, y:200},  // triangle left
+      {id:1, x:220, y:130},
+      {id:2, x:220, y:270},
+      {id:3, x:380, y:200},  // middle (bridge endpoint)
+      {id:4, x:500, y:130},  // square right
+      {id:5, x:600, y:200},
+      {id:6, x:500, y:270},
+    ],
+    // Order matters! Tree edges first, then back edges
+    edges: [
+      [0,1], [1,2],           // tree edges forming path
+      [2,0],                   // back edge → triangle
+      [2,3],                   // BRIDGE (tree edge)
+      [3,4], [4,5], [5,6],    // tree edges forming path
+      [6,3],                   // back edge → square
+    ]
+  },
+  double: {
+    name: "双桥图 (10节点, 2桥)",
+    desc: "三个双连通分量由两座桥串接",
+    nodes: [
+      {id:0, x:80,  y:200},  // triangle 1
+      {id:1, x:180, y:130},
+      {id:2, x:180, y:270},
+      {id:3, x:320, y:200},  // bridge 1 → triangle 2
+      {id:4, x:420, y:130},
+      {id:5, x:420, y:270},
+      {id:6, x:560, y:200},  // bridge 2 → square
+      {id:7, x:660, y:130},
+      {id:8, x:760, y:200},
+      {id:9, x:660, y:270},
+    ],
+    edges: [
+      [0,1], [1,2],           // tree edges triangle 1
+      [2,0],                   // back edge → triangle 1
+      [2,3],                   // BRIDGE 1 (tree edge)
+      [3,4], [4,5],           // tree edges triangle 2
+      [5,3],                   // back edge → triangle 2
+      [5,6],                   // BRIDGE 2 (tree edge)
+      [6,7], [7,8], [8,9],    // tree edges square
+      [9,6],                   // back edge → square
+    ]
+  }
+};
+
+// ============= STATE =============
+let currentGraph = 'single';
+let G = null;
+let steps = [];
+let currentStep = -1;
+let playing = false;
+let playTimer = null;
+let speed = 8;
+
+// Rendering state
+let nodeStates = {};   // id -> {inTree, current, jumpTarget, depth, parent}
+let edgeStates = {};   // "u-v" -> {type, highlight}
+let jumpLines = [];    // [{from, to}] for visualizing DSU jumps
+
+// ============= ALGORITHM STEP GENERATION =============
+// Follows efficient_bridge_count_from_edges from bridge_experiment.py
+function generateSteps(graphKey) {
+  const data = GRAPHS[graphKey];
+  const n = data.nodes.length;
+  const allEdges = data.edges.map(([u,v]) => u < v ? [u,v] : [v,u]);
+  const stepsArr = [];
+
+  // ---- Phase 1: Build Spanning Tree with DSU ----
+  stepsArr.push({
+    phase: 'build',
+    desc: `🔧 <b>阶段1：构建生成树</b><br>使用并查集(DSU)遍历所有边。若两端点属于不同集合→<span style="color:#3b82f6">树边</span>；若属于同一集合→<span style="color:#f59e0b">反向边</span>。`,
+    action: { type: 'init' },
+    log: '═══ 阶段1：DSU构建生成树 ═══',
+    logClass: 'log-build'
+  });
+
+  const dsu = new DSU(n);
+  const treeAdj = Array.from({length: n}, () => []);
+  const treeEdges = [];
+  const backEdges = [];
+  const initialEdgeStates = []; // track what each edge becomes
+
+  for (let i = 0; i < allEdges.length; i++) {
+    const [u, v] = allEdges[i];
+    const ru = dsu.find(u), rv = dsu.find(v);
+
+    stepsArr.push({
+      phase: 'build',
+      desc: `检查边 <b>(${u}, ${v})</b>：find(${u})=${ru}, find(${v})=${rv}。${ru !== rv ? '属于<span style="color:#3b82f6">不同集合</span> → <b>树边</b>' : '属于<span style="color:#f59e0b">同一集合</span> → <b>反向边</b>'}`,
+      action: { type: 'consider_edge', u, v, isTree: ru !== rv },
+      log: `边(${u},${v}): ${ru !== rv ? '树边 (DSU合并)' : '反向边'} [${ru !== rv ? ru+'∪'+rv : ru+'='+rv}]`,
+      logClass: ru !== rv ? 'log-build' : 'log-back'
+    });
+
+    if (dsu.union(u, v)) {
+      treeAdj[u].push(v);
+      treeAdj[v].push(u);
+      treeEdges.push([u, v]);
+      initialEdgeStates.push({u, v, type: 'tree'});
+    } else {
+      backEdges.push([u, v]);
+      initialEdgeStates.push({u, v, type: 'back'});
+    }
+  }
+
+  stepsArr.push({
+    phase: 'build',
+    desc: `✅ 生成树构建完成！共 <b>${treeEdges.length}</b> 条树边，<b>${backEdges.length}</b> 条反向边。`,
+    action: { type: 'build_done', treeEdges, backEdges, initialEdgeStates },
+    log: `阶段1完成: ${treeEdges.length}条树边, ${backEdges.length}条反向边`,
+    logClass: 'log-build'
+  });
+
+  // ---- Phase 2: Compute Parent & Depth via DFS on Spanning Tree ----
+  stepsArr.push({
+    phase: 'depth',
+    desc: `🔧 <b>阶段2：计算深度和父节点</b><br>在生成树上做DFS遍历，为每个节点计算 parent 和 depth。`,
+    action: { type: 'depth_init' },
+    log: '═══ 阶段2：计算parent与depth ═══',
+    logClass: 'log-depth'
+  });
+
+  const parent = Array.from({length: n}, (_, i) => i);
+  const depth = new Array(n).fill(0);
+
+  for (let start = 0; start < n; start++) {
+    if (parent[start] !== start) continue;
+    const stack = [start];
+    parent[start] = start;
+    depth[start] = 0;
+
+    stepsArr.push({
+      phase: 'depth',
+      desc: `从根节点 <b>${start}</b> 开始DFS遍历生成树，parent[${start}]=${start}(根), depth=0。`,
+      action: { type: 'dfs_visit', node: start, p: start, d: 0 },
+      log: `DFS: 访问根节点 ${start} (depth=0)`,
+      logClass: 'log-depth'
+    });
+
+    while (stack.length > 0) {
+      const node = stack.pop();
+      for (const nxt of treeAdj[node]) {
+        if (nxt === parent[node]) continue;
+        parent[nxt] = node;
+        depth[nxt] = depth[node] + 1;
+        stack.push(nxt);
+
+        stepsArr.push({
+          phase: 'depth',
+          desc: `树边 <b>${node}→${nxt}</b>：parent[${nxt}]=${node}, depth[${nxt}]=${depth[nxt]}。`,
+          action: { type: 'dfs_tree_edge', u: node, v: nxt, p: node, d: depth[nxt] },
+          log: `DFS: 树边 ${node}→${nxt} (depth=${depth[nxt]})`,
+          logClass: 'log-depth'
+        });
+      }
+    }
+  }
+
+  stepsArr.push({
+    phase: 'depth',
+    desc: `✅ 深度计算完成。现在每个树中节点都有 depth 和 parent。`,
+    action: { type: 'depth_done', parent: [...parent], depth: [...depth] },
+    log: `阶段2完成: 计算出所有节点的parent与depth`,
+    logClass: 'log-depth'
+  });
+
+  // ---- Phase 3: Process Back Edges with DSUJump ----
+  stepsArr.push({
+    phase: 'back',
+    desc: `🔧 <b>阶段3：处理反向边（DSUJump路径压缩）</b><br>每条反向边形成一个环。沿深度大的端点向上跳跃，将路径上的树边标记为非桥。<br>使用 <span style="color:#a78bfa">DSUJump</span> 跳过已标记节点实现路径压缩。`,
+    action: { type: 'back_init' },
+    log: '═══ 阶段3：DSUJump处理反向边 ═══',
+    logClass: 'log-back'
+  });
+
+  const marked = new Array(n).fill(false);
+  const jump = new DSUJump(n);
+  const dsu2 = new DSU(n);
+
+  for (let i = 0; i < allEdges.length; i++) {
+    const [u, v] = allEdges[i];
+    if (dsu2.union(u, v)) {
+      continue; // tree edge in second pass, skip
+    }
+
+    // Back edge — process it
+    let cu = jump.find(u);
+    let cv = jump.find(v);
+
+    stepsArr.push({
+      phase: 'back',
+      desc: `处理反向边 <b>(${u}, ${v})</b>：jump.find(${u})=${cu}, jump.find(${v})=${cv}。向上跳跃直到两者相遇（LCA）。`,
+      action: { type: 'back_start', u, v, cu, cv },
+      log: `处理反向边(${u},${v}): jump代表=(${cu},${cv})`,
+      logClass: 'log-back'
+    });
+
+    const pathNodes = [];
+    const pathEdges = [];
+    let iter = 0;
+
+    while (cu !== cv) {
+      if (depth[cu] < depth[cv]) {
+        [cu, cv] = [cv, cu];
+      }
+      if (parent[cu] === cu) break;
+
+      const p = parent[cu];
+      pathNodes.push(cu);
+      pathEdges.push([p, cu]);
+
+      stepsArr.push({
+        phase: 'back',
+        desc: `depth[${cu}]=${depth[cu]} ≥ depth[${cv}]=${depth[cv]}，向上跳：标记边 <b>(${p}, ${cu})</b> 为<span style="color:#10b981">非桥</span>，jump.skip(${cu}→${p})。`,
+        action: { type: 'jump_step', node: cu, parent: p, peer: cv, pathSoFar: [...pathEdges] },
+        log: `  跳跃: 标记(${p},${cu})为非桥, jump[${cu}]→${p}`,
+        logClass: 'log-mark'
+      });
+
+      marked[cu] = true;
+      jump.skipToParent(cu, p);
+      cu = jump.find(p);
+      iter++;
+      if (iter > n + 5) break; // safety
+    }
+
+    if (pathEdges.length > 0) {
+      stepsArr.push({
+        phase: 'back',
+        desc: `✅ 反向边 <b>(${u},${v})</b> 处理完成：${pathEdges.map(e=>`(${e[0]},${e[1]})`).join(', ')} 被标记为<span style="color:#10b981">非桥边</span>。`,
+        action: { type: 'back_done', edges: pathEdges },
+        log: `  完成: 标记了 ${pathEdges.length} 条非桥边`,
+        logClass: 'log-mark'
+      });
+    } else {
+      stepsArr.push({
+        phase: 'back',
+        desc: `反向边 <b>(${u},${v})</b>：两端已在同一跳跃组，无需处理。`,
+        action: { type: 'back_skip', u, v },
+        log: `  跳过: 已在同一跳跃组`,
+        logClass: 'log-back'
+      });
+    }
+  }
+
+  // ---- Phase 4: Count Bridges ----
+  const bridges = [];
+  for (let node = 0; node < n; node++) {
+    if (parent[node] !== node && !marked[node]) {
+      bridges.push([parent[node], node]);
+    }
+  }
+
+  stepsArr.push({
+    phase: 'result',
+    desc: `🎉 <b>算法完成！</b><br>遍历所有节点：parent[node]≠node 且 !marked[node] 的边即为桥。<br>共找到 <b style="color:#ef4444">${bridges.length}</b> 座桥：${bridges.map(e=>`<b>(${e[0]},${e[1]})</b>`).join(', ')}`,
+    action: { type: 'result', bridges },
+    log: `═══ 结果: ${bridges.length}座桥 — ${bridges.map(e=>`(${e[0]},${e[1]})`).join(', ')} ═══`,
+    logClass: 'log-bridge'
+  });
+
+  return stepsArr;
+}
+
+// ============= CANVAS RENDERING =============
+const canvas = document.getElementById('graphCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const area = document.querySelector('.canvas-area');
+  canvas.width = area.clientWidth - 20;
+  canvas.height = area.clientHeight - 20;
+  if (G) render();
+}
+
+function getEdgeKey(u, v) {
+  return u < v ? `${u}-${v}` : `${v}-${u}`;
+}
+
+function render() {
+  if (!G) return;
+  const data = G;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Compute scale to fit all nodes
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  data.nodes.forEach(nd => {
+    if (nd.x < minX) minX = nd.x;
+    if (nd.x > maxX) maxX = nd.x;
+    if (nd.y < minY) minY = nd.y;
+    if (nd.y > maxY) maxY = nd.y;
+  });
+  const gw = maxX - minX + 160;
+  const gh = maxY - minY + 160;
+  const scale = Math.min((canvas.width - 40) / gw, (canvas.height - 40) / gh, 1.8);
+  const offX = (canvas.width - gw * scale) / 2 - (minX - 80) * scale;
+  const offY = (canvas.height - gh * scale) / 2 - (minY - 80) * scale;
+  function tx(x) { return x * scale + offX; }
+  function ty(y) { return y * scale + offY; }
+
+  // Draw jump lines (purple dashed)
+  jumpLines.forEach(jl => {
+    const nu = data.nodes.find(n => n.id === jl.from);
+    const nv = data.nodes.find(n => n.id === jl.to);
+    if (!nu || !nv) return;
+    ctx.beginPath();
+    ctx.setLineDash([6 * scale, 4 * scale]);
+    ctx.moveTo(tx(nu.x), ty(nu.y));
+    // Draw curved arrow
+    const mx = (tx(nu.x) + tx(nv.x)) / 2;
+    const my = (ty(nu.y) + ty(nv.y)) / 2 - 20 * scale;
+    ctx.quadraticCurveTo(mx, my, tx(nv.x), ty(nv.y));
+    ctx.strokeStyle = '#a78bfa';
+    ctx.globalAlpha = 0.8;
+    ctx.lineWidth = 2 * scale;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+  });
+
+  // Draw edges
+  data.edges.forEach(([u, v]) => {
+    const key = getEdgeKey(u, v);
+    const st = edgeStates[key] || { type: 'unvisited', highlight: false };
+    const nu = data.nodes.find(n => n.id === u);
+    const nv = data.nodes.find(n => n.id === v);
+    if (!nu || !nv) return;
+
+    ctx.beginPath();
+    ctx.moveTo(tx(nu.x), ty(nu.y));
+    ctx.lineTo(tx(nv.x), ty(nv.y));
+
+    let lineWidth = 2;
+    let color = '#475569';
+    let alpha = 0.5;
+
+    switch (st.type) {
+      case 'tree': color = '#3b82f6'; lineWidth = 2.5; alpha = 0.9; break;
+      case 'back': color = '#f59e0b'; lineWidth = 2; alpha = 0.85; break;
+      case 'nonbridge': color = '#10b981'; lineWidth = 2.5; alpha = 0.75; break;
+      case 'bridge': color = '#ef4444'; lineWidth = 4; alpha = 1; break;
+    }
+    if (st.highlight) { lineWidth += 2; alpha = 1; }
+
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = alpha;
+    ctx.lineWidth = lineWidth * scale;
+    ctx.stroke();
+
+    // Bridge glow effect
+    if (st.type === 'bridge') {
+      ctx.strokeStyle = '#ef4444';
+      ctx.globalAlpha = 0.25;
+      ctx.lineWidth = 10 * scale;
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 1;
+
+    // Bridge emoji label
+    if (st.type === 'bridge') {
+      const mx = (tx(nu.x) + tx(nv.x)) / 2;
+      const my = (ty(nu.y) + ty(nv.y)) / 2;
+      ctx.font = `${13 * scale}px sans-serif`;
+      ctx.fillStyle = '#ef4444';
+      ctx.textAlign = 'center';
+      ctx.fillText('🌉', mx, my - 10 * scale);
+    }
+  });
+
+  // Draw nodes
+  data.nodes.forEach(nd => {
+    const st = nodeStates[nd.id] || { inTree: false, current: false };
+    const x = tx(nd.x);
+    const y = ty(nd.y);
+    const r = 18 * scale;
+
+    // Glow for current node
+    if (st.current) {
+      const grad = ctx.createRadialGradient(x, y, r, x, y, r * 2.5);
+      grad.addColorStop(0, 'rgba(251, 191, 36, 0.45)');
+      grad.addColorStop(1, 'rgba(251, 191, 36, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Glow for jump target
+    if (st.jumpTarget) {
+      const grad = ctx.createRadialGradient(x, y, r, x, y, r * 2);
+      grad.addColorStop(0, 'rgba(167, 139, 250, 0.4)');
+      grad.addColorStop(1, 'rgba(167, 139, 250, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(x, y, r * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Node circle
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    let fillColor = '#334155';
+    let strokeColor = '#64748b';
+    if (st.inTree) { fillColor = '#1e3a5f'; strokeColor = '#38bdf8'; }
+    if (st.current) { fillColor = '#422006'; strokeColor = '#fbbf24'; }
+    if (st.jumpTarget) { strokeColor = '#a78bfa'; }
+
+    ctx.fillStyle = fillColor;
+    ctx.fill();
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = 2.5 * scale;
+    ctx.stroke();
+
+    // Node ID label
+    ctx.font = `bold ${13 * scale}px sans-serif`;
+    ctx.fillStyle = st.inTree ? '#e2e8f0' : '#94a3b8';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(nd.id, x, y);
+
+    // Depth label below
+    if (st.inTree && st.depth !== undefined) {
+      ctx.font = `${10 * scale}px sans-serif`;
+      ctx.fillStyle = '#64748b';
+      ctx.fillText(`d=${st.depth}`, x, y + r + 12 * scale);
+    }
+  });
+}
+
+// ============= APPLY STEP =============
+function applyStep(idx) {
+  if (idx < 0 || idx >= steps.length) return;
+  const step = steps[idx];
+  const act = step.action;
+
+  switch (act.type) {
+    case 'init':
+      nodeStates = {};
+      edgeStates = {};
+      jumpLines = [];
+      G.nodes.forEach(nd => { nodeStates[nd.id] = { inTree: false, current: false }; });
+      G.edges.forEach(([u,v]) => { edgeStates[getEdgeKey(u,v)] = { type: 'unvisited', highlight: false }; });
+      break;
+
+    case 'consider_edge':
+      // Highlight the edge being considered
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      const cKey = getEdgeKey(act.u, act.v);
+      if (!edgeStates[cKey] || edgeStates[cKey].type === 'unvisited') {
+        edgeStates[cKey] = { type: act.isTree ? 'tree' : 'back', highlight: true };
+      } else {
+        edgeStates[cKey].highlight = true;
+      }
+      // Mark nodes
+      nodeStates[act.u] = { ...nodeStates[act.u], inTree: true, current: true };
+      nodeStates[act.v] = { ...nodeStates[act.v], inTree: true, current: false };
+      Object.keys(nodeStates).forEach(k => {
+        if (parseInt(k) !== act.u) nodeStates[k].current = false;
+      });
+      jumpLines = [];
+      break;
+
+    case 'build_done':
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; });
+      // Apply initial edge states
+      act.initialEdgeStates.forEach(({u, v, type}) => {
+        edgeStates[getEdgeKey(u, v)] = { type, highlight: false };
+      });
+      // Mark all nodes as in tree
+      G.nodes.forEach(nd => { nodeStates[nd.id] = { ...nodeStates[nd.id], inTree: true }; });
+      jumpLines = [];
+      break;
+
+    case 'depth_init':
+      Object.keys(nodeStates).forEach(k => {
+        nodeStates[k].current = false;
+        nodeStates[k].depth = undefined;
+        nodeStates[k].parent = undefined;
+      });
+      jumpLines = [];
+      break;
+
+    case 'dfs_visit':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; });
+      nodeStates[act.node] = {
+        ...nodeStates[act.node],
+        inTree: true, current: true, depth: act.d, parent: act.p
+      };
+      jumpLines = [];
+      break;
+
+    case 'dfs_tree_edge':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; });
+      nodeStates[act.v] = {
+        ...nodeStates[act.v],
+        inTree: true, current: true, depth: act.d, parent: act.p
+      };
+      // Highlight tree edge
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      const dKey = getEdgeKey(act.u, act.v);
+      if (edgeStates[dKey]) edgeStates[dKey].highlight = true;
+      jumpLines = [];
+      break;
+
+    case 'depth_done':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; });
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      // Set all depths
+      act.parent.forEach((p, i) => {
+        if (nodeStates[i]) {
+          nodeStates[i].parent = p;
+          nodeStates[i].depth = act.depth[i];
+        }
+      });
+      jumpLines = [];
+      break;
+
+    case 'back_init':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; nodeStates[k].jumpTarget = false; });
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      jumpLines = [];
+      break;
+
+    case 'back_start':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; nodeStates[k].jumpTarget = false; });
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      // Highlight the back edge
+      const bKey = getEdgeKey(act.u, act.v);
+      if (edgeStates[bKey]) edgeStates[bKey].highlight = true;
+      // Show both endpoints
+      nodeStates[act.u] = { ...nodeStates[act.u], current: true };
+      nodeStates[act.v] = { ...nodeStates[act.v], jumpTarget: true };
+      jumpLines = [];
+      break;
+
+    case 'jump_step':
+      // Clear highlights
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; nodeStates[k].jumpTarget = false; });
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      // Current node being jumped from
+      nodeStates[act.node] = { ...nodeStates[act.node], current: true };
+      nodeStates[act.parent] = { ...nodeStates[act.parent], jumpTarget: true };
+      // Peer node
+      if (nodeStates[act.peer]) nodeStates[act.peer].jumpTarget = true;
+      // Mark edges in path so far as nonbridge
+      act.pathSoFar.forEach(([u, v]) => {
+        edgeStates[getEdgeKey(u, v)] = { type: 'nonbridge', highlight: true };
+      });
+      // Show jump line
+      jumpLines = [{from: act.node, to: act.parent}];
+      break;
+
+    case 'back_done':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; nodeStates[k].jumpTarget = false; });
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      act.edges.forEach(([u, v]) => {
+        edgeStates[getEdgeKey(u, v)] = { type: 'nonbridge', highlight: false };
+      });
+      jumpLines = [];
+      break;
+
+    case 'back_skip':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; nodeStates[k].jumpTarget = false; });
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      jumpLines = [];
+      break;
+
+    case 'result':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; nodeStates[k].jumpTarget = false; });
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      act.bridges.forEach(([u, v]) => {
+        edgeStates[getEdgeKey(u, v)] = { type: 'bridge', highlight: true };
+      });
+      jumpLines = [];
+      break;
+  }
+
+  updateUI(step);
+  render();
+}
+
+function updateUI(step) {
+  const badge = document.getElementById('phaseBadge');
+  badge.className = 'phase-badge';
+  switch (step.phase) {
+    case 'build': badge.className += ' phase-build'; badge.textContent = '🔧 阶段1: DSU构建生成树'; break;
+    case 'depth': badge.className += ' phase-depth'; badge.textContent = '🌲 阶段2: 计算深度'; break;
+    case 'back': badge.className += ' phase-back'; badge.textContent = '⚡ 阶段3: DSUJump处理反向边'; break;
+    case 'result': badge.className += ' phase-result'; badge.textContent = '🎉 结果'; break;
+  }
+
+  document.getElementById('stepDesc').innerHTML = step.desc;
+
+  let treeCount = 0, backCount = 0, nonBridgeCount = 0, bridgeCount = 0;
+  Object.values(edgeStates).forEach(s => {
+    if (s.type === 'tree') treeCount++;
+    if (s.type === 'back') backCount++;
+    if (s.type === 'nonbridge') nonBridgeCount++;
+    if (s.type === 'bridge') bridgeCount++;
+  });
+  const visitedCount = Object.values(nodeStates).filter(s => s.inTree).length;
+
+  document.getElementById('infoProcessed').textContent = treeCount + backCount;
+  document.getElementById('infoTreeEdges').textContent = treeCount;
+  document.getElementById('infoBackEdges').textContent = backCount;
+  document.getElementById('infoMarked').textContent = nonBridgeCount;
+  document.getElementById('infoBridges').textContent = step.phase === 'result' ? bridgeCount : '?';
+
+  const pct = steps.length > 0 ? ((currentStep + 1) / steps.length * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  const logArea = document.getElementById('logArea');
+  const logLine = document.createElement('div');
+  logLine.className = step.logClass || '';
+  logLine.textContent = `[${currentStep + 1}] ${step.log}`;
+  logArea.appendChild(logLine);
+  logArea.scrollTop = logArea.scrollHeight;
+
+  document.getElementById('btnPrev').disabled = currentStep <= 0;
+  document.getElementById('btnStep').disabled = currentStep >= steps.length - 1;
+}
+
+// ============= CONTROLS =============
+function togglePlay() {
+  if (playing) { stopPlay(); }
+  else { startPlay(); }
+}
+
+function startPlay() {
+  if (currentStep >= steps.length - 1) return;
+  playing = true;
+  document.getElementById('btnPlay').textContent = '⏸ 暂停';
+  document.getElementById('btnPlay').className = 'btn btn-warning';
+  playNext();
+}
+
+function stopPlay() {
+  playing = false;
+  clearTimeout(playTimer);
+  document.getElementById('btnPlay').textContent = '▶ 播放';
+  document.getElementById('btnPlay').className = 'btn btn-success';
+}
+
+function playNext() {
+  if (!playing || currentStep >= steps.length - 1) { stopPlay(); return; }
+  stepForward();
+  const delay = Math.max(50, 1200 - speed * 60);
+  playTimer = setTimeout(playNext, delay);
+}
+
+function stepForward() {
+  if (currentStep >= steps.length - 1) return;
+  currentStep++;
+  applyStep(currentStep);
+}
+
+function stepBack() {
+  if (currentStep <= 0) return;
+  currentStep--;
+  // Rebuild from scratch
+  nodeStates = {};
+  edgeStates = {};
+  jumpLines = [];
+  G.nodes.forEach(nd => { nodeStates[nd.id] = { inTree: false, current: false }; });
+  G.edges.forEach(([u,v]) => { edgeStates[getEdgeKey(u,v)] = { type: 'unvisited', highlight: false }; });
+
+  document.getElementById('logArea').innerHTML = '';
+  for (let i = 0; i <= currentStep; i++) {
+    applyStepSilent(i);
+  }
+  updateUI(steps[currentStep]);
+  render();
+}
+
+function applyStepSilent(idx) {
+  const step = steps[idx];
+  const act = step.action;
+  switch (act.type) {
+    case 'init':
+      nodeStates = {}; edgeStates = {}; jumpLines = [];
+      G.nodes.forEach(nd => { nodeStates[nd.id] = { inTree: false, current: false }; });
+      G.edges.forEach(([u,v]) => { edgeStates[getEdgeKey(u,v)] = { type: 'unvisited', highlight: false }; });
+      break;
+    case 'consider_edge':
+      const cKey = getEdgeKey(act.u, act.v);
+      edgeStates[cKey] = { type: act.isTree ? 'tree' : 'back', highlight: false };
+      nodeStates[act.u] = { ...nodeStates[act.u], inTree: true, current: false };
+      nodeStates[act.v] = { ...nodeStates[act.v], inTree: true, current: false };
+      break;
+    case 'build_done':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; });
+      act.initialEdgeStates.forEach(({u, v, type}) => {
+        edgeStates[getEdgeKey(u, v)] = { type, highlight: false };
+      });
+      G.nodes.forEach(nd => { nodeStates[nd.id] = { ...nodeStates[nd.id], inTree: true }; });
+      break;
+    case 'depth_init':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; nodeStates[k].depth = undefined; });
+      break;
+    case 'dfs_visit':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; });
+      nodeStates[act.node] = { ...nodeStates[act.node], inTree: true, current: false, depth: act.d, parent: act.p };
+      break;
+    case 'dfs_tree_edge':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; });
+      nodeStates[act.v] = { ...nodeStates[act.v], inTree: true, current: false, depth: act.d, parent: act.p };
+      edgeStates[getEdgeKey(act.u, act.v)] = { ...edgeStates[getEdgeKey(act.u, act.v)], highlight: false };
+      break;
+    case 'depth_done':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; });
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      act.parent.forEach((p, i) => {
+        if (nodeStates[i]) { nodeStates[i].parent = p; nodeStates[i].depth = act.depth[i]; }
+      });
+      break;
+    case 'back_init':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; nodeStates[k].jumpTarget = false; });
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      jumpLines = [];
+      break;
+    case 'back_start':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; nodeStates[k].jumpTarget = false; });
+      break;
+    case 'jump_step':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; nodeStates[k].jumpTarget = false; });
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      act.pathSoFar.forEach(([u, v]) => {
+        edgeStates[getEdgeKey(u, v)] = { type: 'nonbridge', highlight: false };
+      });
+      break;
+    case 'back_done':
+      Object.keys(nodeStates).forEach(k => { nodeStates[k].current = false; nodeStates[k].jumpTarget = false; });
+      act.edges.forEach(([u, v]) => {
+        edgeStates[getEdgeKey(u, v)] = { type: 'nonbridge', highlight: false };
+      });
+      break;
+    case 'back_skip':
+      break;
+    case 'result':
+      Object.keys(edgeStates).forEach(k => { edgeStates[k].highlight = false; });
+      act.bridges.forEach(([u, v]) => {
+        edgeStates[getEdgeKey(u, v)] = { type: 'bridge', highlight: true };
+      });
+      break;
+  }
+}
+
+function resetAlgorithm() {
+  stopPlay();
+  currentStep = -1;
+  nodeStates = {};
+  edgeStates = {};
+  jumpLines = [];
+  G = GRAPHS[currentGraph];
+  G.nodes.forEach(nd => { nodeStates[nd.id] = { inTree: false, current: false }; });
+  G.edges.forEach(([u,v]) => { edgeStates[getEdgeKey(u,v)] = { type: 'unvisited', highlight: false }; });
+
+  document.getElementById('logArea').innerHTML = '';
+  document.getElementById('stepDesc').textContent = '点击 "播放" 或 "单步" 开始算法演示。';
+  document.getElementById('phaseBadge').className = 'phase-badge phase-idle';
+  document.getElementById('phaseBadge').textContent = '等待开始';
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('infoProcessed').textContent = '0';
+  document.getElementById('infoTreeEdges').textContent = '0';
+  document.getElementById('infoBackEdges').textContent = '0';
+  document.getElementById('infoMarked').textContent = '0';
+  document.getElementById('infoBridges').textContent = '?';
+  document.getElementById('btnPrev').disabled = true;
+  document.getElementById('btnStep').disabled = false;
+
+  render();
+}
+
+function skipToEnd() {
+  stopPlay();
+  currentStep = steps.length - 1;
+  nodeStates = {};
+  edgeStates = {};
+  jumpLines = [];
+  G.nodes.forEach(nd => { nodeStates[nd.id] = { inTree: false, current: false }; });
+  G.edges.forEach(([u,v]) => { edgeStates[getEdgeKey(u,v)] = { type: 'unvisited', highlight: false }; });
+
+  document.getElementById('logArea').innerHTML = '';
+  for (let i = 0; i <= currentStep; i++) {
+    applyStepSilent(i);
+  }
+  updateUI(steps[currentStep]);
+  render();
+}
+
+function updateSpeed() {
+  speed = parseInt(document.getElementById('speedSlider').value);
+  document.getElementById('speedVal').textContent = speed + 'x';
+}
+
+// ============= GRAPH SELECTOR =============
+function initGraphSelector() {
+  const container = document.getElementById('graphSelector');
+  container.innerHTML = '';
+  Object.keys(GRAPHS).forEach(key => {
+    const btn = document.createElement('button');
+    btn.className = 'graph-btn' + (key === currentGraph ? ' active' : '');
+    btn.textContent = GRAPHS[key].name;
+    btn.onclick = () => selectGraph(key);
+    container.appendChild(btn);
+  });
+}
+
+function selectGraph(key) {
+  stopPlay();
+  currentGraph = key;
+  steps = generateSteps(key);
+  currentStep = -1;
+  document.querySelectorAll('.graph-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.graph-btn').forEach(b => {
+    if (b.textContent === GRAPHS[key].name) b.classList.add('active');
+  });
+  resetAlgorithm();
+}
+
+// ============= INIT =============
+window.addEventListener('resize', resizeCanvas);
+
+function init() {
+  initGraphSelector();
+  steps = generateSteps(currentGraph);
+  resetAlgorithm();
+  resizeCanvas();
+}
+
+init();
+</script>
+</body>
+</html>

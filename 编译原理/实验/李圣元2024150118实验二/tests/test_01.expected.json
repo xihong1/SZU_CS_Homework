@@ -1,0 +1,13 @@
+﻿{
+  "tokens": [
+    {"type": "KEYWORD", "value": "if", "line": 1, "col": 1},
+    {"type": "ID", "value": "ifx", "line": 1, "col": 4},
+    {"type": "ID", "value": "xif", "line": 1, "col": 8},
+    {"type": "KEYWORD", "value": "int", "line": 1, "col": 12},
+    {"type": "ID", "value": "intVal", "line": 1, "col": 16},
+    {"type": "ID", "value": "returnx", "line": 1, "col": 23},
+    {"type": "KEYWORD", "value": "true", "line": 1, "col": 31},
+    {"type": "EOF", "value": "", "line": 2, "col": 1}
+  ],
+  "errors": []
+}

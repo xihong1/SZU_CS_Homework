@@ -1,0 +1,1 @@
+{"fileName":"20092026105258949.hist","query":"SELECT * FROM DEPT2024150118 d LEFT JOIN emp2024150118 e ON d.DEPTNO\u003de.DEPTNO WHERE e.EMPNO IS NULL;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 10:52:58.762 CST","elapsedTime":"34 ms","isPinned":false,"finalStatus":true,"resultSetSize":1,"querySizeToStore":1000}

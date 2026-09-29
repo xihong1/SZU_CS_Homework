@@ -1,0 +1,30 @@
+// S4: 控制流嵌套（if 与 while）
+// 逻辑：多层条件与循环叠加，验证缩进块与控制流正确性
+
+fn(int) nestedFlow -> limit@int:
+    int i
+    int total
+    i@int = 0
+    total@int = 0
+
+    while i@int < limit@int:
+        if i@int % 2 == 0:
+            int j
+            j@int = 0
+            while j@int < i@int:
+                if j@int % 3 == 0:
+                    total@int = total@int + j@int
+                else:
+                    total@int = total@int + 1
+                j@int = j@int + 1
+        else:
+            total@int = total@int + i@int
+
+        i@int = i@int + 1
+
+    return total@int
+
+fn(void) main ->:
+    int out
+    out@int = nestedFlow->(8)
+    print->(out@int)

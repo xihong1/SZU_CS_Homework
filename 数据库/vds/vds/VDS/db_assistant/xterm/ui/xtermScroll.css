@@ -1,0 +1,23 @@
+/* 设置滚动条的宽度 */
+.xterm-viewport {
+    scrollbar-width: thin;
+    scrollbar-color: #888888 #f0f0f0;
+}
+
+/* 设置滚动条的背景颜色 */
+.xterm-viewport::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* 设置滚动条的滑块颜色 */
+.xterm-viewport::-webkit-scrollbar-thumb {
+    background: #888888;
+}
+
+/* 鼠标悬停在滑块上时的颜色 */
+.xterm-viewport::-webkit-scrollbar-thumb:hover {
+    background: #555555;
+}
+
+
+

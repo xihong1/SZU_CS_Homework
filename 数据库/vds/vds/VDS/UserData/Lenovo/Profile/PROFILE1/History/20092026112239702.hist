@@ -1,0 +1,1 @@
+{"fileName":"20092026112239702.hist","query":"SELECT * FROM EMP2024150118 e JOIN DEPT2024150118 m ON E.DEPTNO\u003dM.DEPTNO;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 11:22:39.503 CST","elapsedTime":"28 ms","isPinned":false,"finalStatus":true,"resultSetSize":17,"querySizeToStore":1000}

@@ -1,0 +1,23 @@
+// S3: 类型检查与类型转换
+// 逻辑：禁止 C 风格强转，必须通过对象方法 toFloat()/toInt()
+
+fn(float) average -> a@int, b@int:
+    int sum
+    float result
+    sum@int = a@int + b@int
+    result@float = sum@int.toFloat() / 2.0
+    return result@float
+
+fn(void) main ->:
+    int m
+    int n
+    float avg
+    int rounded
+
+    m@int = 7
+    n@int = 10
+    avg@float = average->(m@int, n@int)
+
+    // 非法写法示例：rounded@int = (int)avg@float
+    rounded@int = avg@float.toInt()
+    print->(rounded@int)

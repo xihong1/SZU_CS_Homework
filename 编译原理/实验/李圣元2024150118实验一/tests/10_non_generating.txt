@@ -1,0 +1,8 @@
+# A and B are non-generating
+N: S A B
+T: a
+P:
+S->A
+A->B
+B->A
+START: S

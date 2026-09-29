@@ -1,0 +1,44 @@
+% CVPR 2026 Paper Template
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+%%%%%%%%% PAPER TYPE
+\usepackage[pagenumbers]{cvpr}  % Show authors + page numbers (course paper)
+
+% Import additional packages in the preamble file, before hyperref
+\input{preamble}
+
+% hyperref
+\definecolor{cvprblue}{rgb}{0.21,0.49,0.74}
+\usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
+
+%%%%%%%%% PAPER ID
+\def\paperID{*****}
+\def\confName{CVPR}
+\def\confYear{2026}
+
+%%%%%%%%% TITLE
+\title{MSAE-AD: Multi-Scale Sparse Autoencoder for Few-Shot Anomaly Detection}
+
+%%%%%%%%% AUTHORS
+\author{Shengyuan Li\textsuperscript{1*}\qquad Ruilin Deng\textsuperscript{1*}\\
+\textsuperscript{1}Shenzhen University\\
+{\tt\small \{lishengyuan, dengruilin\}@szu.edu.cn}
+\and
+\textsuperscript{*}Equal contribution.}
+
+\begin{document}
+\maketitle
+\input{fig/framework}
+\input{sec/0_abstract}
+\input{sec/1_intro}
+\input{sec/2_related_work}
+\input{sec/3_method}
+\input{sec/4_experiments}
+\input{sec/5_conclusion}
+{
+    \small
+    \bibliographystyle{ieeenat_fullname}
+    \bibliography{main}
+}
+
+\end{document}

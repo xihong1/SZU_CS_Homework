@@ -1,0 +1,18 @@
+#ifndef __KEY_H
+#define __KEY_H
+
+#include "main.h"
+
+/* 使用开发板自带的 4 个按键，不需要额外接线：
+ *   KEY0 = PH3   按下为低电平
+ *   KEY1 = PH2   按下为低电平
+ *   KEY2 = PC13  按下为低电平
+ *   KEY3 = PA0（板上丝印 WK_UP）按下为高电平
+ */
+#define KEY_NUM             4
+#define KEY_DEBOUNCE_MS     10      /* 消抖时间：10ms 内的抖动一律忽略 */
+
+void    key_init(void);
+uint8_t key_scan(void);             /* 0 = 无按键；1~4 = 第几个按键被按下 */
+
+#endif /* __KEY_H */

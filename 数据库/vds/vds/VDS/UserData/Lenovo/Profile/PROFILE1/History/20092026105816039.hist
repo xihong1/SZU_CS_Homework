@@ -1,0 +1,1 @@
+{"fileName":"20092026105816039.hist","query":"SELECT e.* \nFROM EMP2024150118 e \nJOIN EMP2024150118 m ON e.MGR \u003d m.EMPNO \nWHERE m.ENAME \u003d \u0027BLAKE\u0027;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 10:58:15.876 CST","elapsedTime":"19 ms","isPinned":false,"finalStatus":true,"resultSetSize":5,"querySizeToStore":1000}

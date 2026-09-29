@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Shopping Cart Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .cart-icon {
+            padding: 10px 18px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            color: #333;
+        }
+        .button-container {
+            perspective: 800px;
+        }
+        .animated-button {
+            position: relative;
+            overflow: hidden;
+            padding: 14px 28px;
+            font-size: 18px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        .animated-button:hover {
+            background-color: #2ecc71;
+            transform: translateY(-10px);
+            box-shadow: 0 18px 28px rgba(0, 0, 0, 0.25), 0 0 0 6px rgba(46, 204, 113, 0.18);
+        }
+        .animated-button:active {
+            background-color: #e74c3c;
+            transform: scale(0.98);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.16);
+        }
+        .animated-button::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.18);
+            opacity: 0;
+            transform: scale(0.85);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        .animated-button:hover::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .animated-button:active::before {
+            opacity: 0.35;
+            transform: scale(1.05);
+        }
+        .item {
+            display: inline-block;
+            margin-left: 10px;
+            opacity: 0;
+            transform: translateX(0) translateY(0) rotate(0deg);
+            transition: all 0.3s ease;
+        }
+        .animated-button:active .item {
+            opacity: 1;
+            transform: translateX(110px) translateY(-18px) rotate(360deg);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cart-icon">购物车</div> <!-- 购物车图标 -->
+    <div class="button-container">
+        <button class="animated-button">
+            Add to Cart
+            <span class="item">物品</span> <!-- 物品图标 -->
+        </button>
+    </div>
+</body>
+
+</html>

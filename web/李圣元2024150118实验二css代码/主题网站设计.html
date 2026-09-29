@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>五等份的花嫁 - 官方首页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* 导航栏 */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            padding: 0 40px;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            color: #fff;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        nav a {
+            color: #fff;
+            font-size: 15px;
+            transition: opacity 0.3s;
+        }
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        /* 英雄区 */
+        .hero {
+            margin-top: 70px;
+            height: 600px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="1200" height="600" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 22px;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #fff;
+            color: #667eea;
+            padding: 14px 40px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* 介绍区 */
+        .intro-section {
+            padding: 80px 0;
+            background: #f9f9f9;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+            color: #667eea;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .intro-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            max-width: 1100px;
+            margin: 50px auto 0;
+        }
+
+        .intro-text h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .intro-text p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .intro-image {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding-left: 10px;
+        }
+
+        .intro-image img {
+            width: 100%;
+            max-width: 420px;
+            height: auto;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        /* 五姐妹卡片 */
+        .characters-section {
+            padding: 80px 0;
+        }
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 30px;
+            max-width: 1080px;
+            margin: 50px auto 0;
+        }
+        .character-card {
+            grid-column: span 2;
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .character-card:nth-child(4) {
+            grid-column: 2 / span 2;
+        }
+        .character-card:nth-child(5) {
+            grid-column: 4 / span 2;
+        }
+
+        .character-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+        }
+
+        .character-image {
+            width: 100%;
+            height: 320px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .character-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .character-card:hover .character-image img {
+            transform: scale(1.05);
+        }
+
+        .character-info {
+            padding: 25px;
+        }
+
+        .character-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .character-role {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
+        .character-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 故事简介 */
+        .story-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .story-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+            max-width: 1100px;
+            margin: 50px auto 0;
+        }
+
+        .story-text h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .story-text p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .story-highlights {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .highlight-tag {
+            background: #667eea;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+        }
+
+        /* 作品信息 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .info-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .info-card i {
+            font-size: 36px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .info-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .info-card p {
+            font-size: 16px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        /* 作品亮点 */
+        .highlights-section {
+            padding: 80px 0;
+            background: #f9f9f9;
+        }
+
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            margin: 50px auto 0;
+        }
+
+        .highlight-item {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s;
+        }
+
+        .highlight-item:hover {
+            transform: translateX(5px);
+        }
+
+        .highlight-item h3 {
+            font-size: 20px;
+            color: #667eea;
+            margin-bottom: 12px;
+        }
+
+        .highlight-item p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* 经典台词 */
+        .quotes-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .quotes-container {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 30px;
+            max-width: 1100px;
+            margin: 50px auto 0;
+        }
+
+        .quote-card {
+            background: #fff;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #667eea;
+        }
+
+        .quote-text {
+            font-size: 16px;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .quote-author {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        /* 粉丝评价 */
+        .reviews-section {
+            padding: 80px 0;
+            background: #f9f9f9;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            margin: 50px auto 0;
+        }
+
+        .review-card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .review-stars {
+            color: #ffc107;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .review-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .review-author {
+            font-size: 13px;
+            color: #999;
+            font-weight: 600;
+        }
+
+        /* 页脚 */
+        footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 50px 0 30px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 30px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 40px 0;
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .characters-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .character-card,
+            .character-card:nth-child(4),
+            .character-card:nth-child(5) {
+                grid-column: auto;
+            }
+
+            .highlights-grid,
+            .quotes-container,
+            .reviews-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 20px;
+            }
+
+            nav ul {
+                gap: 15px;
+            }
+
+            .hero {
+                height: 400px;
+                margin-top: 60px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .container {
+                padding: 0 20px;
+            }
+
+            .intro-content,
+            .story-content {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .characters-grid,
+            .highlights-grid,
+            .quotes-container,
+            .reviews-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .intro-image {
+                justify-content: center;
+                padding-left: 0;
+            }
+
+            .intro-image img {
+                max-width: 320px;
+                width: 70%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">🎬 五等份的花嫁</div>
+            <nav>
+                <ul>
+                    <li><a href="#about">关于作品</a></li>
+                    <li><a href="#characters">五姐妹</a></li>
+                    <li><a href="#story">故事</a></li>
+                    <li><a href="#highlights">看点</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>五等份的花嫁</h1>
+            <p>五个不同性格的女孩，一个幸运的少年，一个浪漫的故事</p>
+            <a href="#characters" class="cta-button">探索五姐妹</a>
+        </div>
+    </section>
+
+    <!-- 作品介绍 -->
+    <section class="intro-section" id="about">
+        <div class="container">
+            <h2 class="section-title">关于作品</h2>
+            <div class="intro-content">
+                <div class="intro-text">
+                    <h2>一部温暖而浪漫的爱情故事</h2>
+                    <p>《五等份的花嫁》是由春场葵创作的日本漫画作品，讲述了高中三年级学生上杉风太郎作为一名家庭教师，与五胞胎姐妹相遇的故事。</p>
+                    <p>这五个女孩性格各异，却在风太郎的帮助和陪伴下，不仅学习成绩得到提高，更重要的是，她们之间的感情也逐渐变得更加亲密。</p>
+                    <p>作品以其温暖的情感、精致的画风和紧张的悬念设定，成为了近年来最受欢迎的恋爱漫画之一。其中"花嫁"指的是将要嫁给男主角的新娘，神秘感正是这部作品的魅力所在。</p>
+                </div>
+                <div class="intro-image">
+                    <img src="照片/wdf.png" alt="作品海报">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 五姐妹介绍 -->
+    <section class="characters-section" id="characters">
+        <div class="container">
+            <h2 class="section-title">五等份的魅力 - 五姐妹</h2>
+            <div class="characters-grid">
+                <div class="character-card">
+                    <div class="character-image">
+                        <img src="照片/ichika.jpg" alt="一花">
+                    </div>
+                    <div class="character-info">
+                        <div class="character-name">中野一花</div>
+                        <div class="character-role">长女 · 温柔成熟</div>
+                        <div class="character-desc">性格温柔体贴，是五姐妹中最像母亲的存在。作为长女，她总是为大家考虑，默默付出。有着一头红色长发，沉静而神秘的气质。</div>
+                    </div>
+                </div>
+
+                <div class="character-card">
+                    <div class="character-image">
+                        <img src="照片/nino.jpg" alt="二乃">
+                    </div>
+                    <div class="character-info">
+                        <div class="character-name">中野二乃</div>
+                        <div class="character-role">次女 · 娇蛮可爱</div>
+                        <div class="character-desc">性格直率热情，有些傲娇。最初对风太郎抗拒，但随着时间推移逐渐坦诚。她的笑容最能点燃整个房间的气氛。</div>
+                    </div>
+                </div>
+
+                <div class="character-card">
+                    <div class="character-image">
+                        <img src="照片/miku.jpg" alt="三玖">
+                    </div>
+                    <div class="character-info">
+                        <div class="character-name">中野三玖</div>
+                        <div class="character-role">三女 · 沉默神秘</div>
+                        <div class="character-desc">性格内向沉默，喜欢和风太郎独处。对历史充满热情，是一个有趣的传播历史知识的"小老师"。她的内心其实很温暖。</div>
+                    </div>
+                </div>
+
+                <div class="character-card">
+                    <div class="character-image">
+                        <img src="照片/yotsuba.jpg" alt="四葉">
+                    </div>
+                    <div class="character-info">
+                        <div class="character-name">中野四叶</div>
+                        <div class="character-role">四女 · 活力开朗</div>
+                        <div class="character-desc">性格开朗活泼，总是笑面迎人。运动能力出众，是五姐妹中最有活力的。她能轻易地点燃周围所有人的热情。</div>
+                    </div>
+                </div>
+
+                <div class="character-card">
+                    <div class="character-image">
+                        <img src="照片/itsuki.jpg" alt="五月">
+                    </div>
+                    <div class="character-info">
+                        <div class="character-name">中野五月</div>
+                        <div class="character-role">五女 · 冷酷聪慧</div>
+                        <div class="character-desc">性格冷酷内敛，是成绩最好的。看似最抗拒补习，但实际上心里很在意风太郎。她的温柔往往隐藏在冷漠的外壳之下。</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 故事简介 -->
+    <section class="story-section" id="story">
+        <div class="container">
+            <h2 class="section-title">故事概览</h2>
+            <div class="story-content">
+                <div class="story-text">
+                    <h2>一个少年与五个少女的相遇</h2>
+                    <p>高中三年级学生上杉风太郎因为家庭经济困难，接受了一份高薪家教工作。他的学生是五胞胎姐妹——中野家的五个女孩。</p>
+                    <p>但五个女孩的成绩各不相同，性格也截然不同。她们最初对这个家教非常抗拒，但在风太郎的真心对待下，一切都逐渐改变了。</p>
+                    <p>在陪伴她们学习、生活的过程中，风太郎与五姐妹建立了深厚的感情。最后，其中一个姐妹最终嫁给了他——但究竟是谁呢？这正是整个故事的悬念所在。</p>
+                    <div class="story-highlights">
+                        <span class="highlight-tag">💕 爱情悬念</span>
+                        <span class="highlight-tag">😊 温暖日常</span>
+                        <span class="highlight-tag">🎓 成长励志</span>
+                        <span class="highlight-tag">⭐ 精彩转折</span>
+                    </div>
+                </div>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <i class="fas fa-book"></i>
+                        <h3>原作形式</h3>
+                        <p>漫画作品</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-calendar"></i>
+                        <h3>连载年份</h3>
+                        <p>2017-2020年</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-user-alt"></i>
+                        <h3>原作者</h3>
+                        <p>春场葵</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-star"></i>
+                        <h3>人气指数</h3>
+                        <p>极高评价</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 作品亮点 -->
+    <section class="highlights-section" id="highlights">
+        <div class="container">
+            <h2 class="section-title">作品亮点</h2>
+            <div class="highlights-grid">
+                <div class="highlight-item">
+                    <h3>🎨 精美画风</h3>
+                    <p>春场葵老师精致细腻的绘画风格，每一帧都是艺术品。人物设计各具特色，五姐妹的表情生动真挚，让读者为之倾倒。</p>
+                </div>
+                <div class="highlight-item">
+                    <h3>❤️ 温暖情感</h3>
+                    <p>作品充满了温暖人心的日常互动，家人间的羁绊、朋友间的友谊、爱情的萌芽，每一种情感都被细致刻画。</p>
+                </div>
+                <div class="highlight-item">
+                    <h3>🎭 丰富人设</h3>
+                    <p>五个性格截然不同的女孩，从高冷学霸到活力少女，每个人都有独特魅力。即使是男主角风太郎也充满了成长故事。</p>
+                </div>
+                <div class="highlight-item">
+                    <h3>💭 悬念十足</h3>
+                    <p>谁才是最后的花嫁？这个悬念贯穿全作。每一卷都会有新的线索，让读者猜测和期待，欲罢不能。</p>
+                </div>
+                <div class="highlight-item">
+                    <h3>🌸 日常推进</h3>
+                    <p>不仅有紧张的悬念，更有大量温馨幽默的日常戏份。家庭教师和学生的相处、五姐妹之间的互动都充满欢乐。</p>
+                </div>
+                <div class="highlight-item">
+                    <h3>🎬 媒体扩展</h3>
+                    <p>成功改编为动画、电影等多种形式。高质量的动画制作让更多人了解这部作品，粉丝遍布全球。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 经典台词 -->
+    <section class="quotes-section">
+        <div class="container">
+            <h2 class="section-title">经典台词</h2>
+            <div class="quotes-container">
+                <div class="quote-card">
+                    <div class="quote-text">"无论如何，我决定了。我要成为能帮助你们的家教。"</div>
+                    <div class="quote-author">— 上杉风太郎</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">"五个人虽然各不相同，但都是我宝贵的学生。"</div>
+                    <div class="quote-author">— 上杉风太郎</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">"因为是和你在一起，所以即使很难，我也不会放弃。"</div>
+                    <div class="quote-author">— 中野二乃</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">"历史就像人一样，有许多秘密和故事。"</div>
+                    <div class="quote-author">— 中野三玖</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">"只要有你在，我就有勇气面对任何挑战。"</div>
+                    <div class="quote-author">— 中野五月</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">"我们虽然是五胞胎，但每个人都有自己独特的梦想。"</div>
+                    <div class="quote-author">— 中野四叶</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 粉丝评价 -->
+    <section class="reviews-section">
+        <div class="container">
+            <h2 class="section-title">粉丝评价</h2>
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                    <div class="review-text">"这部漫画完全颠覆了我对恋爱番的认知。五姐妹的设定太棒了，每个人都能找到自己喜欢的角色。"</div>
+                    <div class="review-author">动漫爱好者 · 小李</div>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                    <div class="review-text">"故事温暖治愈，画风精美，人物性格鲜明。虽然有悬念，但更多是感受那份真挚的感情。"</div>
+                    <div class="review-author">漫画迷 · 王同学</div>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                    <div class="review-text">"花嫁到底是谁？这个谜团让我一直看到最后。每一个选择都有理由，每个人都值得被爱。"</div>
+                    <div class="review-author">粉丝 · 张三</div>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                    <div class="review-text">"动画化得特别成功，OP和ED都超好听。声优的演绎让五姐妹更加生动，每季都期待播出。"</div>
+                    <div class="review-author">动画迷 · 李四</div>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                    <div class="review-text">"不仅仅是恋爱漫画，更是关于成长、陪伴和羁绊的故事。读完后心里暖暖的。"</div>
+                    <div class="review-author">读者 · 王五</div>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                    <div class="review-text">"看了这部作品，深深理解什么是青春。五个女孩的故事让我想起了自己的高中时代。"</div>
+                    <div class="review-author">怀旧粉丝 · 小王</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>关于本站</h4>
+                <ul>
+                    <li>这是一个致敬《五等份的花嫁》的粉丝页面</li>
+                    <li>目的是分享这部作品的魅力</li>
+                    <li>感谢春场葵老师的精彩创作</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>推荐资源</h4>
+                <ul>
+                    <li>官方漫画</li>
+                    <li>动画系列</li>
+                    <li>电影作品</li>
+                    <li>粉丝社区</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>相关链接</h4>
+                <ul>
+                    <li>原作者春场葵</li>
+                    <li>出版社讲谈社</li>
+                    <li>动画制作BIBURY</li>
+                    <li>官方网站</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>获奖荣誉</h4>
+                <ul>
+                    <li>2019年漫画榜第一</li>
+                    <li>国际动画节最佳</li>
+                    <li>粉丝最爱作品</li>
+                    <li>全球百万级销量</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 五等份的花嫁 粉丝页面 | 所有权利归原作者及出版方所有 | 设计用于教学实验</p>
+        </div>
+    </footer>
+</body>
+
+</html>

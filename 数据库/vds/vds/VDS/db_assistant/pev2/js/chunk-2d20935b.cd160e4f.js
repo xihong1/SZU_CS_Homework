@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d20935b"],{a7a0:function(s,a,n){"use strict";n.r(a),a["default"]="SELECT feature_name, tags->'tourism' As tourism_type FROM ch03.paris\n    WHERE ar_num = 8 AND tags?'tourism';\n"}}]);

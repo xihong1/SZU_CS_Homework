@@ -1,0 +1,13 @@
+{
+  "errors": [],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "nestedFlow", "type": "int(int)", "scope": "global", "line": 4 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 27 },
+    { "name": "limit", "type": "int", "scope": "function", "line": 4 },
+    { "name": "i", "type": "int", "scope": "function", "line": 5 },
+    { "name": "total", "type": "int", "scope": "function", "line": 6 },
+    { "name": "j", "type": "int", "scope": "block", "line": 12 },
+    { "name": "out", "type": "int", "scope": "function", "line": 28 }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "ast": {
+    "type": "Program", "line": 2, "col": 1,
+    "funcs": [
+      {
+        "type": "FuncDecl", "name": "main", "return_type": "void", "line": 2, "col": 1,
+        "params": [],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "a", "line": 3, "col": 5 },
+          { "type": "VarDecl", "var_type": "float", "name": "b", "line": 4, "col": 5 },
+          { "type": "VarDecl", "var_type": "string", "name": "c", "line": 5, "col": 5 },
+          { "type": "VarDecl", "var_type": "bool", "name": "d", "line": 6, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 7, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "a", "ref_type": "int", "line": 7, "col": 5 },
+            "value": { "type": "IntLiteral", "value": "10", "line": 7, "col": 13 }
+          },
+          {
+            "type": "AssignStmt", "line": 8, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "b", "ref_type": "float", "line": 8, "col": 5 },
+            "value": { "type": "FloatLiteral", "value": "3.14", "line": 8, "col": 15 }
+          },
+          {
+            "type": "AssignStmt", "line": 9, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "c", "ref_type": "string", "line": 9, "col": 5 },
+            "value": { "type": "StringLiteral", "value": "\"hello\"", "line": 9, "col": 16 }
+          },
+          {
+            "type": "AssignStmt", "line": 10, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "d", "ref_type": "bool", "line": 10, "col": 5 },
+            "value": { "type": "BoolLiteral", "value": "true", "line": 10, "col": 14 }
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python compiler.py parse tests/test_04_if_while.src)"
+    ]
+  }
+}

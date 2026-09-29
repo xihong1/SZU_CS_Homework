@@ -1,0 +1,14 @@
+{
+  "errors": [
+    { "type": "ARG_COUNT_MISMATCH", "line": 7, "col": 13, "symbol": "multiply", "expected": "3", "found": "2" }
+  ],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "multiply", "type": "int(int,int,int)", "scope": "global", "line": 2 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 5 },
+    { "name": "a", "type": "int", "scope": "function", "line": 2 },
+    { "name": "b", "type": "int", "scope": "function", "line": 2 },
+    { "name": "c", "type": "int", "scope": "function", "line": 2 },
+    { "name": "x", "type": "int", "scope": "function", "line": 6 }
+  ]
+}

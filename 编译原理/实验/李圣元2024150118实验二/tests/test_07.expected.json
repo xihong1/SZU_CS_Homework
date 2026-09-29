@@ -1,0 +1,9 @@
+﻿{
+  "tokens": [
+    {"type": "OP", "value": "==", "line": 1, "col": 1},
+    {"type": "OP", "value": "=", "line": 1, "col": 3},
+    {"type": "OP", "value": "!=", "line": 1, "col": 5},
+    {"type": "EOF", "value": "", "line": 2, "col": 1}
+  ],
+  "errors": []
+}

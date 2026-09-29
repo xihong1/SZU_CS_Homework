@@ -1,0 +1,6 @@
+# Classic ambiguous arithmetic grammar
+N: E
+T: id + *
+P:
+E->E+E|E*E|id
+START: E

@@ -1,0 +1,11 @@
+{
+  "errors": [],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "testAuto", "type": "void()", "scope": "global", "line": 2 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 10 },
+    { "name": "a", "type": "int", "scope": "function", "line": 3 },
+    { "name": "b", "type": "float", "scope": "function", "line": 4 },
+    { "name": "c", "type": "bool", "scope": "function", "line": 5 }
+  ]
+}

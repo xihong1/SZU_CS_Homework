@@ -1,0 +1,1 @@
+{"fileName":"20092026103837795.hist","query":"SELECT * \nFROM EMP2024150118 \nWHERE DEPTNO \u003d 30 AND COMM IS NOT NULL \nORDER BY COMM ASC;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 10:38:37.632 CST","elapsedTime":"20 ms","isPinned":false,"finalStatus":true,"resultSetSize":4,"querySizeToStore":1000}

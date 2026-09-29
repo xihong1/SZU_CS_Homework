@@ -1,0 +1,11 @@
+﻿{
+  "tokens": [
+    {"type": "NUM", "value": "0", "line": 1, "col": 1},
+    {"type": "NUM", "value": "10", "line": 1, "col": 3},
+    {"type": "NUM", "value": "3.14", "line": 1, "col": 6},
+    {"type": "NUM", "value": "0.001", "line": 1, "col": 11},
+    {"type": "NUM", "value": "999999", "line": 1, "col": 17},
+    {"type": "EOF", "value": "", "line": 2, "col": 1}
+  ],
+  "errors": []
+}

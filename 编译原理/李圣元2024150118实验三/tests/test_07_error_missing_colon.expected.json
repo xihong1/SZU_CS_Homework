@@ -1,0 +1,6 @@
+{
+  "ast": null,
+  "errors": [
+    { "type": "SYNTAX_ERROR", "expected": ":", "found": "\n", "line": 5, "col": 17, "message": "expected ':' before '\n'" }
+  ]
+}

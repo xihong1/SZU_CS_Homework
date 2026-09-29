@@ -1,0 +1,28 @@
+// 优化演示用例: 包含常量表达式、无用变量、代数可简化的运算
+fn(int) demo -> a@int:
+    int x
+    int y
+    int z
+
+    // 常量折叠: 2*3+4 → 10
+    x@int = a@int + 2 * 3 + 4
+
+    // 代数化简: b*1 → b, b+0 → b
+    y@int = x@int * 1 + 0
+
+    // 无用变量（将被死代码消除）
+    int unused
+    unused@int = 999
+
+    // 可折叠的比较
+    if x@int > y@int:
+        z@int = 100
+    else:
+        z@int = 200
+
+    return z@int
+
+fn(void) main ->:
+    int r
+    r@int = demo->(5)
+    print->(r@int)

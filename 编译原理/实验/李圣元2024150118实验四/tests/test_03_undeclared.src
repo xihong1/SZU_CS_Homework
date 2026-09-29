@@ -1,0 +1,8 @@
+// T2-1: 使用未声明变量
+fn(void) testUndeclared ->:
+    int a
+    a@int = 10
+    print->(undeclaredVar@int)
+
+fn(void) main ->:
+    testUndeclared->()

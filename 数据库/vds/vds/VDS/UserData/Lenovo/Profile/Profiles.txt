@@ -1,0 +1,1 @@
+[{"profileName":"共享数据库","profileId":"1","filePath":"UserData\\Lenovo\\Profile\\PROFILE1\\connection.properties","versionNo":"2.00","jdbcParameter":"?preferQueryMode\u003dextended","dbVersion":"3.0.9","dbCommit":"31338"}]

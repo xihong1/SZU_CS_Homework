@@ -1,0 +1,31 @@
+// S5: 数组操作
+// 逻辑：展示 int a[5]、a[1]@int、a@int[5] 的完整使用
+
+fn(int) sumArray -> arr@int[5]:
+    int i
+    int s
+    i@int = 0
+    s@int = 0
+
+    while i@int < 5:
+        s@int = s@int + arr[i@int]@int
+        i@int = i@int + 1
+
+    return s@int
+
+fn(void) main ->:
+    int a[5]
+    int one
+    int all
+
+    a[0]@int = 1
+    a[1]@int = 2
+    a[2]@int = 3
+    a[3]@int = 4
+    a[4]@int = 5
+
+    one@int = a[1]@int
+    all@int = sumArray->(a@int[5])
+
+    print->(one@int)
+    print->(all@int)

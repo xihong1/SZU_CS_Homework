@@ -1,0 +1,1383 @@
+\documentclass[UTF8,zihao=5,fontset=fandol]{ctexart}
+
+\usepackage[letterpaper,top=1in,bottom=1in,left=1.25in,right=1.25in]{geometry}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+\usepackage{textcomp}
+
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
+
+% ============================================================
+% 模板固定文字（课程信息、教师信息、各段标题等）
+% ============================================================
+\input{template-info}
+
+% ============================================================
+% 学生信息填写区
+% 只需修改下面各命令第二对花括号中的内容。
+% ============================================================
+\newcommand{\MajorName}{人工智能卓越班}              % 专业
+\newcommand{\StudentName}{李圣元}            % 姓名
+\newcommand{\StudentID}{2024150118}              % 学号
+\newcommand{\ClassName}{01}              % 班级
+\newcommand{\ExperimentDate}{2026年\quad 9月\quad 28日} % 实验时间
+\newcommand{\SubmissionDate}{2026年\quad 9月\quad 29日}         % 实验报告提交时间
+
+% ============================================================
+% 模板排版设置（通常不需要修改）
+% ============================================================
+\pagestyle{empty}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0pt}
+\setlength{\fboxsep}{5pt}
+\setlength{\fboxrule}{0.4pt}
+\setlist{nosep,leftmargin=2em}
+
+\definecolor{codegray}{RGB}{245,245,245}
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codegray},
+  frame=single,
+  rulecolor=\color{black!30},
+  numbers=left,
+  numberstyle=\tiny\color{black!55},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  tabsize=4,
+  extendedchars=false,          % 让代码里的中文注释交给 xeCJK 处理，避免乱码
+  language=C,
+  keywordstyle=\color{blue!65!black}\bfseries,
+  commentstyle=\color{green!45!black}\itshape,
+  stringstyle=\color{red!60!black},
+  morekeywords={uint8_t,uint16_t,uint32_t,int32_t,GPIO_TypeDef,GPIO_PinState,
+    GPIO_InitTypeDef,RCC_OscInitTypeDef,RCC_ClkInitTypeDef}
+}
+
+% 固定宽度的带下划线字段。
+\newcommand{\reportfield}[2]{%
+  \underline{\makebox[#1][c]{\strut #2}}%
+}
+
+% 封面各行左端对齐，下划线右端对齐，内容按整行的中心线对齐。
+\newlength{\coverrowwidth}
+\newlength{\coverlabelwidth}
+\newlength{\coverfieldwidth}
+\setlength{\coverrowwidth}{13.8cm}
+\newcommand{\coverrow}[2]{%
+  \settowidth{\coverlabelwidth}{#1}%
+  \setlength{\coverfieldwidth}{\dimexpr\coverrowwidth-\coverlabelwidth-0.5em\relax}%
+  \makebox[0pt][l]{#1\hspace{0.5em}\reportfield{\coverfieldwidth}{}}%
+  \makebox[\coverrowwidth][c]{\strut #2}%
+}
+
+% 正文页的外框尺寸与原 Word 模板一致。
+\newlength{\reportinnerheight}
+\setlength{\reportinnerheight}{\dimexpr\textheight-2\fboxsep-2\fboxrule\relax}
+\newsavebox{\reportpagebox}
+\newenvironment{reportpage}
+  {\begin{lrbox}{\reportpagebox}\begin{minipage}[t][\reportinnerheight][t]{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}}
+  {\end{minipage}\end{lrbox}\noindent\fbox{\usebox{\reportpagebox}}}
+
+\newcommand{\reportheading}[2]{%
+  \noindent\textbf{#1}%
+  \if\relax\detokenize{#2}\relax\else #2\fi\par
+}
+
+% 正文内容框会根据内容自动增高，并在空间不足时自动分页。
+\newtcolorbox{reportsection}[2]{
+  enhanced jigsaw,
+  breakable,
+  colback=white,
+  colframe=black,
+  boxrule=\fboxrule,
+  arc=0pt,
+  outer arc=0pt,
+  left=5pt,
+  right=5pt,
+  top=5pt,
+  bottom=5pt,
+  before skip=0pt,
+  after skip=0pt,
+  before upper={\reportheading{#1}{#2}}
+}
+
+% ------------------------------------------------------------
+% 报告内图片、表格、代码的编号与标题
+% （正文框不是浮动环境，这里手工编号，避免浮动体丢失）
+% ------------------------------------------------------------
+\newcounter{figcnt}
+\newcounter{tabcnt}
+\newcounter{codecnt}
+
+% \reportfigure[缩放比例]{标签}{文件名}{图题}
+\newcommand{\reportfigure}[4][0.94]{%
+  \par\medskip
+  \refstepcounter{figcnt}%
+  \begin{center}
+    \includegraphics[width=#1\linewidth]{images/#3}\\[0.35em]
+    {\small\textbf{图\,\thefigcnt}\quad #4}%
+  \end{center}
+  \label{#2}%
+  \par\medskip
+}
+
+% \reportcaption{标签}{表题}  —— 放在表格上方
+\newcommand{\reportcaption}[2]{%
+  \refstepcounter{tabcnt}%
+  \par\medskip\noindent{\small\textbf{表\,\thetabcnt}\quad #2}\par\nobreak
+  \vspace{0.4em}%
+  \label{#1}%
+}
+
+% \codesrc{代码题注}  —— 放在代码清单上方
+\newcommand{\codesrc}[1]{%
+  \refstepcounter{codecnt}%
+  \par\medskip\noindent{\small\textbf{代码\,\thecodecnt}\quad #1}\par\nobreak
+  \vspace{0.2em}%
+}
+
+% 表格中的居中列
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+\begin{document}
+
+% ============================================================
+% 第 1 页：封面
+% ============================================================
+\noindent \AttachmentText
+
+\vspace{2.2em}
+{\centering\bfseries\fontsize{22pt}{28pt}\selectfont \ReportTitle\par}
+
+\vspace{2.8em}
+{\bfseries\fontsize{14pt}{21pt}\selectfont
+\setlength{\parindent}{0pt}
+\centering
+\coverrow{\CourseLabel}{\CourseName}\par\vspace{1.5em}
+\coverrow{\ExperimentLabel}{\ExperimentName}\par\vspace{1.5em}
+\coverrow{\CollegeLabel}{\CollegeName}\par\vspace{1.5em}
+\coverrow{\MajorLabel}{\MajorName}\par\vspace{1.5em}
+\coverrow{\InstructorLabel}{\InstructorName}\par\vspace{1.5em}
+\coverrow{\StudentLabel}{\StudentLine}\par\vspace{1.5em}
+\coverrow{\ClassLabel}{\ClassName}\par\vspace{1.5em}
+\coverrow{\ExperimentDateLabel}{\ExperimentDate}\par\vspace{1.5em}
+\coverrow{\SubmissionDateLabel}{\SubmissionDate}\par
+}
+
+\vfill
+{\centering\bfseries\fontsize{12pt}{16pt}\selectfont \OfficeText\par}
+
+\newpage
+
+% ============================================================
+% 报告正文：各部分按内容自动增高、自动分页
+% ============================================================
+\begin{reportsection}{\PurposeTitle}{}
+  % ---------- “实验目的与要求”填写区开始 ----------
+  跑马灯是嵌入式系统入门实验中常见的人机交互实例。本实验以 STM32F4 开发板为平台，将 LED、独立按键和蜂鸣器等外设组合起来，使学生理解微控制器如何采集外部输入、执行控制逻辑并驱动输出设备，为后续学习中断、定时器及复杂外设控制打下基础。
+
+  \textbf{相关预备知识：}
+  \begin{itemize}
+    \item \textbf{GPIO 基础：}了解 STM32F4 GPIO 的输入、推挽输出、上拉和下拉等工作模式，能够根据开发板原理图确认 LED、按键和蜂鸣器所连接的端口、引脚及有效电平。
+    \item \textbf{LED 驱动：}理解 LED 的限流和高、低电平点亮方式，掌握使用 \texttt{HAL\_GPIO\_WritePin()}、\texttt{HAL\_GPIO\_TogglePin()} 等函数改变 LED 状态。
+    \item \textbf{按键检测：}掌握使用 \texttt{HAL\_GPIO\_ReadPin()} 读取按键电平的方法，理解机械按键抖动的产生原因，以及延时消抖、状态变化检测和单次触发的基本思路。
+    \item \textbf{时序与状态控制：}理解阻塞式延时对程序响应速度的影响，能够使用循环、计时变量或状态机描述跑马灯的执行顺序和灯效切换过程。
+    \item \textbf{蜂鸣器控制：}根据开发板所用蜂鸣器的类型和有效电平选择正确的驱动方式；按键触发后应控制鸣响持续时间，防止蜂鸣器因按键持续按下而连续发声。
+    \item \textbf{PWM 基础：}了解 STM32 定时器、PWM 频率和占空比的含义，理解通过周期性改变占空比调节 LED 平均亮度并形成呼吸效果的原理。
+  \end{itemize}
+
+  \textbf{实验目的：}
+  \begin{enumerate}[label=\arabic*)]
+    \item 熟悉 STM32F4 开发板的基本结构，以及 STM32CubeIDE 中工程创建、引脚配置、代码生成、编译、下载和调试的基本流程。
+    \item 理解 GPIO 输入与输出的工作原理，掌握使用 HAL 库读取按键状态、控制 LED 和驱动蜂鸣器的方法。
+    \item 学习利用循环、延时、位操作及状态变量组织灯光变化，并通过函数封装提高程序的模块化程度和可读性。
+    \item 掌握按键消抖和按键事件检测方法，理解“按下事件”与“持续按下状态”的区别，避免一次按键产生多次误触发。
+    \item 了解定时器 PWM 的频率、占空比与 LED 亮度之间的关系，为实现呼吸灯及后续电机调速等功能建立基础。
+  \end{enumerate}
+
+  \textbf{实验要求：}使用 8 个 LED 实现 4 种具有明显差异的跑马灯特效；使用 4 个按键分别选择对应特效；每次有效按键按下时，蜂鸣器只发出一次提示音，并保证灯效能够稳定切换。程序应合理划分功能模块，使用含义明确的变量和注释，避免各外设控制之间相互干扰。选做部分使用 PWM 占空比渐变实现亮度变化平滑的呼吸灯效果。
+  % ---------- “实验目的与要求”填写区结束 ----------
+\end{reportsection}
+
+\begin{reportsection}{\MethodTitle}{\MethodHint}
+  % ---------- “方法、步骤”填写区开始 ----------
+
+  \subsection*{（一）硬件连接与引脚规划}
+
+  本实验使用的开发板为阿波罗 STM32F429IGT6 实验箱。要在同一块板子上同时驱动 8 路 LED、4 个按键和 1 个蜂鸣器，首先要做的是把引脚分配清楚，并确认每一路外设的有效电平，否则后面的程序逻辑再正确也无法得到预期现象。
+
+  \textbf{1. 8 路 LED}
+
+  板载指示灯只有 2 个，因此另外 6 个 LED 采用面包板搭接。每个 LED 的接法完全一致：GPIO出来经过一只 $1\,\mathrm{k\textohm}$ 限流电阻接到 LED 的长脚（阳极），LED 的短脚（阴极）接到面包板上地线。这样接线后，\textbf{GPIO 输出低电平（0\,V）时回路两端没有电压差，LED 熄灭；输出高电平（3.3\,V）时回路闭合，LED 点亮}，属于“高电平点亮”。
+
+  8 路 LED 与引脚的对应关系为：\texttt{PB3}、\texttt{PB4}、\texttt{PB5}、\texttt{PB6}、\texttt{PB7}、\texttt{PB8}、\texttt{PB9} 依次对应 \texttt{LED0} $\sim$ \texttt{LED6}，\texttt{PB0} 对应 \texttt{LED7}。之所以不是简单地从 \texttt{PB0} 顺序排到 \texttt{PB7}，是因为 \texttt{PB1} 已经作为板载 DS0 红色指示灯的固定用途，需要避开。全部 8 路 LED 都挂在 \texttt{GPIOB} 上，这样初始化时只需要使能一个端口的时钟，代码也更整齐。详细的引脚分配见表\,\ref{tab:led}。
+
+  {\centering{\reportcaption{tab:led}{8 路 LED 的引脚分配表}}}
+  \begin{center}
+  \renewcommand{\arraystretch}{1.25}
+  {\small
+  \begin{tabular}{|C{1.6cm}|C{1.6cm}|C{2.0cm}|C{2.2cm}|C{2.6cm}|}
+    \hline
+    \textbf{编号} & \textbf{端口} & \textbf{引脚} & \textbf{有效电平} & \textbf{端口寄存器位}\\
+    \hline
+    LED0 & GPIOB & PB3  & 低电平点亮 & bit0\\
+    \hline
+    LED1 & GPIOB & PB4  & 低电平点亮 & bit1\\
+    \hline
+    LED2 & GPIOB & PB5  & 低电平点亮 & bit2\\
+    \hline
+    LED3 & GPIOB & PB6  & 低电平点亮 & bit3\\
+    \hline
+    LED4 & GPIOB & PB7  & 低电平点亮 & bit4\\
+    \hline
+    LED5 & GPIOB & PB8  & 低电平点亮 & bit5\\
+    \hline
+    LED6 & GPIOB & PB9  & 低电平点亮 & bit6\\
+    \hline
+    LED7 & GPIOB & PB0  & 低电平点亮 & bit7\\
+    \hline
+  \end{tabular}}
+  \end{center}
+  \textbf{2. 4 个独立按键}
+
+  按键直接使用开发板自带的 4 个按键，不需要额外接线。需要注意它们的有效电平并不一致：\texttt{KEY0}（PH3）、\texttt{KEY1}（PH2）、\texttt{KEY2}（PC13）按下时引脚被拉到低电平，属于低电平有效；\texttt{KEY3}按下时引脚为高电平，属于高电平有效。程序中必须把这两种情况统一成同一种表示（本实验统一为“1 表示按下”），否则会出现“按下没反应、松开才触发”的怪异现象。
+
+  \textbf{3. 蜂鸣器}
+
+  板载蜂鸣器并不是直接接在 MCU 引脚上，而是接在 I2C 扩展芯片 PCF8574 的 \texttt{P0} 脚上。要让它发声，必须通过 I2C 总线给 PCF8574 写数据。板上的 I2C 总线与 24C02 存储芯片共用，两根信号线为 \texttt{PH4}（SCL）和 \texttt{PH5}（SDA）；PCF8574 的地址线 \texttt{A0} $\sim$ \texttt{A2} 全部接地，因此 7 位从机地址为 \texttt{0x20}，写操作时发送的字节为 \texttt{0x40}。按键与蜂鸣器的引脚分配汇总于表\,\ref{tab:key}。向 \texttt{P0} 写 \texttt{0} 时蜂鸣器鸣响，写 \texttt{1} 时停止。
+
+  本实验采用软件模拟 I2C 时序的方式驱动，不占用硬件 I2C 外设，也不会与其它使用 I2C 的模块抢资源。
+
+  {\centering{\reportcaption{tab:key}{按键与蜂鸣器的引脚分配表}}}
+  \begin{center}
+  \renewcommand{\arraystretch}{1.25}
+  {\small
+  \begin{tabular}{|C{2.2cm}|C{2.0cm}|C{2.4cm}|C{3.6cm}|}
+    \hline
+    \textbf{外设} & \textbf{引脚} & \textbf{有效电平} & \textbf{说明}\\
+    \hline
+    KEY0 & PH3  & 低电平有效 & 板载独立按键，内部上拉\\
+    \hline
+    KEY1 & PH2  & 低电平有效 & 板载独立按键，内部上拉\\
+    \hline
+    KEY2 & PC13 & 低电平有效 & 板载独立按键，内部上拉\\
+    \hline
+    KEY3 & PA0  & 高电平有效 & 板上丝印 WK\_UP，内部下拉\\
+    \hline
+    蜂鸣器 SCL & PH4 & --- & 软件 I2C 时钟线，开漏输出\\
+    \hline
+    蜂鸣器 SDA & PH5 & --- & 软件 I2C 数据线，开漏输出\\
+    \hline
+    蜂鸣器 & PCF8574 的 P0 & 低电平鸣响 & 7 位地址 0x20，写地址 0x40\\
+    \hline
+  \end{tabular}}
+  \end{center}
+
+  \reportfigure{fig:sysblk}{fig01_system_block.png}{系统总体结构框图}
+
+  \subsection*{（二）软件总体设计思路}
+
+  程序按“应用层 --- 驱动层 --- 硬件抽象层”三层组织，如图\,\ref{fig:mod} 所示。这样分层的目的是让每一层只关心自己的事情：应用层只描述“先干什么、后干什么”，驱动层只关心“某个外设怎么操作”，硬件抽象层则由 ST 官方 HAL 库提供。任何一层的变化都不会大面积影响其它层。
+
+  \begin{itemize}
+    \item \textbf{led.c / led.h}：负责 LED 引脚初始化、按掩码刷新灯态，以及 4 种跑马灯特效的算法。
+    \item \textbf{key.c / key.h}：负责按键引脚初始化，以及带消抖的按键扫描，对外只返回“第几个键被按下”。
+    \item \textbf{beep.c / beep.h}：负责软件 I2C 时序、PCF8574 读写，以及“响一段时间后自动关闭”的计时。
+    \item \textbf{main.c}：负责系统时钟配置和主循环调度，把上面三个模块串起来。
+  \end{itemize}
+
+  贯穿整个设计的一条重要原则是：\textbf{主循环里不允许出现阻塞式延时}。如果为了“让两个灯之间隔 200\,ms”而直接调用 \texttt{HAL\_Delay(200)}，那么在这 200\,ms 内 CPU 全部在空等，按键扫描、蜂鸣器关闭全部停摆，表现就是“按键反应迟钝、按一下灯要过一会儿才切”。因此本设计统一用 \texttt{HAL\_GetTick()} 返回的毫秒时间戳做非阻塞计时，主循环每一轮都跑得飞快。
+
+  \reportfigure{fig:mod}{fig07_module_tree.png}{软件模块层次与调用关系}
+
+  \subsection*{（三）核心数据结构：8 位灯态掩码}
+
+  8 路 LED 如果每一路都写一遍 \texttt{HAL\_GPIO\_WritePin()}，代码会又长又难改。本实验引入一个 8 位无符号变量作为“灯态掩码”：\textbf{bit\,$i$ 为 1 表示 \texttt{LED}$i$ 点亮，为 0 表示熄灭}，一个 \texttt{uint8\_t} 正好描述 8 个灯的全部状态，具体的位序见表\,\ref{tab:mask}。
+
+  {\centering{\reportcaption{tab:mask}{灯态掩码每一位与 LED 的对应关系}}}
+  \begin{center}
+  \renewcommand{\arraystretch}{1.25}
+  {\small
+  \begin{tabular}{|C{1.6cm}|C{1.8cm}|C{1.8cm}|C{2.4cm}|C{3.2cm}|}
+    \hline
+    \textbf{掩码位} & \textbf{LED 编号} & \textbf{引脚} & \textbf{点亮时的掩码值} & \textbf{二进制（bit7 $\rightarrow$ bit0）}\\
+    \hline
+    bit0 & LED0 & PB3 & 0x01 & 0b0000\,0001\\
+    \hline
+    bit1 & LED1 & PB4 & 0x02 & 0b0000\,0010\\
+    \hline
+    bit2 & LED2 & PB5 & 0x04 & 0b0000\,0100\\
+    \hline
+    bit3 & LED3 & PB6 & 0x08 & 0b0000\,1000\\
+    \hline
+    bit4 & LED4 & PB7 & 0x10 & 0b0001\,0000\\
+    \hline
+    bit5 & LED5 & PB8 & 0x20 & 0b0010\,0000\\
+    \hline
+    bit6 & LED6 & PB9 & 0x40 & 0b0100\,0000\\
+    \hline
+    bit7 & LED7 & PB0 & 0x80 & 0b1000\,0000\\
+    \hline
+  \end{tabular}}
+  \end{center}
+
+  有了掩码以后，刷新 8 个灯只需要一个函数 \texttt{led\_write(mask)}：它按顺序遍历 8 个引脚，检查掩码对应的位，为 1 就输出低电平，为 0 就输出高电平。这样做的最大好处是\textbf{把“灯效算法”和“硬件引脚”彻底解耦}：算法层只需要算出“这一步应该亮哪几个灯”，完全不用关心这些灯接在哪个引脚、是高电平点亮还是低电平点亮。将来如果换板子、换引脚，只要改 \texttt{led.h} 里的引脚宏定义，算法一个字都不用动。
+
+  \subsection*{（四）四种跑马灯特效的算法设计}
+
+  为了便于扩展，把“灯效”抽象成一个统一的接口：
+
+  \begin{center}
+  \texttt{effect\_run(uint8\_t effect, uint16\_t step)}
+  \end{center}
+
+  \noindent 它的含义是“执行第 \texttt{effect} 种特效的第 \texttt{step} 步”。每种特效被拆成一个纯粹的掩码计算函数（输入步数、输出掩码），再用一个 \texttt{switch} 语句分发。这样做的好处是：主循环永远只需要做一件事——\textbf{按时间递增步数、调用 \texttt{effect\_run()} }，完全不需要知道特效内部是怎么算的，将来想增加第 5、第 6 种特效，只要加一个掩码函数和一个 \texttt{case} 分支即可。
+
+  \textbf{特效 1：单灯流水。}只有 1 个灯亮，亮点的位置随步数依次右移，走到 \texttt{LED7} 后回到 \texttt{LED0}。核心是“取模 + 移位”：
+
+  \begin{center}
+  \texttt{mask = 1 << (step \% 8)}
+  \end{center}
+
+  \textbf{特效 2：双灯追逐。}两个亮点同时向右移动，位置始终相隔 4 个灯。做法是在特效 1 的基础上，把同一步的掩码与它“错开 4 位”的掩码做按位或：
+
+  \begin{center}
+  \texttt{a = step \% 8;\qquad b = (a + 4) \% 8;\qquad mask = (1 << a) | (1 << b)}
+  \end{center}
+
+  \noindent 由于两个亮点相距正好是总数的一半，这个特效的循环周期其实只有 4 步。
+
+  \textbf{特效 3：乒乓往返。}亮点先从 \texttt{LED0} 走到 \texttt{LED7}，再折返走回 \texttt{LED1}，形成一个来回。为了记住“现在是去程还是回程”，把整个往返过程看作长度为 $2 \times 8 - 2 = 14$ 的周期，用取模得到 $0 \sim 13$ 的位置，超过 7 的部分再利用对称性折回去：
+
+  \begin{center}
+  \texttt{pos = step \% 14;\qquad if (pos >= 8)\ pos = 14 - pos;}
+  \end{center}
+
+  \noindent 这样得到的位置序列是 $0,1,2,3,4,5,6,7,6,5,4,3,2,1$，两端点不重复，视觉上非常自然。
+
+  \textbf{特效 4：逐个点亮再熄灭。}已点亮的灯数从 0 个逐级增加到 8 个，然后整体清零重新开始。这里用了一个小技巧：\texttt{(1 << n) - 1} 恰好能得到“低 $n$ 位全为 1”的掩码，因此
+
+  \begin{center}
+  \texttt{mask = (1 << (step \% 9)) - 1}
+  \end{center}
+
+  \noindent 当 \texttt{step \% 9} 为 0 时掩码为 \texttt{0x00}（全灭），为 8 时掩码为 \texttt{0xFF}（全亮），随后回到全灭。
+
+  四种特效在每一步的灯态掩码如表\,\ref{tab:step} 所示，对应的可视化时序见图\,\ref{fig:eff}。为了让四种特效在观感上有明显区别，特意给它们设置了不同的步进间隔：流水和追逐较慢（200\,ms），乒乓往返稍快（150\,ms），逐个点亮最快（120\,ms），这样切换时很容易一眼分辨出当前是第几种特效。
+
+  {\centering{\reportcaption{tab:step}{四种特效的步数与灯态掩码对照表}}}
+  \begin{center}
+  \renewcommand{\arraystretch}{1.2}
+  {\small
+  \begin{tabular}{|C{1.2cm}|C{2.6cm}|C{2.6cm}|C{2.6cm}|C{2.6cm}|}
+    \hline
+    \textbf{步} & \textbf{特效 1}\newline\textbf{单灯流水} & \textbf{特效 2}\newline\textbf{双灯追逐}
+      & \textbf{特效 3}\newline\textbf{乒乓往返} & \textbf{特效 4}\newline\textbf{逐个点亮}\\
+    \hline
+    0 & 0x01 & 0x11 & 0x01 & 0x00\\
+    \hline
+    1 & 0x02 & 0x22 & 0x02 & 0x01\\
+    \hline
+    2 & 0x04 & 0x44 & 0x04 & 0x03\\
+    \hline
+    3 & 0x08 & 0x88 & 0x08 & 0x07\\
+    \hline
+    4 & 0x10 & 0x11 & 0x10 & 0x0F\\
+    \hline
+    5 & 0x20 & 0x22 & 0x20 & 0x1F\\
+    \hline
+    6 & 0x40 & 0x44 & 0x40 & 0x3F\\
+    \hline
+    7 & 0x80 & 0x88 & 0x80 & 0x7F\\
+    \hline
+    8 & 0x01 & 0x11 & 0x40 & 0xFF\\
+    \hline
+    9 & 0x02 & 0x22 & 0x20 & 0x00\\
+    \hline
+    10 & 0x04 & 0x44 & 0x10 & 0x01\\
+    \hline
+    11 & 0x08 & 0x88 & 0x08 & 0x03\\
+    \hline
+    12 & 0x10 & 0x11 & 0x04 & 0x07\\
+    \hline
+    13 & 0x20 & 0x22 & 0x02 & 0x0F\\
+    \hline
+  \end{tabular}}
+
+  \par\medskip\noindent{\small 注：表中数值为 16 进制的灯态掩码，bit\,$i$ 为 1 表示 LED\,$i$ 点亮。
+  例如 0x11（二进制 0001\,0001）表示 LED0 与 LED4 同时点亮。}
+  \par\medskip
+  \end{center}
+
+  \reportfigure{fig:eff}{fig08_effect_waveform.png}{四种跑马灯特效的灯态掩码时序（实心方块 表示该灯点亮）}
+
+  \subsection*{（五）按键扫描与消抖方法}
+
+  \textbf{1. 机械按键为什么需要消抖}
+
+  机械按键的内部是金属弹片。按下和松开的瞬间，弹片并不会立刻稳定接触，而是会在几毫秒内反复通断，表现在引脚电平上就是一串快速的跳变，称为\textbf{抖动}。如果程序在抖动期间直接采信电平，一次按键就会被识别成好几次，后果是“按一下灯效连跳好几下、蜂鸣器连着响好几声”。
+
+  同时还要区分两个容易混淆的概念：\textbf{“按下事件”}指电平从松开变为按下的那一瞬间，一次按压只发生一次；\textbf{“持续按下状态”}指按键保持被按住的整段时间，可以持续几百毫秒。本实验要求“每按一次只响一声”，因此必须只在按下事件发生时触发蜂鸣器，而不能在持续按下期间反复触发。
+
+  \textbf{2. 本实验采用的消抖方法：变电平计时法}
+
+  常见的“延时消抖”做法是——检测到电平变化后调用 \texttt{HAL\_Delay(10)} 再读一次。这种办法简单，但会阻塞主循环 10\,ms，与前面“主循环不允许阻塞”的原则冲突。本实验改用\textbf{变电平计时法}，为每个按键维护三个静态变量：
+
+  \begin{itemize}
+    \item \texttt{last\_raw[i]}：上一次采样得到的原始电平；
+    \item \texttt{change\_tick[i]}：最近一次电平发生变化的时间戳（ms）；
+    \item \texttt{stable[i]}：已经确认的稳定状态（1 表示按下）。
+  \end{itemize}
+
+  \noindent 每一轮扫描的处理逻辑是：如果本次采到的原始电平与上次不同，说明电平刚刚跳变（很可能正处在抖动中），此时只更新 \texttt{last\_raw} 并把计时起点重置为当前时刻；如果本次电平与上次相同，而且这个电平已经连续保持超过 \texttt{KEY\_DEBOUNCE\_MS}（本实验取 10\,ms），才认为抖动已经结束，把它确认为新的稳定状态 \texttt{stable[i]}——并且\textbf{只有当新状态是“按下”时，才把键值 \texttt{i+1} 作为返回值交出去}。
+
+  这样做有三个好处：整个过程不阻塞、天然实现了“只在按下瞬间产生一次事件”、并且抖动的判断标准和消抖时间长度都由宏定义 \texttt{KEY\_DEBOUNCE\_MS} 集中控制，想改成 20\,ms 只要改一个数字。
+
+  图\,\ref{fig:deb} 用三条波形对比了理想按键、实际抖动波形和软件识别出的稳定状态，可以直观看到抖动被完整过滤，且“按下事件”只在电平稳定后的那一刻产生一次。
+
+  \reportfigure{fig:deb}{fig06_debounce.png}{按键抖动与软件消抖时序对比}
+
+  \reportfigure[0.84]{fig:keyflow}{fig05_key_flow.png}{按键扫描与消抖流程图}
+
+  \subsection*{（六）蜂鸣器“只响一声”的实现}
+
+  蜂鸣器的控制要求是：按键触发后响约 80\,ms 然后自动停止。最直观的写法是“打开蜂鸣器 $\rightarrow$ \texttt{HAL\_Delay(80)} $\rightarrow$ 关闭蜂鸣器”，但这样同样会阻塞主循环，导致这 80\,ms 内灯效停住、按键无响应。
+
+  本实验把蜂鸣器拆成两个函数，用一个时间戳变量把“开始响”和“停止响”分开：
+
+  \begin{itemize}
+    \item \texttt{beep\_start(ms)}：把 PCF8574 的 P0 置为鸣响电平，同时记录 \texttt{beep\_off\_tick = HAL\_GetTick() + ms}，并置标志 \texttt{beeping = 1}，然后立即返回；
+    \item \texttt{beep\_task()}：在主循环每一轮都被调用，检查当前时间是否已经到达 \texttt{beep\_off\_tick}，到了就关闭蜂鸣器并清除标志。判断时使用 \texttt{(int32\_t)(HAL\_GetTick() - beep\_off\_tick) >= 0} 的写法，可以正确应对 \texttt{HAL\_GetTick()} 计数回绕的情况。
+  \end{itemize}
+
+  这样一来，蜂鸣器的鸣响时间由“时间戳”而不是“阻塞等待”来保证，主循环始终畅通。同理，灯效推进也是用 \texttt{HAL\_GetTick()} 与 \texttt{effect\_tick} 的差值来判断是否该走下一步。整套调度中没有一处阻塞延时。
+
+  \subsection*{（七）主程序流程}
+
+  主程序的结构非常清晰，可以概括为“三段式初始化 + 一个三件事的主循环”，流程图见图\,\ref{fig:mainflow}。
+
+  \textbf{初始化阶段：}依次完成 HAL 库初始化（\texttt{HAL\_Init}）、系统时钟配置（\texttt{SystemClock\_Config}，把主频配置到 180\,MHz）、GPIO 初始化（\texttt{MX\_GPIO\_Init}），然后调用 \texttt{led\_init()}、\texttt{key\_init()}、\texttt{beep\_init()} 完成三个外设模块的初始化，最后先用 \texttt{effect\_run(cur\_effect, 0)} 把第 1 种灯效的第 0 步显示出来。
+
+  \textbf{主循环阶段：}每一轮依次做三件事，任何一件都不会阻塞：
+
+  \begin{enumerate}[label=\arabic*)]
+    \item \textbf{扫描按键}：调用 \texttt{key\_scan()}，如果返回值不为 0，说明发生了“按下事件”，于是把当前灯效切换到对应的那一种（\texttt{cur\_effect = key - 1}）、把步数清零、立刻刷新一次灯态，并调用 \texttt{beep\_start(80)} 让蜂鸣器响一声；
+    \item \textbf{推进灯效}：判断距离上一次推进是否已经过去了 \texttt{effect\_interval(cur\_effect)} 毫秒，到了就把步数加一并重新计算、刷新灯态，同时更新时间戳；
+    \item \textbf{处理蜂鸣器计时}：调用 \texttt{beep\_task()}，到点自动关闭蜂鸣器。
+  \end{enumerate}
+
+  \reportfigure[0.78]{fig:mainflow}{fig04_main_flow.png}{主程序流程图}
+
+  \subsection*{（八）系统时钟配置}
+
+  为了让按键扫描和灯效计时足够及时，需要把系统主频配置到较高的频率。本实验使用外部 25\,MHz 晶振（HSE）作为时钟源，经主 PLL 倍频得到 180\,MHz 的 \texttt{SYSCLK}：
+
+  \begin{center}
+  \texttt{25\,MHz $\div$ PLLM(25) = 1\,MHz;\quad 1\,MHz $\times$ PLLN(360) = 360\,MHz;\quad 360\,MHz $\div$ PLLP(2) = 180\,MHz}
+  \end{center}
+
+  \noindent AHB 不分频，\texttt{HCLK} 同样为 180\,MHz；APB1 分频系数为 4，得到 45\,MHz；APB2 分频系数为 2，得到 90\,MHz。由于 180\,MHz 已经超过 Flash 在默认等待周期下能承受的速度，必须把 Flash 等待周期设为 \texttt{FLASH\_LATENCY\_5}，同时把电压调节档位设为 \texttt{PWR\_REGULATOR\_VOLTAGE\_SCALE1}。相关参数汇总于表\,\ref{tab:clk}。
+
+  \reportcaption{tab:clk}{系统时钟的主要参数}
+  \begin{center}
+  \renewcommand{\arraystretch}{1.25}
+  {\small
+  \begin{tabular}{|C{3.6cm}|C{2.6cm}|C{4.4cm}|}
+    \hline
+    \textbf{项目} & \textbf{取值} & \textbf{说明}\\
+    \hline
+    时钟源 & HSE 25\,MHz & 外部无源晶振\\
+    \hline
+    PLL 分频倍频 & 25/360/2/4 & PLLQ 供 USB 等外设使用\\
+    \hline
+    SYSCLK & 180\,MHz & PLL 输出，AHB 预分频 $\div$1\\
+    \hline
+    HCLK & 180\,MHz & 内核、AHB 总线、SysTick\\
+    \hline
+    PCLK1（APB1） & 45\,MHz & $\div$4，定时器时钟 90\,MHz\\
+    \hline
+    PCLK2（APB2） & 90\,MHz & $\div$2，定时器时钟 180\,MHz\\
+    \hline
+    Flash 等待周期 & LATENCY\_5 & 180\,MHz 下的必须设置\\
+    \hline
+    电压调节档位 & SCALE1 & 最高性能档\\
+    \hline
+  \end{tabular}}
+  \end{center}
+
+  % ---------- “方法、步骤”填写区结束 ----------
+\end{reportsection}
+
+\begin{reportsection}{\ProcessTitle}{\ProcessHint}
+  % ---------- “实验过程及内容”填写区开始 ----------
+
+  \subsection*{（一）STM32CubeMX 工程配置}
+
+  \textbf{步骤 1：新建工程并选择芯片。}打开 STM32CubeIDE，新建 STM32 工程，在芯片选择界面输入 \texttt{STM32F429IGT6}，从列表中选中 LQFP176 封装的型号并创建工程。
+
+  \textbf{步骤 2：配置调试接口与时钟源。}在 \texttt{System Core} 中把 \texttt{SYS} 的 Debug 设为 \texttt{Serial Wire}，避免下载一次程序后调试口被占用；在 \texttt{RCC} 中把高速外部时钟 \texttt{HSE} 设为 \texttt{Crystal/Ceramic Resonator}（外部晶振），使能外部 25\,MHz 晶振。
+
+  \textbf{步骤 3：配置 GPIO。}在 \texttt{Pinout \& Configuration} 视图中，依次点击 \texttt{PB0}、\texttt{PB3} $\sim$ \texttt{PB9}，把它们设置为 \texttt{GPIO\_Output}；然后在 \texttt{GPIO} 标签页中统一设置：
+
+  \begin{itemize}
+    \item \texttt{GPIO output level}：\texttt{High}（上电时输出高电平，保证 LED 初始为熄灭状态）；
+    \item \texttt{GPIO mode}：\texttt{Output Push Pull}（推挽输出，既能输出高电平也能输出低电平，驱动力足够点亮 LED）；
+    \item \texttt{GPIO Pull-up/Pull-down}：\texttt{Pull-up}；
+    \item \texttt{Maximum output speed}：\texttt{High}；
+    \item \texttt{User Label}：按照 \texttt{PB0 $\rightarrow$ LED7}、\texttt{PB3 $\rightarrow$ LED0}、\texttt{PB4 $\rightarrow$ LED1} …… \texttt{PB9 $\rightarrow$ LED6} 逐一填写标签，CubeMX 会自动生成 \texttt{LED0\_Pin}、\texttt{LED0\_GPIO\_Port} 这样的宏，方便阅读。
+  \end{itemize}
+
+  配置完成后的引脚视图见图\,\ref{fig:pinout}。可以看到 8 个引脚的 \texttt{User Label} 依次是 \texttt{LED7}、\texttt{LED0} $\sim$ \texttt{LED6}，与前面的引脚规划完全一致。
+
+  \reportfigure[0.90]{fig:pinout}{fig11_cubemx_pinout.png}{STM32CubeMX 的 GPIO 引脚配置（Pinout \& Configuration）}
+
+  \textbf{步骤 4：配置系统时钟。}切换到 \texttt{Clock Configuration} 标签页，把 \texttt{PLL Source Mux} 选择为 \texttt{HSE}，输入端填入 25\,MHz，然后依次设置 \texttt{PLLM = 25}、\texttt{PLLN = 360}、\texttt{PLLP = 2}、\texttt{PLLQ = 4}；\texttt{System Clock Mux} 选择 \texttt{PLLCLK}，\texttt{AHB Prescaler} 为 1，\texttt{APB1 Prescaler} 为 4，\texttt{APB2 Prescaler} 为 2。设置正确后，\texttt{SYSCLK} 一栏应显示 180\,MHz，且不再提示时钟冲突（\texttt{Resolve Clock Issues} 按钮变灰）。配置结果见图\,\ref{fig:clkcfg}。
+
+  \reportfigure[0.96]{fig:clkcfg}{fig12_cubemx_clock.png}{STM32CubeMX 的时钟树配置}
+
+  \textbf{步骤 5：生成代码。}在 \texttt{Project Manager} 中设置工程名与存放路径、选择 \texttt{MDK-ARM} 或 \texttt{STM32CubeIDE} 工具链，勾选 \texttt{Generate peripheral initialization as a pair of .c/.h files per peripheral}，然后点击 \texttt{GENERATE CODE}。生成的工程中，\texttt{gpio.c} 里的 \texttt{MX\_GPIO\_Init()} 已经包含 8 路 LED 的初始化代码；按键和蜂鸣器的初始化则放在各自的驱动文件里完成。
+
+  \subsection*{（二）核心代码实现与说明}
+
+  下面按照“LED 驱动 $\rightarrow$ 按键驱动 $\rightarrow$ 蜂鸣器驱动 $\rightarrow$ 主程序”的顺序说明代码。所有自己编写的代码都写在 CubeMX 生成的 \texttt{USER CODE BEGIN} 与 \texttt{USER CODE END} 之间，这样以后重新生成代码时不会被覆盖。
+  \reportfigure[0.96]{fig:clkcfg}{fig13_wire.png}{接线图}
+
+  \subsubsection*{1. LED 驱动模块（led.h / led.c）}
+
+  头文件里集中定义 8 路 LED 的引脚和 4 种特效的编号。把“容易变的东西”（引脚定义）全部集中在一个地方，是嵌入式代码里非常实用的习惯。
+
+  \codesrc{led.h —— 引脚宏定义与对外接口}
+  \begin{lstlisting}
+#ifndef __LED_H
+#define __LED_H
+
+#include "main.h"
+
+/* ============ 引脚定义：下标 i 对应 LEDi / 掩码 bit i ============ */
+#define LED_NUM             8
+
+/* 8 路 LED 全部挂在 GPIOB 上，低电平点亮
+ * 注意：PB1 已被板载 DS0 红灯占用，故 LED0 从 PB3 开始 */
+#define LED0_PORT           GPIOB
+#define LED0_PIN            GPIO_PIN_3
+
+#define LED1_PORT           GPIOB
+#define LED1_PIN            GPIO_PIN_4
+
+#define LED2_PORT           GPIOB
+#define LED2_PIN            GPIO_PIN_5
+
+#define LED3_PORT           GPIOB
+#define LED3_PIN            GPIO_PIN_6
+
+#define LED4_PORT           GPIOB
+#define LED4_PIN            GPIO_PIN_7
+
+#define LED5_PORT           GPIOB
+#define LED5_PIN            GPIO_PIN_8
+
+#define LED6_PORT           GPIOB
+#define LED6_PIN            GPIO_PIN_9
+
+/* 板载 DS1 绿灯 */
+#define LED7_PORT           GPIOB
+#define LED7_PIN            GPIO_PIN_0
+
+/* ============ 4 种灯效的编号 ============ */
+#define EFFECT_FLOW         0   /* 特效1：单灯流水    */
+#define EFFECT_DOUBLE       1   /* 特效2：双灯追逐    */
+#define EFFECT_BOUNCE       2   /* 特效3：乒乓往返    */
+#define EFFECT_FILL         3   /* 特效4：逐个点亮    */
+#define EFFECT_NUM          4
+
+/* ============ 对外函数 ============ */
+void     led_init(void);
+void     led_write(uint8_t mask);
+void     effect_run(uint8_t effect, uint16_t step);
+uint16_t effect_interval(uint8_t effect);
+
+#endif /* __LED_H */
+\end{lstlisting}
+
+  源文件里用两个常量数组把“端口”和“引脚”按顺序存起来，这样后面刷新灯态时就可以用一个 \texttt{for} 循环统一处理 8 个灯，而不必写 8 遍几乎相同的代码。
+
+  \codesrc{led.c —— LED 端口数组、初始化与掩码刷新}
+  \begin{lstlisting}
+#include "led.h"
+
+/* 8 个 LED 的端口与引脚，下标 i 对应 LEDi */
+static GPIO_TypeDef *const led_port[LED_NUM] = {
+    LED0_PORT, LED1_PORT, LED2_PORT, LED3_PORT,
+    LED4_PORT, LED5_PORT, LED6_PORT, LED7_PORT
+};
+
+static const uint16_t led_pin[LED_NUM] = {
+    LED0_PIN, LED1_PIN, LED2_PIN, LED3_PIN,
+    LED4_PIN, LED5_PIN, LED6_PIN, LED7_PIN
+};
+
+/**
+ * @brief  初始化 8 个 LED 的 IO 口（推挽输出，上电默认熄灭）
+ */
+void led_init(void)
+{
+    GPIO_InitTypeDef gpio_init_struct = {0};
+    uint8_t i;
+
+    __HAL_RCC_GPIOB_CLK_ENABLE();                    /* 8 个 LED 都在 GPIOB 上 */
+
+    gpio_init_struct.Mode  = GPIO_MODE_OUTPUT_PP;    /* 推挽输出 */
+    gpio_init_struct.Pull  = GPIO_PULLUP;            /* 上拉 */
+    gpio_init_struct.Speed = GPIO_SPEED_FREQ_LOW;    /* 驱动 LED 用低速就够 */
+
+    for (i = 0; i < LED_NUM; i++)
+    {
+        gpio_init_struct.Pin = led_pin[i];
+        HAL_GPIO_Init(led_port[i], &gpio_init_struct);
+        HAL_GPIO_WritePin(led_port[i], led_pin[i], GPIO_PIN_SET);  /* 高电平 = 灯灭 */
+    }
+}
+
+/**
+ * @brief  按掩码刷新 8 个 LED
+ * @param  mask: bit0~bit7 依次对应 LED0~LED7，某位为 1 表示该灯点亮
+ */
+void led_write(uint8_t mask)
+{
+    uint8_t i;
+
+    for (i = 0; i < LED_NUM; i++)
+    {
+        /* 低电平点亮：掩码位为 1 输出低电平，为 0 输出高电平 */
+        if (mask & (1 << i))
+        {
+            HAL_GPIO_WritePin(led_port[i], led_pin[i], GPIO_PIN_RESET);
+        }
+        else
+        {
+            HAL_GPIO_WritePin(led_port[i], led_pin[i], GPIO_PIN_SET);
+        }
+    }
+}
+\end{lstlisting}
+
+  这里有两个细节值得说明。第一，\texttt{led\_init()} 里对每个引脚都先写了一次高电平，保证上电瞬间 LED 处于熄灭状态，否则可能会出现“上电时所有灯闪一下”的现象。第二，\texttt{led\_write()} 是“全量刷新”——每次调用都会把 8 个引脚全部写一遍。相比“先关掉上一次亮的、再点亮这一次该亮的”这种增量式做法，全量刷新逻辑更简单、绝不会出现“残影”，代价只是多几次写寄存器的开销，对 LED 这种慢速外设来说完全可以接受。
+
+  接下来是四种特效的掩码计算函数。它们都被声明为 \texttt{static}，因为外部只需要通过 \texttt{effect\_run()} 这一个统一入口来使用，不需要暴露内部实现。
+
+  \codesrc{led.c —— 四种跑马灯特效的掩码算法}
+  \begin{lstlisting}
+/* --------------------- 4 种特效的掩码算法 --------------------- */
+
+/**
+ * @brief  特效1：单灯流水 —— 只有一个灯亮，位置依次右移
+ */
+static uint8_t effect_flow_mask(uint16_t step)
+{
+    return (uint8_t)(1 << (step % LED_NUM));
+}
+
+/**
+ * @brief  特效2：双灯追逐 —— 两个亮点相隔 4 个位置同时移动
+ */
+static uint8_t effect_double_mask(uint16_t step)
+{
+    uint8_t a = (uint8_t)(step % LED_NUM);
+    uint8_t b = (uint8_t)((a + LED_NUM / 2) % LED_NUM);
+
+    return (uint8_t)((1 << a) | (1 << b));
+}
+
+/**
+ * @brief  特效3：乒乓往返 —— 亮点先从头走到尾，再从尾走回头（两端不重复）
+ */
+static uint8_t effect_bounce_mask(uint16_t step)
+{
+    uint16_t period = (uint16_t)(2 * LED_NUM - 2);   /* 14 个位置循环 */
+    uint16_t pos    = (uint16_t)(step % period);
+
+    if (pos >= LED_NUM)
+    {
+        pos = (uint16_t)(period - pos);              /* 利用对称性折返 */
+    }
+
+    return (uint8_t)(1 << pos);
+}
+
+/**
+ * @brief  特效4：逐个点亮 —— 亮的灯数从 0 个逐个增加到 8 个，然后重新开始
+ */
+static uint8_t effect_fill_mask(uint16_t step)
+{
+    uint16_t num = (uint16_t)(step % (LED_NUM + 1));
+    uint8_t  mask = 0;
+    uint8_t  i;
+
+    for (i = 0; i < num; i++)
+    {
+        mask |= (uint8_t)(1 << i);                   /* 低 num 位全置 1 */
+    }
+
+    return mask;
+}
+\end{lstlisting}
+
+  最后是统一入口 \texttt{effect\_run()} 和每种特效的步进间隔 \texttt{effect\_interval()}。把“间隔时间”也做成一个函数而不是硬编码在主循环里，是为了让每种特效可以有自己的节奏；将来加特效时只要在这个 \texttt{switch} 里补一行即可。
+
+  \codesrc{led.c —— 特效统一入口与步进间隔}
+  \begin{lstlisting}
+/**
+ * @brief  执行第 effect 种特效的第 step 步
+ * @param  effect: 特效编号（EFFECT_FLOW / EFFECT_DOUBLE / ...）
+ * @param  step  : 步数，从 0 开始递增
+ */
+void effect_run(uint8_t effect, uint16_t step)
+{
+    uint8_t mask = 0;
+
+    switch (effect)
+    {
+        case EFFECT_FLOW:   mask = effect_flow_mask(step);   break;
+        case EFFECT_DOUBLE: mask = effect_double_mask(step); break;
+        case EFFECT_BOUNCE: mask = effect_bounce_mask(step); break;
+        case EFFECT_FILL:   mask = effect_fill_mask(step);   break;
+        default:            mask = 0;                        break;
+    }
+
+    led_write(mask);        /* 算出来的掩码立刻刷新到 8 个引脚上 */
+}
+
+/**
+ * @brief  取某种特效每一步的间隔时间（ms）
+ */
+uint16_t effect_interval(uint8_t effect)
+{
+    switch (effect)
+    {
+        case EFFECT_FLOW:   return 200;   /* 流水：慢一点更清楚 */
+        case EFFECT_DOUBLE: return 200;
+        case EFFECT_BOUNCE: return 150;   /* 往返：稍快 */
+        case EFFECT_FILL:   return 120;   /* 逐个点亮：最快 */
+        default:            return 200;
+    }
+}
+\end{lstlisting}
+
+  \subsubsection*{2. 按键驱动模块（key.h / key.c）}
+
+  按键模块最核心的部分是 \texttt{key\_scan()}。它需要同时解决三个问题：读电平、处理高低有效电平的差异、消抖并识别“按下事件”。
+
+  \codesrc{key.h —— 按键数量与消抖时间}
+  \begin{lstlisting}
+#ifndef __KEY_H
+#define __KEY_H
+
+#include "main.h"
+
+/* 使用开发板自带的 4 个按键，不需要额外接线：
+ *   KEY0 = PH3   按下为低电平
+ *   KEY1 = PH2   按下为低电平
+ *   KEY2 = PC13  按下为低电平
+ *   KEY3 = PA0（板上丝印 WK_UP）按下为高电平
+ */
+#define KEY_NUM             4
+#define KEY_DEBOUNCE_MS     10      /* 消抖时间：10ms 内的抖动一律忽略 */
+
+void    key_init(void);
+uint8_t key_scan(void);             /* 0 = 无按键；1~4 = 第几个按键被按下 */
+
+#endif /* __KEY_H */
+\end{lstlisting}
+
+  \codesrc{key.c —— 端口表、初始化与按下判断}
+  \begin{lstlisting}
+#include "key.h"
+
+static GPIO_TypeDef *const key_port[KEY_NUM] = {GPIOH, GPIOH, GPIOC, GPIOA};
+static const uint16_t     key_pin[KEY_NUM]  = {GPIO_PIN_3, GPIO_PIN_2,
+                                               GPIO_PIN_13, GPIO_PIN_0};
+/* 1 = 按下时为高电平（WK_UP），0 = 按下时为低电平（KEY0~KEY2） */
+static const uint8_t      key_active_high[KEY_NUM] = {0, 0, 0, 1};
+
+/**
+ * @brief  初始化 4 个按键的 IO（输入模式，带内部上下拉）
+ */
+void key_init(void)
+{
+    GPIO_InitTypeDef gpio_init_struct = {0};
+    uint8_t i;
+
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+
+    gpio_init_struct.Mode  = GPIO_MODE_INPUT;
+    gpio_init_struct.Speed = GPIO_SPEED_FREQ_LOW;
+
+    for (i = 0; i < KEY_NUM; i++)
+    {
+        gpio_init_struct.Pin  = key_pin[i];
+        /* 低电平有效的按键配内部上拉，高电平有效的配内部下拉 */
+        gpio_init_struct.Pull = key_active_high[i] ? GPIO_PULLDOWN : GPIO_PULLUP;
+        HAL_GPIO_Init(key_port[i], &gpio_init_struct);
+    }
+}
+
+/**
+ * @brief  判断第 i 个按键当前是否被按下（已统一为 1 = 按下）
+ * @retval 1 = 按下，0 = 松开
+ */
+static uint8_t key_is_pressed(uint8_t i)
+{
+    GPIO_PinState level = HAL_GPIO_ReadPin(key_port[i], key_pin[i]);
+
+    if (key_active_high[i])
+    {
+        return (level == GPIO_PIN_SET) ? 1 : 0;      /* WK_UP：高电平表示按下 */
+    }
+
+    return (level == GPIO_PIN_RESET) ? 1 : 0;        /* KEY0~2：低电平表示按下 */
+}
+\end{lstlisting}
+
+  \texttt{key\_is\_pressed()} 这一步“归一化”非常关键：无论按键是低电平有效还是高电平有效，经过它之后都统一为“\texttt{1} 表示按下”。这样后面的消抖逻辑就只需要处理一种约定，代码量直接减半，也不容易出错。
+
+  \codesrc{key.c —— 带消抖的按键扫描（核心）}
+  \begin{lstlisting}
+/**
+ * @brief  按键扫描（需要在主循环里反复调用，内部不阻塞）
+ * @retval 0 = 没有新的按下事件；1~4 = 第几个按键被按下
+ */
+uint8_t key_scan(void)
+{
+    static uint8_t  stable[KEY_NUM];        /* 已确认的稳定状态：1 = 按下 */
+    static uint8_t  last_raw[KEY_NUM];      /* 上一次采样的原始状态 */
+    static uint32_t change_tick[KEY_NUM];   /* 最近一次电平变化的时间 */
+    uint8_t  i;
+    uint8_t  raw;
+    uint8_t  ret = 0;
+    uint32_t now = HAL_GetTick();
+
+    for (i = 0; i < KEY_NUM; i++)
+    {
+        raw = key_is_pressed(i);
+
+        if (raw != last_raw[i])             /* 电平刚变化：重新开始计时 */
+        {
+            last_raw[i]    = raw;
+            change_tick[i] = now;
+        }
+        else if ((now - change_tick[i]) >= KEY_DEBOUNCE_MS && raw != stable[i])
+        {
+            stable[i] = raw;                /* 持续 10ms 没变，认可这个新状态 */
+
+            if (raw != 0)                   /* 只在“按下”的瞬间返回键值 */
+            {
+                ret = (uint8_t)(i + 1);
+            }
+        }
+        else
+        {
+            /* 状态没变，什么都不做 */
+        }
+    }
+
+    return ret;
+}
+\end{lstlisting}
+
+  这段代码有几个值得注意的地方。首先，三个状态数组都声明为 \texttt{static}，它们的值在两次调用之间会保留下来，相当于给每个按键维护了一份“记忆”；因为数组是 \texttt{static} 的，未显式初始化时会被自动清零，正好符合“初始状态为松开、计时起点为 0”的预期。其次，整个函数没有一处延时，执行时间是几个微秒量级，放在主循环里几乎不占时间。第三，\texttt{ret} 只有在“新状态是按下”时才被赋值，因此按住不放时后续轮次都返回 0，从源头上保证了“一次按压只产生一个事件”。
+
+  \subsubsection*{3. 蜂鸣器驱动模块（beep.h / beep.c）}
+
+  蜂鸣器模块的代码比前两个模块长一些，因为它要在没有硬件 I2C 外设的情况下用软件模拟 I2C 时序。代码分为三层：底层是软件 I2C 的位操作，中层是 PCF8574 的字节/位操作，上层才是对外的三个接口。
+
+  \codesrc{beep.h —— 有效电平定义与对外接口}
+  \begin{lstlisting}
+#ifndef __BEEP_H
+#define __BEEP_H
+
+#include "main.h"
+
+/* 板载蜂鸣器接在 PCF8574 的 P0 脚上，通过 I2C 控制
+ *   板上的 I2C 总线（与 24C02 共用）：PH4 = SCL，PH5 = SDA
+ *   PCF8574 地址线 A0~A2 全部接地，7 位地址 0x20（写地址 0x40）
+ */
+
+/* P0 输出 0 = 蜂鸣器响。若实测相反，改成 1 即可 */
+#define BEEP_ON_LEVEL       0
+
+#define BEEP_DEFAULT_MS     80      /* 按键提示音时长：80ms */
+
+void beep_init(void);
+void beep_start(uint16_t ms);       /* 让蜂鸣器开始响，ms 毫秒后自动关闭 */
+void beep_task(void);               /* 需要在主循环里反复调用 */
+
+#endif /* __BEEP_H */
+\end{lstlisting}
+
+  \codesrc{beep.c —— 软件模拟 I2C 底层时序}
+  \begin{lstlisting}
+#include "beep.h"
+
+/* ============ 一、软件 I2C 底层 ============ */
+#define IIC_SCL_PORT        GPIOH
+#define IIC_SCL_PIN         GPIO_PIN_4
+#define IIC_SDA_PORT        GPIOH
+#define IIC_SDA_PIN         GPIO_PIN_5
+
+#define PCF8574_ADDR_W      0x40    /* 7 位地址 0x20 左移一位 + 写方向 0 */
+
+/**
+ * @brief  I2C 位延时（约 1~2us，I2C 对速度要求不严格，慢一点更稳）
+ */
+static void iic_delay(void)
+{
+    volatile uint16_t i;
+    for (i = 0; i < 8; i++)
+    {
+        __NOP();
+    }
+}
+
+static void iic_scl(uint8_t level)
+{
+    HAL_GPIO_WritePin(IIC_SCL_PORT, IIC_SCL_PIN,
+                      level ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    iic_delay();
+}
+
+static void iic_sda(uint8_t level)
+{
+    HAL_GPIO_WritePin(IIC_SDA_PORT, IIC_SDA_PIN,
+                      level ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    iic_delay();
+}
+
+static uint8_t iic_sda_read(void)
+{
+    return (HAL_GPIO_ReadPin(IIC_SDA_PORT, IIC_SDA_PIN) == GPIO_PIN_SET) ? 1 : 0;
+}
+
+/* 起始信号：SCL 为高时，SDA 由高变低 */
+static void iic_start(void)
+{
+    iic_sda(1);
+    iic_scl(1);
+    iic_sda(0);
+    iic_scl(0);
+}
+
+/* 停止信号：SCL 为高时，SDA 由低变高 */
+static void iic_stop(void)
+{
+    iic_sda(0);
+    iic_scl(1);
+    iic_sda(1);
+    iic_delay();
+}
+
+/**
+ * @brief  发送一个字节（高位先发），并读回应答位
+ * @retval 0 = 从机应答（ACK），1 = 无应答（NACK）
+ */
+static uint8_t iic_send_byte(uint8_t txd)
+{
+    uint8_t t;
+    uint8_t ack;
+
+    for (t = 0; t < 8; t++)
+    {
+        iic_sda((txd & 0x80) ? 1 : 0);      /* 先发最高位 */
+        txd <<= 1;
+        iic_scl(1);                          /* SCL 高电平期间数据有效 */
+        iic_scl(0);                          /* 拉低 SCL，准备下一位 */
+    }
+
+    iic_sda(1);                              /* 释放 SDA，等从机应答 */
+    iic_scl(1);
+    ack = iic_sda_read();                    /* 0 = 有应答 */
+    iic_scl(0);
+
+    return ack;
+}
+\end{lstlisting}
+
+  \codesrc{beep.c —— PCF8574 读写与对外接口}
+  \begin{lstlisting}
+/* ============ 二、PCF8574 操作 ============ */
+
+/**
+ * @brief  向 PCF8574 写一个字节，会同时刷新 P0~P7 的输出
+ */
+static void pcf8574_write_byte(uint8_t data)
+{
+    iic_start();
+    iic_send_byte(PCF8574_ADDR_W);
+    iic_send_byte(data);
+    iic_stop();
+}
+
+/**
+ * @brief  控制 PCF8574 的某一位（bit: 0~7，sta: 0 或 1）
+ */
+static void pcf8574_write_bit(uint8_t bit, uint8_t sta)
+{
+    static uint8_t out_buf = 0xFF;          /* 输出锁存：默认全部输出高电平 */
+
+    if (sta)
+    {
+        out_buf |= (uint8_t)(1 << bit);
+    }
+    else
+    {
+        out_buf &= (uint8_t)~(1 << bit);
+    }
+
+    pcf8574_write_byte(out_buf);
+}
+
+/* ============ 三、对外接口 ============ */
+
+static uint32_t beep_off_tick = 0;          /* 该关掉蜂鸣器的时间点 */
+static uint8_t  beeping       = 0;          /* 1 = 正在响 */
+
+/**
+ * @brief  初始化：PH4/PH5 配成开漏输出，并把 PCF8574 全部输出置为“不响”
+ */
+void beep_init(void)
+{
+    GPIO_InitTypeDef gpio_init_struct = {0};
+
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+
+    gpio_init_struct.Pin   = IIC_SCL_PIN | IIC_SDA_PIN;
+    gpio_init_struct.Mode  = GPIO_MODE_OUTPUT_OD;   /* I2C 必须是开漏输出 */
+    gpio_init_struct.Pull  = GPIO_PULLUP;           /* 配合内部上拉，空闲时为高 */
+    gpio_init_struct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    HAL_GPIO_Init(GPIOH, &gpio_init_struct);
+
+    iic_scl(1);
+    iic_sda(1);
+
+    pcf8574_write_byte(0xFF);                       /* 全部输出高 = 蜂鸣器不响 */
+}
+
+/**
+ * @brief  让蜂鸣器响 ms 毫秒（不阻塞主循环）
+ */
+void beep_start(uint16_t ms)
+{
+    pcf8574_write_bit(0, BEEP_ON_LEVEL);            /* P0 = 响 */
+    beep_off_tick = HAL_GetTick() + ms;
+    beeping       = 1;
+}
+
+/**
+ * @brief  蜂鸣器计时处理（主循环里反复调用）
+ */
+void beep_task(void)
+{
+    if (beeping && ((int32_t)(HAL_GetTick() - beep_off_tick) >= 0))
+    {
+        pcf8574_write_bit(0, (uint8_t)!BEEP_ON_LEVEL);  /* P0 = 不响 */
+        beeping = 0;
+    }
+}
+\end{lstlisting}
+
+  这段代码里有三处工程上常见的处理方式。第一，\texttt{IIC\_SCL/SDA} 必须配置为\textbf{开漏输出}并配合上拉电阻，这是 I2C 总线“线与”特性的要求；用推挽输出在某些情况下会造成总线冲突。第二，\texttt{pcf8574\_write\_bit()} 用了一个 \texttt{static} 变量 \texttt{out\_buf} 做“输出锁存”，因为 PCF8574 的 8 个输出位是共用一次 I2C 写传输的，如果只改 P0 而不管其它位，就必须记住其它位原来的值，否则会误改到连接在同一条总线上的其它外设。第三，\texttt{beep\_task()} 中的时间比较写成 \texttt{(int32\_t)(HAL\_GetTick() - beep\_off\_tick) >= 0}，利用有符号数的差值判断，即使 \texttt{HAL\_GetTick()} 的计数发生回绕也不会出错。
+
+  \subsubsection*{4. 主程序（main.c）}
+
+  主程序把前面三个模块串起来。初始化阶段调用各模块的 \texttt{init} 函数，主循环里只做“扫描按键、推进灯效、处理蜂鸣器”三件事。
+
+  \codesrc{main.c —— 头文件、变量定义与初始化}
+  \begin{lstlisting}
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+#include "led.h"
+#include "key.h"
+#include "beep.h"
+/* USER CODE END Includes */
+
+/* USER CODE BEGIN 1 */
+  uint8_t  cur_effect  = EFFECT_FLOW;   /* 当前灯效编号 0~3 */
+  uint16_t effect_step = 0;             /* 当前灯效已经走到第几步 */
+  uint32_t effect_tick = 0;             /* 上一次推进灯效的时间 */
+  uint8_t  key;                         /* 本次扫描到的按键值：0=无，1~4 */
+/* USER CODE END 1 */
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
+
+  /* Configure the system clock */
+  SystemClock_Config();
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  /* USER CODE BEGIN 2 */
+  led_init();                           /* 初始化 8 路 LED */
+  key_init();                           /* 初始化 4 个按键 */
+  beep_init();                          /* 初始化蜂鸣器  */
+  effect_run(cur_effect, 0);            /* 先显示第 1 种灯效的第 0 步 */
+  effect_tick = HAL_GetTick();
+  /* USER CODE END 2 */
+\end{lstlisting}
+
+  \codesrc{main.c —— 主循环（三件事，全部非阻塞）}
+  \begin{lstlisting}
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* ---- 1. 扫描按键：有按下事件就切换灯效，并让蜂鸣器响一声 ---- */
+    key = key_scan();
+    if (key != 0)
+    {
+      cur_effect  = (uint8_t)(key - 1);        /* 按键 1~4 对应 4 种灯效 */
+      effect_step = 0;
+      effect_tick = HAL_GetTick();
+      effect_run(cur_effect, effect_step);     /* 立刻切到新灯效的第一步 */
+      beep_start(BEEP_DEFAULT_MS);             /* 响 80ms 后自动关，不阻塞 */
+    }
+
+    /* ---- 2. 到时间就推进一步灯效（用时间戳判断，不用 HAL_Delay）---- */
+    if ((HAL_GetTick() - effect_tick) >= effect_interval(cur_effect))
+    {
+      effect_tick = HAL_GetTick();
+      effect_step++;
+      effect_run(cur_effect, effect_step);
+    }
+
+    /* ---- 3. 蜂鸣器计时处理（到时间自动关闭）---- */
+    beep_task();
+
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
+\end{lstlisting}
+
+  \codesrc{main.c —— 系统时钟配置（HSE 25 MHz $\rightarrow$ 180 MHz）}
+  \begin{lstlisting}
+void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+  /* HSE 25MHz 经 PLL：25/25=1MHz，x360=360MHz，/2=180MHz */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState       = RCC_HSE_ON;
+  RCC_OscInitStruct.PLL.PLLState   = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource  = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM       = 25;
+  RCC_OscInitStruct.PLL.PLLN       = 360;
+  RCC_OscInitStruct.PLL.PLLP       = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ       = 4;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+                              | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource   = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider  = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;   /* PCLK1 = 45MHz */
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;   /* PCLK2 = 90MHz */
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+\end{lstlisting}
+
+  \subsection*{（三）编译、下载与运行}
+
+  代码编写完成后，依次完成下面几步：
+
+  \begin{enumerate}[label=\arabic*)]
+    \item \textbf{编译。}在 STM32CubeIDE 中点击 \texttt{Build}（锤子图标）。编译成功后，控制台会输出程序占用的 Flash 和 RAM 大小；如果报错，重点检查头文件包含路径是否正确、函数声明与定义是否一致。
+    \item \textbf{连接仿真器。}用 ST-Link 或 J-Link 连接开发板的 SWD 接口（\texttt{SWCLK}、\texttt{SWDIO}、\texttt{GND}、\texttt{3.3\,V}），确认开发板已上电。
+    \item \textbf{下载。}点击 \texttt{Run}，IDE 会把程序烧写进 Flash 并复位运行。
+    \item \textbf{观察现象。}复位后应当看到 8 个 LED 按第 1 种特效（单灯流水）循环点亮；依次按下 \texttt{KEY0} $\sim$ \texttt{KEY3}，灯效应当切换到对应的第 1 $\sim$ 4 种特效，同时蜂鸣器发出一次短促的提示音。
+  \end{enumerate}
+
+  由于整个程序没有一处阻塞延时，主循环每一轮的执行时间只有几十微秒，因此按键响应非常及时，灯效推进的时间精度也只受 \texttt{HAL\_GetTick()} 的 1\,ms 分辨率限制。
+
+  \subsection*{（四）调试过程中遇到的问题与解决}
+
+  \textbf{问题 1：程序下载后 8 个 LED 全部不亮。}
+
+  \emph{现象：}程序能正常下载运行，但无论如何操作都看不到任何 LED 点亮。
+
+  \emph{排查过程：}先用万用表测量 LED 两端电压，发现 GPIO 引脚的电平确实会随程序变化（用示波器或万用表能看到高低切换），说明程序逻辑是正常的，问题出在硬件接线上。重新对照电路检查后发现，LED 的长短脚接反了——LED 是二极管，具有单向导电性，接反后无论引脚输出什么电平都不会导通。
+
+  \emph{解决办法：}LED 长脚（阳极）接限流电阻一侧，短脚（阴极）接单片机引脚，接好后 LED 正常工作。这个问题的经验是：\textbf{程序没反应时，先确认“软件到底有没有输出”，再怀疑硬件}，用万用表/示波器量一下引脚电平就能快速区分是软件问题还是接线问题。
+
+  \textbf{问题 2：按一次按键，灯效却连续跳了好几种。}
+
+  \emph{现象：}按一下按键，有时灯效正常切换一次，有时却连续切换好几次甚至“跳过”目标灯效。
+
+  \emph{原因分析：}这正是机械按键抖动造成的。最初的版本在检测到电平变化后就立即认为是按下，而抖动期间电平会在几毫秒内反复跳变，于是被识别成多次按下。
+
+  \emph{解决办法：}改用“变电平计时法”，要求电平变化后\textbf{连续保持 10\,ms 不变}才认可为新状态。实现上就是本文 \texttt{key\_scan()} 中的 \texttt{(now - change\_tick[i]) >= KEY\_DEBOUNCE\_MS} 判断。加入消抖后，一次按压稳定地只产生一个事件。
+
+  \textbf{问题 3：蜂鸣器一直响，或者按住按键时连续响。}
+
+  \emph{现象：}按下按键时蜂鸣器不是响一声，而是按住期间持续发声。
+
+  \emph{原因分析：}最初的写法是在“按键被按下”这个状态上触发蜂鸣器，而不是在“按下事件”上触发。由于按键被按住期间状态一直是“按下”，主循环每一轮都会重新打开蜂鸣器，即使 \texttt{beep\_task()} 刚把它关掉也立刻被打开发声。
+
+  \emph{解决办法：}把 \texttt{key\_scan()} 的返回值改为“只在按下瞬间返回一次键值”，按住不放时返回 0（见本文代码中 \texttt{ret} 的赋值位置），从源头上保证一次按压只触发一次 \texttt{beep\_start()}。这也再次印证了“按下事件”和“持续按下状态”必须区分清楚。
+
+  \textbf{问题 4：按键反应迟钝、灯效卡顿。}
+
+  \emph{现象：}灯效运行还算正常，但按键要按下去过一会儿才有反应，而且按键瞬间灯效会“停一下”。
+
+  \emph{原因分析：}最初为了控制蜂鸣器鸣响时长，在按键处理里直接调用了 \texttt{HAL\_Delay(80)}。这 80\,ms 内 CPU 完全空等，按键扫描和灯效推进全部暂停，因此表现为卡顿；如果鸣响时间设得更长，卡顿会更明显。
+
+  \emph{解决办法：}把“响多久”交给时间戳来管理，拆成 \texttt{beep\_start()} 和 \texttt{beep\_task()} 两个函数，主循环不再有任何阻塞。灯效推进也从 \texttt{HAL\_Delay()} 改成用 \texttt{HAL\_GetTick()} 比较时间戳。改完之后按键响应干脆利落，灯效也不再停顿。
+
+  \textbf{问题 5：修改时钟配置后程序卡在 \texttt{HAL\_RCC\_OscConfig()} 里，LED 全灭。}
+
+  \emph{现象：}把系统时钟从内部 HSI 改为外部 HSE 25\,MHz 之后，程序一运行就停住不动，看起来像是死机。
+
+  \emph{原因分析：}这一段代码在 \texttt{HAL\_RCC\_OscConfig()} 内部会等待 HSE 起振标志 \texttt{HSERDY} 置位，如果超过设定时间仍未起振就会失败并调用 \texttt{Error\_Handler()}，而 \texttt{Error\_Handler()} 里是一个 \texttt{while(1)} 死循环，所以表现为“卡死”。先临时把时钟源改回内部 16\,MHz HSI，程序立刻恢复正常，说明主频和后续逻辑都没有问题，故障点确定在 HSE 起振环节。
+
+  \emph{解决办法：}对照原理图确认开发板确实焊接了 25\,MHz 晶振，并检查 CubeMX 中 HSE 已设为 \texttt{Crystal/Ceramic Resonator}、PLLM/PLLN/PLLP 的取值与时钟树一致。参数配置正确后，HSE 正常起振，180\,MHz 主频稳定运行。这个问题带来的经验是：\textbf{用“替换法”定位故障}非常有效——把可疑的部分换成已知可用的配置，就能迅速判断问题是否出在这里。
+
+  % ---------- “实验过程及内容”填写区结束 ----------
+\end{reportsection}
+
+\begin{reportsection}{\ConclusionTitle}{\ConclusionHint}
+  % ---------- “实验结论”填写区开始 ----------
+
+  \subsection*{（一）运行结果}
+
+  程序下载并复位后，观察到的现象与设计预期完全一致，具体结果如表\,\ref{tab:result} 所示。四种特效在视觉上差异明显，通过按键可以稳定切换，且每次按键蜂鸣器只发出一次约 80\,ms 的短促提示音。
+
+  \reportcaption{tab:result}{四种灯效的运行结果}
+  \begin{center}
+  \renewcommand{\arraystretch}{1.3}
+  {\small
+  \begin{tabular}{|C{1.3cm}|C{2.6cm}|C{4.2cm}|C{3.2cm}|}
+    \hline
+    \textbf{按键} & \textbf{灯效名称} & \textbf{观察到的现象} & \textbf{步进间隔}\\
+    \hline
+    KEY0 & 特效 1\newline 单灯流水 & 8 个 LED 中始终只有 1 个点亮，亮点从 LED0 依次移到 LED7，到达 LED7 后回到 LED0 循环 & 200\,ms\\
+    \hline
+    KEY1 & 特效 2\newline 双灯追逐 & 同一时刻有 2 个 LED 点亮，两点相距 4 个位置，同步向右移动 & 200\,ms\\
+    \hline
+    KEY2 & 特效 3\newline 乒乓往返 & 1 个亮点从 LED0 走到 LED7，再折返走回 LED1，如此往复 & 150\,ms\\
+    \hline
+    KEY3 & 特效 4\newline 逐个点亮 & 点亮的灯数从 0 个开始逐个增加，增加到 8 个全亮后整体熄灭，重新开始 & 120\,ms\\
+    \hline
+  \end{tabular}}
+  \end{center}
+
+  通过示波器或逻辑分析仪观察 \texttt{PB3} 引脚，可以进一步验证软件的时间行为：在特效 1 下，\texttt{PB3} 大约每 $200\,\mathrm{ms} \times 8 = 1.6\,\mathrm{s}$ 出现一次持续约 200\,ms 的低电平脉冲，与 \texttt{effect\_interval(EFFECT\_FLOW)} 返回的 200\,ms 完全吻合，说明灯效的推进时序由时间戳精确控制。
+
+  \subsection*{（二）结果分析与探讨}
+
+  \textbf{1. 三种外设能够互不干扰，靠的是“非阻塞调度”。}本实验把三件周期性的事情——按键扫描、灯效推进、蜂鸣器计时——全部放在同一个主循环里按顺序处理，靠 \texttt{HAL\_GetTick()} 的时间戳判断“是否到点”，没有使用任何阻塞式延时。这是一种非常朴素的“前后台系统”或“时间片轮询”思想：主循环跑得足够快（每轮几十微秒），每个任务的响应延迟就都可以忽略不计。相比“打开蜂鸣器后 \texttt{HAL\_Delay(80)} 再关闭”的写法，这里虽然代码稍复杂一些，但换来了实时的按键响应，这个取舍在嵌入式开发中通常是值得的。
+
+  \textbf{2. 掩码机制把算法和硬件解耦，显著提高了可扩展性。}整个灯效部分可以概括成一个纯粹的数学映射：$f(\text{特效编号}, \text{步数}) \rightarrow \text{8 位掩码}$。算法层只处理位运算，完全不接触引脚；驱动层只负责把掩码翻译成引脚电平。两者之间用一个 \texttt{uint8\_t} 通信，接口极窄。如果要把 LED 从 8 个扩展到 16 个，只需要把掩码类型从 \texttt{uint8\_t} 换成 \texttt{uint16\_t}、把 \texttt{LED\_NUM} 改成 16，四种特效的算法几乎不用修改。同样，如果要换板子、换引脚，只改 \texttt{led.h} 里的宏定义即可，特效算法一个字都不用动。
+
+  \textbf{3. 消抖与事件检测是两件事，必须分别处理。}调试中遇到的“按一次跳好几下”和“按住不放连续响”这两个问题，表面上看都和按键有关，但根因完全不同：前者是\textbf{抖动}问题，需要用时间去过滤；后者是\textbf{事件语义}问题，需要用状态变化去区分。两者无法互相替代——即使做了完美的消抖，如果仍在“持续按下状态”上触发蜂鸣器，依然会连续鸣响。把这两个问题分开处理之后，代码的逻辑也变得清晰：\texttt{key\_scan()} 对外只承诺“返回一个按下事件”，不承诺别的。
+
+  \textbf{4. 实验中的不足。}目前的设计还有一些可以改进的地方。首先，灯效的推进精度受限于 \texttt{HAL\_GetTick()} 的 1\,ms 分辨率以及主循环中其它任务的耗时，如果将来在主循环里加入耗时较长的操作（比如刷 LCD），灯效的节奏就会受到影响。其次，4 个按键只能选择 4 种固定的特效，不能调节速度、亮度或者暂停。第三，全部逻辑都挤在主循环里，随着功能增加，主循环会越来越臃肿。
+
+  \subsection*{（三）改进想法}
+
+  \textbf{1. 用定时器中断驱动灯效推进。}可以把灯效推进放到 \texttt{SysTick} 或某个定时器的中断服务函数里，由硬件定时器以固定的周期调用，这样灯效的节奏就完全不受主循环耗时的影响，真正实现“精确到毫秒”。主循环则只保留按键扫描和低优先级的人机交互。
+
+  \textbf{2. 用 PWM 占空比渐变实现呼吸灯。}目前 8 路 LED 都只能“全亮”或“全灭”两种状态，亮度不可调。如果用定时器输出 PWM，只要周期足够短（比如 1\,kHz，周期 1\,ms），人眼就会因为视觉暂留而感受到“平均亮度”，而这个平均亮度正比于占空比。把占空比按正弦或三角波缓慢变化，就能得到亮度平滑变化的呼吸效果。原理如图\,\ref{fig:pwm} 所示：占空比从 0 逐渐增大到 100\% 再逐渐减小到 0，LED 就完成一次“暗 $\rightarrow$ 亮 $\rightarrow$ 暗”的呼吸。
+
+  \reportfigure{fig:pwm}{fig09_pwm_breath.png}{选做：PWM 占空比渐变实现呼吸灯的亮度调节原理}
+
+  \noindent 在 STM32F429 上实现呼吸灯，可以使用通用定时器（如 \texttt{TIM3}）的某个通道输出 PWM，在中断或主循环中按时间改变比较寄存器的值：
+
+  \codesrc{呼吸灯核心思路伪代码}
+  \begin{lstlisting}
+/* 占空比按三角波在 0~100 之间往返变化，每步改变 1% */
+static uint16_t duty = 0;          /* 当前占空比 0~100 */
+static int8_t   dir  = 1;          /* +1 变亮，-1 变暗 */
+
+void breath_task(void)             /* 在主循环中每 20ms 调用一次 */
+{
+    duty += dir;
+    if (duty >= 100) { duty = 100; dir = -1; }
+    if (duty == 0)   { duty = 0;   dir = +1; }
+
+    /* 把占空比换算成比较值：ARR 为定时器自动重装值 */
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (uint32_t)duty * ARR / 100);
+}
+\end{lstlisting}
+
+  \textbf{3. 引入状态机，让灯效切换更平滑。}目前切换灯效时是“立即清零并跳到第 0 步”，虽然响应快，但视觉上略显生硬。可以引入一个简单的状态机，让当前步骤先走完一个完整周期再切换，或者加入淡出/淡入的过渡效果，观感会更精致。
+
+  \textbf{4. 增加更多交互。}例如用长按/短按区分不同的操作语义（短按切换特效、长按调节速度），或者用按键组合实现“暂停/继续”。这需要在 \texttt{key\_scan()} 的基础上再增加一层“按键事件解析”，把“按下事件”进一步翻译成“单击、长按、双击”等语义事件。
+
+  % ---------- “实验结论”填写区结束 ----------
+\end{reportsection}
+
+\begin{reportsection}{\ReflectionTitle}{\ReflectionHint}
+  % ---------- “实验体会”填写区开始 ----------
+  这次跑马灯实验是我第一次完整地走完“从需求到现象”的嵌入式开发流程，收获最大的并不是学会调用几个 HAL 函数，而是理解了“程序结构和硬件特性必须一起考虑”这件事。
+
+  让我印象最深的是“非阻塞调度”这个设计。一开始我写的版本非常直观：按键处理里直接 \texttt{HAL\_Delay(80)} 等蜂鸣器响完，灯效推进里直接 \texttt{HAL\_Delay(200)} 等这一步显示够久。程序逻辑上完全正确，跑起来也确实能看到灯在动、蜂鸣器在响，但手感非常糟糕——按一下按键要过一会儿才有反应，按键的那一刻灯效还会明显地“卡”一下。后来把两处延时都换成用 \texttt{HAL\_GetTick()} 比较时间戳，代码看起来稍微复杂了一点，但体验立刻完全不同。这让我第一次真切地体会到：在嵌入式系统里，“CPU 有没有被空等”本身就是一种重要的资源。
+
+  另一个让我反复吃亏的地方是按键。我原以为读一个引脚的电平是最简单的事，结果“按一次灯效跳好几下”和“按住不放蜂鸣器一直响”这两个问题都出在按键上，而且它们的根因完全不同：前者是机械抖动的物理问题，需要用时间去过滤；后者是我把“按下事件”和“持续按下状态”混为一谈了，需要用状态变化去区分。修好第一个问题之后，第二个问题依然存在，这让我意识到必须搞清楚每一个现象背后的确切原因。把这两个问题分开之后，\texttt{key\_scan()} 的语义就变得很干净，这种接口设计上的清晰，是我这次学到的最有价值的东西之一。
+
+  掩码那个设计也让我很有感触。一开始我是为每个灯效分别写代码的，比如流水灯就是循环里写 \texttt{HAL\_GPIO\_WritePin(PB3, ...)} 八遍，写完之后再想加第二种特效就觉得无从下手。后来改为“用 8 位掩码统一表示灯态、算法只负责算掩码、驱动只负责刷引脚”之后，加特效变成了一件非常轻松的事——写一个纯位运算的小函数，再在 \texttt{switch} 里加一行就行。四种特效的算法函数加起来不到 40 行，却都清晰易懂。
+
+  调试过程中还有个小插曲让我印象深刻。改完时钟配置之后程序突然“死机”了，灯全灭，看不出任何信息。我当时的第一反应是怀疑主频太高导致程序跑飞，折腾了很久。后来抱着试试看的心态把时钟源换回内部 HSI，程序立刻就恢复正常了，这才把故障定位到 HSE 起振这一环。这件事让我学会了\textbf{用“替换法”快速缩小问题范围}——把可疑的部分换成已知可用的版本，看现象是否消失，比盯着代码一行行猜要高效得多。同时也让我注意到 \texttt{Error\_Handler()} 里的 \texttt{while(1)} 会把所有错误都变成同一种表现（死循环），以后调试时可以在里面加一个 LED 闪烁或者串口打印，把错误信息暴露出来。
+
+  总的来说，这次实验虽然简单，但里面包含了嵌入式开发的几个核心要素：GPIO 的输入输出、机械器件的消抖、非阻塞的时序管理、以及模块化的接口设计。这些思路在后面的定时器、中断、PWM 甚至电机控制里都会被反复用到。我也更清楚地认识到，嵌入式程序和普通程序最大的不同在于，它每时每刻都在和真实的物理世界打交道，所以\textbf{必须同时考虑代码逻辑和硬件行为}，任何一方的疏忽都会直接体现在现象上。
+  % ---------- “实验体会”填写区结束 ----------
+
+  \par\medskip\noindent \ReviewNote
+\end{reportsection}
+
+\clearpage
+
+% ============================================================
+% 第 5 页：教师批阅页（学生无需填写）
+% ============================================================
+\begin{reportpage}
+  \begin{minipage}[t][0.56\reportinnerheight][t]{\linewidth}
+    \noindent \ReviewTitle
+  \end{minipage}
+  \par\nointerlineskip\rule{\linewidth}{\fboxrule}\par
+  \begin{minipage}[t][0.15\reportinnerheight][t]{\linewidth}
+    \vspace{5pt}\noindent \GradeTitle
+  \end{minipage}
+  \par\nointerlineskip\rule{\linewidth}{\fboxrule}\par
+  \begin{minipage}[t][0.16\reportinnerheight][t]{\linewidth}
+    \vspace{5pt}
+    \hfill \SignatureTitle\hspace{2em}\par
+    \vspace{1.5em}
+    \hfill 年\hspace{2em}月\hspace{2em}日\hspace{2em}
+  \end{minipage}
+  \par\nointerlineskip\rule{\linewidth}{\fboxrule}\par
+  \vspace{5pt}\noindent \RemarksTitle
+\end{reportpage}
+
+\end{document}

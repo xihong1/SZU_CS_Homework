@@ -1,0 +1,151 @@
+{
+  "ast": {
+    "type": "Program", "line": 4, "col": 1,
+    "funcs": [
+      {
+        "type": "FuncDecl", "name": "sumArray", "return_type": "int", "line": 4, "col": 1,
+        "params": [
+          { "type": "ParamDecl", "name": "arr", "param_type": "int", "line": 4, "col": 21, "array_size": "5" }
+        ],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "i", "line": 5, "col": 5 },
+          { "type": "VarDecl", "var_type": "int", "name": "s", "line": 6, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 7, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 7, "col": 5 },
+            "value": { "type": "IntLiteral", "value": "0", "line": 7, "col": 13 }
+          },
+          {
+            "type": "AssignStmt", "line": 8, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "s", "ref_type": "int", "line": 8, "col": 5 },
+            "value": { "type": "IntLiteral", "value": "0", "line": 8, "col": 13 }
+          },
+          {
+            "type": "WhileStmt", "line": 10, "col": 5,
+            "cond": {
+              "type": "BinaryExpr", "op": "<", "line": 10, "col": 11,
+              "left": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 10, "col": 11 },
+              "right": { "type": "IntLiteral", "value": "5", "line": 10, "col": 19 }
+            },
+            "body": [
+              {
+                "type": "AssignStmt", "line": 11, "col": 9,
+                "target": { "type": "TypedVarRef", "name": "s", "ref_type": "int", "line": 11, "col": 9 },
+                "value": {
+                  "type": "BinaryExpr", "op": "+", "line": 11, "col": 17,
+                  "left": { "type": "TypedVarRef", "name": "s", "ref_type": "int", "line": 11, "col": 17 },
+                  "right": {
+                    "type": "TypedArrayElemRef", "name": "arr", "ref_type": "int", "line": 11, "col": 25,
+                    "index": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 11, "col": 29 }
+                  }
+                }
+              },
+              {
+                "type": "AssignStmt", "line": 12, "col": 9,
+                "target": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 12, "col": 9 },
+                "value": {
+                  "type": "BinaryExpr", "op": "+", "line": 12, "col": 17,
+                  "left": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 12, "col": 17 },
+                  "right": { "type": "IntLiteral", "value": "1", "line": 12, "col": 25 }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ReturnStmt", "line": 14, "col": 5,
+            "expr": { "type": "TypedVarRef", "name": "s", "ref_type": "int", "line": 14, "col": 12 }
+          }
+        ]
+      },
+      {
+        "type": "FuncDecl", "name": "main", "return_type": "void", "line": 16, "col": 1,
+        "params": [],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "a", "size": "5", "line": 17, "col": 5 },
+          { "type": "VarDecl", "var_type": "int", "name": "one", "line": 18, "col": 5 },
+          { "type": "VarDecl", "var_type": "int", "name": "all", "line": 19, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 21, "col": 5,
+            "target": {
+              "type": "TypedArrayElemRef", "name": "a", "ref_type": "int", "line": 21, "col": 5,
+              "index": { "type": "IntLiteral", "value": "0", "line": 21, "col": 7 }
+            },
+            "value": { "type": "IntLiteral", "value": "1", "line": 21, "col": 16 }
+          },
+          {
+            "type": "AssignStmt", "line": 22, "col": 5,
+            "target": {
+              "type": "TypedArrayElemRef", "name": "a", "ref_type": "int", "line": 22, "col": 5,
+              "index": { "type": "IntLiteral", "value": "1", "line": 22, "col": 7 }
+            },
+            "value": { "type": "IntLiteral", "value": "2", "line": 22, "col": 16 }
+          },
+          {
+            "type": "AssignStmt", "line": 23, "col": 5,
+            "target": {
+              "type": "TypedArrayElemRef", "name": "a", "ref_type": "int", "line": 23, "col": 5,
+              "index": { "type": "IntLiteral", "value": "2", "line": 23, "col": 7 }
+            },
+            "value": { "type": "IntLiteral", "value": "3", "line": 23, "col": 16 }
+          },
+          {
+            "type": "AssignStmt", "line": 24, "col": 5,
+            "target": {
+              "type": "TypedArrayElemRef", "name": "a", "ref_type": "int", "line": 24, "col": 5,
+              "index": { "type": "IntLiteral", "value": "3", "line": 24, "col": 7 }
+            },
+            "value": { "type": "IntLiteral", "value": "4", "line": 24, "col": 16 }
+          },
+          {
+            "type": "AssignStmt", "line": 25, "col": 5,
+            "target": {
+              "type": "TypedArrayElemRef", "name": "a", "ref_type": "int", "line": 25, "col": 5,
+              "index": { "type": "IntLiteral", "value": "4", "line": 25, "col": 7 }
+            },
+            "value": { "type": "IntLiteral", "value": "5", "line": 25, "col": 16 }
+          },
+          {
+            "type": "AssignStmt", "line": 27, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "one", "ref_type": "int", "line": 27, "col": 5 },
+            "value": {
+              "type": "TypedArrayElemRef", "name": "a", "ref_type": "int", "line": 27, "col": 15,
+              "index": { "type": "IntLiteral", "value": "1", "line": 27, "col": 17 }
+            }
+          },
+          {
+            "type": "AssignStmt", "line": 28, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "all", "ref_type": "int", "line": 28, "col": 5 },
+            "value": {
+              "type": "CallExpr", "line": 28, "col": 15,
+              "callee": { "type": "Identifier", "name": "sumArray", "line": 28, "col": 15 },
+              "args": [
+                { "type": "TypedArrayRef", "name": "a", "ref_type": "int", "size": "5", "line": 28, "col": 26 }
+              ]
+            }
+          },
+          {
+            "type": "ExprStmt", "line": 30, "col": 5,
+            "expr": {
+              "type": "CallExpr", "line": 30, "col": 5,
+              "callee": { "type": "Identifier", "name": "print", "line": 30, "col": 5 },
+              "args": [
+                { "type": "TypedVarRef", "name": "one", "ref_type": "int", "line": 30, "col": 13 }
+              ]
+            }
+          },
+          {
+            "type": "ExprStmt", "line": 31, "col": 5,
+            "expr": {
+              "type": "CallExpr", "line": 31, "col": 5,
+              "callee": { "type": "Identifier", "name": "print", "line": 31, "col": 5 },
+              "args": [
+                { "type": "TypedVarRef", "name": "all", "ref_type": "int", "line": 31, "col": 13 }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

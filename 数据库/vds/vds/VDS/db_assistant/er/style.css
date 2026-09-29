@@ -1,0 +1,8 @@
+.minimap{
+    position: absolute;
+    bottom: 0px; /* 距离画布顶部的距离 */
+    left: 0px; /* 距离画布右侧的距离 */
+    border: 1px solid #000; /* 边框样式 */
+    background-color: white; /* 设置背景颜色为白色 */
+    /* 其他样式 */
+}

@@ -1,0 +1,14 @@
+{
+  "errors": [
+    { "type": "ARG_TYPE_MISMATCH", "line": 9, "col": 13, "symbol": "add", "expected": "int", "found": "string" }
+  ],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "add", "type": "int(int,int)", "scope": "global", "line": 2 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 5 },
+    { "name": "a", "type": "int", "scope": "function", "line": 2 },
+    { "name": "b", "type": "int", "scope": "function", "line": 2 },
+    { "name": "x", "type": "int", "scope": "function", "line": 6 },
+    { "name": "s", "type": "string", "scope": "function", "line": 7 }
+  ]
+}

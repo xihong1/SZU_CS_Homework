@@ -1,0 +1,11 @@
+\begin{abstract}
+Visual anomaly detection in industrial inspection is fundamentally challenged by data scarcity, where only a handful of defect-free images are available per product category.
+Recent work, SubspaceAD, demonstrates that a minimalist, training-free pipeline combining frozen DINOv2 features with Principal Component Analysis (PCA) achieves state-of-the-art few-shot anomaly detection performance.
+However, PCA is inherently limited to modeling linear subspaces, which may fail to capture the complex, non-linear structure of normal feature manifolds learned by deep vision foundation models.
+In this paper, we propose MSAE-AD, a novel anomaly detection framework that replaces the linear PCA subspace with a Matryoshka Sparse Autoencoder (MSAE) to model normal feature distributions at multiple hierarchical granularities.
+MSAE learns sparse, multi-scale representations that simultaneously optimize reconstruction fidelity and sparsity, enabling more precise discrimination between normal and anomalous patterns.
+Our method retains the minimalist philosophy of SubspaceAD while introducing a trainable yet efficient nonlinear manifold model.
+We evaluate two MSAE variants---uniform weighting (UW) and reverse weighting (RW)---on the MVTec-AD and VisA benchmarks.
+Experimental results demonstrate that MSAE-AD achieves strong anomaly detection and localization performance, with the RW variant attaining an average image-level AUROC of 98.72\% on MVTec-AD and 95.58\% on VisA, and pixel-level AUROC of 97.71\% and 98.46\% respectively.
+These results validate that hierarchical sparse representations offer a compelling alternative to linear subspace methods for few-shot anomaly detection.
+\end{abstract}

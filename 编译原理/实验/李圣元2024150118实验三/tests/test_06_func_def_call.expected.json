@@ -1,0 +1,97 @@
+{
+  "ast": {
+    "type": "Program", "line": 2, "col": 1,
+    "funcs": [
+      {
+        "type": "FuncDecl", "name": "add", "return_type": "int", "line": 2, "col": 1,
+        "params": [
+          { "type": "ParamDecl", "name": "a", "param_type": "int", "line": 2, "col": 16 },
+          { "type": "ParamDecl", "name": "b", "param_type": "int", "line": 2, "col": 23 }
+        ],
+        "body": [
+          {
+            "type": "ReturnStmt", "line": 3, "col": 5,
+            "expr": {
+              "type": "BinaryExpr", "op": "+", "line": 3, "col": 12,
+              "left": { "type": "TypedVarRef", "name": "a", "ref_type": "int", "line": 3, "col": 12 },
+              "right": { "type": "TypedVarRef", "name": "b", "ref_type": "int", "line": 3, "col": 20 }
+            }
+          }
+        ]
+      },
+      {
+        "type": "FuncDecl", "name": "mul", "return_type": "int", "line": 5, "col": 1,
+        "params": [
+          { "type": "ParamDecl", "name": "a", "param_type": "int", "line": 5, "col": 16 },
+          { "type": "ParamDecl", "name": "b", "param_type": "int", "line": 5, "col": 23 }
+        ],
+        "body": [
+          {
+            "type": "ReturnStmt", "line": 6, "col": 5,
+            "expr": {
+              "type": "BinaryExpr", "op": "*", "line": 6, "col": 12,
+              "left": { "type": "TypedVarRef", "name": "a", "ref_type": "int", "line": 6, "col": 12 },
+              "right": { "type": "TypedVarRef", "name": "b", "ref_type": "int", "line": 6, "col": 20 }
+            }
+          }
+        ]
+      },
+      {
+        "type": "FuncDecl", "name": "main", "return_type": "void", "line": 8, "col": 1,
+        "params": [],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "x", "line": 9, "col": 5 },
+          { "type": "VarDecl", "var_type": "int", "name": "y", "line": 10, "col": 5 },
+          { "type": "VarDecl", "var_type": "int", "name": "z", "line": 11, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 12, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "x", "ref_type": "int", "line": 12, "col": 5 },
+            "value": {
+              "type": "CallExpr", "line": 12, "col": 13,
+              "callee": { "type": "Identifier", "name": "add", "line": 12, "col": 13 },
+              "args": [
+                { "type": "IntLiteral", "value": "3", "line": 12, "col": 19 },
+                { "type": "IntLiteral", "value": "4", "line": 12, "col": 22 }
+              ]
+            }
+          },
+          {
+            "type": "AssignStmt", "line": 13, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "y", "ref_type": "int", "line": 13, "col": 5 },
+            "value": {
+              "type": "CallExpr", "line": 13, "col": 13,
+              "callee": { "type": "Identifier", "name": "mul", "line": 13, "col": 13 },
+              "args": [
+                { "type": "IntLiteral", "value": "5", "line": 13, "col": 19 },
+                { "type": "IntLiteral", "value": "6", "line": 13, "col": 22 }
+              ]
+            }
+          },
+          {
+            "type": "AssignStmt", "line": 14, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "z", "ref_type": "int", "line": 14, "col": 5 },
+            "value": {
+              "type": "CallExpr", "line": 14, "col": 13,
+              "callee": { "type": "Identifier", "name": "add", "line": 14, "col": 13 },
+              "args": [
+                { "type": "TypedVarRef", "name": "x", "ref_type": "int", "line": 14, "col": 19 },
+                { "type": "TypedVarRef", "name": "y", "ref_type": "int", "line": 14, "col": 26 }
+              ]
+            }
+          },
+          {
+            "type": "ExprStmt", "line": 15, "col": 5,
+            "expr": {
+              "type": "CallExpr", "line": 15, "col": 5,
+              "callee": { "type": "Identifier", "name": "print", "line": 15, "col": 5 },
+              "args": [
+                { "type": "TypedVarRef", "name": "z", "ref_type": "int", "line": 15, "col": 13 }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

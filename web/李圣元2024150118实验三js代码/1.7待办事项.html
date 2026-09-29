@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>任务清单</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        #task-input {
+            width: 70%;
+            padding: 8px;
+            margin-right: 5px;
+        }
+        #add-task {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        #add-task:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        li span {
+            cursor: pointer;
+            flex: 1;
+        }
+        li span.completed {
+            text-decoration: line-through;
+            color: #999;
+        }
+        .delete-btn {
+            padding: 4px 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        .button-container {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .button-container button {
+            padding: 8px 16px;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        #clear-all {
+            background-color: #f44336;
+        }
+        #clear-completed {
+            background-color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <h1>任务清单</h1>
+    <input type="text" id="task-input" placeholder="输入新任务">
+    <button id="add-task">添加任务</button>
+    <ul id="task-list"></ul>
+    <div class="button-container">
+        <button id="clear-all">清空全部任务</button>
+        <button id="clear-completed">清空已完成任务</button>
+    </div>
+
+    <script>
+    //这里写JS代码，不要删除这个注释！
+    var taskInput = document.getElementById("task-input");
+    var addTaskBtn = document.getElementById("add-task");
+    var taskList = document.getElementById("task-list");
+    var clearAllBtn = document.getElementById("clear-all");
+    var clearCompletedBtn = document.getElementById("clear-completed");
+
+    function addTask() {
+        var text = taskInput.value.trim();
+        if (text === "") {
+            console.log("任务内容不能为空");
+            return;
+        }
+        console.log("添加任务:" + text);
+        var li = document.createElement("li");
+        var span = document.createElement("span");
+        span.textContent = text;
+        span.addEventListener("click", function () {
+            span.classList.toggle("completed");
+        });
+        var deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.textContent = "删除";
+        deleteBtn.addEventListener("click", function () {
+            console.log("删除任务:" + span.textContent);
+            taskList.removeChild(li);
+        });
+        li.appendChild(span);
+        li.appendChild(deleteBtn);
+        taskList.appendChild(li);
+        taskInput.value = "";
+    }
+
+    addTaskBtn.addEventListener("click", addTask);
+    taskInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            addTask();
+        }
+    });
+    clearAllBtn.addEventListener("click", function () {
+        taskList.innerHTML = "";
+    });
+    clearCompletedBtn.addEventListener("click", function () {
+        var items = taskList.querySelectorAll("li");
+        for (var i = items.length - 1; i >= 0; i--) {
+            if (items[i].querySelector("span").classList.contains("completed")) {
+                taskList.removeChild(items[i]);
+            }
+        }
+    });
+    </script>
+</body>
+</html>

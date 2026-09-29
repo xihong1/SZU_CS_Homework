@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d237b34"],{fbdf:function(n,p,u){"use strict";u.r(p),p["default"]="INSERT INTO brut.emp VALUES (10000, NOW(), 'pouet');\n"}}]);

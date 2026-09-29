@@ -1,0 +1,7 @@
+# Unambiguous simple grammar
+N: S A
+T: a b
+P:
+S->aA
+A->b
+START: S

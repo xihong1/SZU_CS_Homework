@@ -1,0 +1,13 @@
+﻿{
+  "tokens": [
+    {"type": "OP", "value": "==", "line": 1, "col": 1},
+    {"type": "OP", "value": "!=", "line": 1, "col": 4},
+    {"type": "OP", "value": "<=", "line": 1, "col": 7},
+    {"type": "OP", "value": ">=", "line": 1, "col": 10},
+    {"type": "OP", "value": "->", "line": 1, "col": 13},
+    {"type": "OP", "value": "&&", "line": 1, "col": 16},
+    {"type": "OP", "value": "||", "line": 1, "col": 19},
+    {"type": "EOF", "value": "", "line": 2, "col": 1}
+  ],
+  "errors": []
+}

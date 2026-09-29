@@ -1,0 +1,1 @@
+{"fileName":"20092026101647158.hist","query":"SELECT * FROM EMP2024150118 WHERE JOB \u003d \u0027CLERK\u0027 AND DEPTNO !\u003d 10;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 10:16:46.990 CST","elapsedTime":"26 ms","isPinned":false,"finalStatus":true,"resultSetSize":4,"querySizeToStore":1000}

@@ -1,0 +1,114 @@
+{
+  "ast": {
+    "type": "Program", "line": 4, "col": 1,
+    "funcs": [
+      {
+        "type": "FuncDecl", "name": "scopeDemo", "return_type": "int", "line": 4, "col": 1,
+        "params": [
+          { "type": "ParamDecl", "name": "x", "param_type": "int", "line": 4, "col": 22 }
+        ],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "value", "line": 5, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 6, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "value", "ref_type": "int", "line": 6, "col": 5 },
+            "value": {
+              "type": "BinaryExpr", "op": "+", "line": 6, "col": 17,
+              "left": { "type": "TypedVarRef", "name": "x", "ref_type": "int", "line": 6, "col": 17 },
+              "right": { "type": "IntLiteral", "value": "1", "line": 6, "col": 25 }
+            }
+          },
+          {
+            "type": "IfStmt", "else": null, "line": 8, "col": 5,
+            "cond": {
+              "type": "BinaryExpr", "op": ">", "line": 8, "col": 8,
+              "left": { "type": "TypedVarRef", "name": "x", "ref_type": "int", "line": 8, "col": 8 },
+              "right": { "type": "IntLiteral", "value": "0", "line": 8, "col": 16 }
+            },
+            "then": [
+              { "type": "VarDecl", "var_type": "int", "name": "value", "line": 9, "col": 9 },
+              {
+                "type": "AssignStmt", "line": 10, "col": 9,
+                "target": { "type": "TypedVarRef", "name": "value", "ref_type": "int", "line": 10, "col": 9 },
+                "value": {
+                  "type": "BinaryExpr", "op": "+", "line": 10, "col": 21,
+                  "left": { "type": "TypedVarRef", "name": "x", "ref_type": "int", "line": 10, "col": 21 },
+                  "right": { "type": "IntLiteral", "value": "100", "line": 10, "col": 29 }
+                }
+              },
+              {
+                "type": "IfStmt", "else": null, "line": 12, "col": 9,
+                "cond": {
+                  "type": "BinaryExpr", "op": ">", "line": 12, "col": 12,
+                  "left": { "type": "TypedVarRef", "name": "value", "ref_type": "int", "line": 12, "col": 12 },
+                  "right": { "type": "IntLiteral", "value": "50", "line": 12, "col": 24 }
+                },
+                "then": [
+                  { "type": "VarDecl", "var_type": "int", "name": "value", "line": 13, "col": 13 },
+                  {
+                    "type": "AssignStmt", "line": 14, "col": 13,
+                    "target": { "type": "TypedVarRef", "name": "value", "ref_type": "int", "line": 14, "col": 13 },
+                    "value": { "type": "IntLiteral", "value": "999", "line": 14, "col": 25 }
+                  },
+                  {
+                    "type": "ExprStmt", "line": 15, "col": 13,
+                    "expr": {
+                      "type": "CallExpr", "line": 15, "col": 13,
+                      "callee": { "type": "Identifier", "name": "print", "line": 15, "col": 13 },
+                      "args": [
+                        { "type": "TypedVarRef", "name": "value", "ref_type": "int", "line": 15, "col": 21 }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "ExprStmt", "line": 17, "col": 9,
+                "expr": {
+                  "type": "CallExpr", "line": 17, "col": 9,
+                  "callee": { "type": "Identifier", "name": "print", "line": 17, "col": 9 },
+                  "args": [
+                    { "type": "TypedVarRef", "name": "value", "ref_type": "int", "line": 17, "col": 17 }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "type": "ReturnStmt", "line": 19, "col": 5,
+            "expr": { "type": "TypedVarRef", "name": "value", "ref_type": "int", "line": 19, "col": 12 }
+          }
+        ]
+      },
+      {
+        "type": "FuncDecl", "name": "main", "return_type": "void", "line": 21, "col": 1,
+        "params": [],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "r", "line": 22, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 23, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "r", "ref_type": "int", "line": 23, "col": 5 },
+            "value": {
+              "type": "CallExpr", "line": 23, "col": 13,
+              "callee": { "type": "Identifier", "name": "scopeDemo", "line": 23, "col": 13 },
+              "args": [
+                { "type": "IntLiteral", "value": "3", "line": 23, "col": 25 }
+              ]
+            }
+          },
+          {
+            "type": "ExprStmt", "line": 24, "col": 5,
+            "expr": {
+              "type": "CallExpr", "line": 24, "col": 5,
+              "callee": { "type": "Identifier", "name": "print", "line": 24, "col": 5 },
+              "args": [
+                { "type": "TypedVarRef", "name": "r", "ref_type": "int", "line": 24, "col": 13 }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

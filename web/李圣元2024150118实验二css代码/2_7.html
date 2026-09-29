@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Fade Transition Effect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+        }
+        .image-container {
+            width: 300px;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .image {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+            will-change: transform, opacity;
+        }
+        .first-image {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .second-image {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        .image-container:hover .first-image {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        .image-container:hover .second-image {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .automatic .first-image {
+            animation: firstFade 5s ease-in-out infinite;
+        }
+        .automatic .second-image {
+            animation: secondFade 5s ease-in-out infinite;
+        }
+        @keyframes firstFade {
+            0%,
+            45% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            50%,
+            100% {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+        @keyframes secondFade {
+            0%,
+            45% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            50%,
+            95% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Image Fade Transition Effect</h1>
+
+    <div class="image-container">
+        <img src="http://172.31.233.204/resource/img/apple.jpg" alt="First Image" class="image first-image" />
+        <img src="http://172.31.233.204/resource/img/pineapple.jpg" alt="Second Image" class="image second-image" />
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.opengauss.mppdbide.feature"
+      label="Feature"
+      version="1.0.0.202604201010"
+      provider-name="Huawei Technologies">
+
+   <description url="http://www.example.com/description">
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.apache.commons.lang3" version="3.1.0" match="greaterOrEqual"/>
+      <import plugin="org.opengauss.mppdbide.util" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.opengauss.mppdbide.adapter.gauss" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.swt" version="3.115.100" match="greaterOrEqual"/>
+      <import plugin="javax.inject" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.di" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.workbench" version="1.12.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.di" version="0.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface" version="3.8.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" version="3.8.0" match="greaterOrEqual"/>
+      <import plugin="org.opengauss.mppdbide.bl" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.118.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.contexts" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.ui.workbench.swt" version="0.16.300" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.400" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors" version="3.13.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.e4.core.commands" version="0.10.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.8.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="org.opengauss.mppdbide.adapter.gauss"
+         download-size="9156"
+         install-size="10395"
+         version="1.0.0.202604201010"
+         unpack="false"/>
+
+   <plugin
+         id="org.opengauss.mppdbide.bl"
+         download-size="2218"
+         install-size="3872"
+         version="1.0.0.202604201010"
+         unpack="false"/>
+
+   <plugin
+         id="org.opengauss.mppdbide.view"
+         download-size="17133"
+         install-size="36132"
+         version="1.0.0.202604201010"
+         unpack="false"/>
+
+   <plugin
+         id="org.opengauss.mppdbide.util"
+         download-size="2759"
+         install-size="4627"
+         version="1.0.0.202604201010"
+         unpack="false"/>
+
+   <plugin
+         id="org.opengauss.dbdriver.jdbc.gauss"
+         download-size="2939"
+         install-size="3103"
+         version="1.0.0.202604201010"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.log4j"
+         download-size="418"
+         install-size="798"
+         version="1.2.15.v201012070815"
+         unpack="false"/>
+
+   <plugin
+         id="Common-collection"
+         download-size="16498"
+         install-size="19446"
+         version="1.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="commons-csv"
+         download-size="49"
+         install-size="51"
+         version="1.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.opengauss.mppdbide.presentation"
+         download-size="744"
+         install-size="1723"
+         version="1.0.0.202604201010"
+         unpack="false"/>
+
+   <plugin
+         id="org.opengauss.mppdbide.explainplan"
+         download-size="365"
+         install-size="545"
+         version="1.0.0.202604201010"
+         unpack="false"/>
+
+   <plugin
+         id="JSQLParser"
+         download-size="474"
+         install-size="542"
+         version="1.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.opengauss.mppdbide.parser"
+         download-size="3929"
+         install-size="11233"
+         version="1.0.0.202604201010"
+         unpack="false"/>
+
+   <plugin
+         id="org.opengauss.mppdbide.editor.extension"
+         download-size="6"
+         install-size="9"
+         version="1.0.0.202604201010"
+         unpack="false"/>
+
+</feature>

@@ -1,0 +1,32 @@
+深圳大学《微处理器与机器人》实验提交包
+实验：跑马灯点亮实验（8 路 LED + 4 按键 + 蜂鸣器）
+姓名：孙嘉瑞    学号：2024150087    班级：计科一班
+学院：计算机与软件学院    指导教师：王东升
+实验时间：2026 年 9 月 21 日
+
+一、包内文件
+  led_test/                  STM32CubeIDE 1.13.1 工程（芯片 STM32F429IGT6）
+      Core/Src/led.c         8 路 LED 驱动 + 4 种灯效
+      Core/Src/key.c         4 个按键扫描、10ms 消抖、按下事件检测
+      Core/Src/beep.c        板载蜂鸣器驱动（PH4/PH5 软件 I2C + PCF8574）
+      Core/Src/main.c        主循环：按键切换灯效 + 蜂鸣器提示音
+      led_test.ioc           图形化引脚与时钟配置
+      cmsis-dap-swd.cfg      CMSIS-DAP 调试脚本
+  flash_and_run.bat          一键编译烧录并启动（OpenOCD + DAP）
+  实验报告_跑马灯_LaTeX/      实验报告 LaTeX 源码（main.tex，XeLaTeX 编译）
+  STM32实验-进度记录.md       实验过程与问题排查记录
+
+二、引脚分配
+  LED1=PB1  LED2=PB0  LED3=PB3  LED4=PB4  LED5=PB5  LED6=PB6  LED7=PB7  LED8=PB9
+  KEY0=PH3  KEY1=PH2  KEY2=PC13  KEY3(WK_UP)=PA0
+  蜂鸣器 = PCF8574 的 P0（PH4=SCL，PH5=SDA，7 位地址 0x20）
+  LED 接法：3.3V—1k 电阻—LED 正极—LED 负极—对应 IO，低电平点亮
+
+三、实现要点与实测说明
+  1) 4 种灯效：单灯流水 / 双灯追逐 / 乒乓往返 / 逐个点亮，分别由 KEY0~KEY3 切换；
+  2) 每次有效按键蜂鸣器只响一声（80ms，非阻塞计时）；
+  3) 系统主频采用内部 HSI 16 MHz：本实验箱使用 HSE+PLL 180 MHz 时程序崩溃，
+     16 MHz 下跑马灯、按键、蜂鸣器全部正常；
+  4) 实验箱底板把 BOOT0 拉高，上电/复位后芯片进入 Bootloader，
+     故使用 flash_and_run.bat 烧录（脚本内含跳转到 Flash 入口的动作）。
+

@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>棒球淘汰问题 — Dinic最大流算法可视化</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+:root {
+  --bg:#0a0f1a; --panel:#141e2d; --border:#253348; --text:#e2e8f0; --text2:#8899aa;
+  --accent:#38bdf8; --green:#4ade80; --red:#f87171; --gold:#fbbf24; --purple:#a78bfa;
+  --src-c:#2E7D32; --game-c:#1565C0; --team-c:#E65100; --sink-c:#C62828;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  background:var(--bg); color:var(--text); height:100vh;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+
+/* ====== 顶部栏 ====== */
+.topbar{
+  background:var(--panel); border-bottom:1px solid var(--border);
+  padding:10px 20px; display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:8px; z-index:20;
+}
+.topbar h1{font-size:1.2rem;white-space:nowrap}
+.topbar h1 em{color:var(--accent);font-style:normal}
+.topbar .grp{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.btn{
+  padding:7px 14px;border:none;border-radius:7px;cursor:pointer;
+  font-size:0.83rem;font-weight:600;transition:0.15s;white-space:nowrap;
+}
+.btn-p{background:var(--accent);color:#0a0f1a}.btn-p:hover{filter:brightness(1.15)}
+.btn-o{background:transparent;border:1.5px solid var(--border);color:var(--text)}
+.btn-o:hover{border-color:var(--accent);color:var(--accent)}
+.btn:disabled{opacity:0.3;cursor:not-allowed;pointer-events:none}
+.sel{padding:7px 12px;border-radius:7px;border:1.5px solid var(--border);background:var(--panel);color:var(--text);font-size:0.83rem;outline:none}
+.sel:focus{border-color:var(--accent)}
+
+/* ====== 主体布局 ====== */
+.main{display:flex;flex:1;overflow:hidden}
+.sidebar{
+  width:340px;min-width:340px;background:var(--panel);
+  border-right:1px solid var(--border);padding:14px;
+  overflow-y:auto;display:flex;flex-direction:column;gap:12px;
+}
+.content{flex:1;position:relative;overflow:hidden;background:var(--bg)}
+
+/* ====== 卡片 ====== */
+.card{background:#0d1520;border:1px solid var(--border);border-radius:10px;padding:14px}
+.card h3{font-size:0.78rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent);margin-bottom:10px}
+
+/* 球队卡片 */
+.tcard{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 12px;border-radius:8px;cursor:pointer;border:2px solid transparent;
+  margin-bottom:4px;transition:0.15s;
+}
+.tcard:hover{border-color:var(--accent);background:rgba(56,189,248,0.06)}
+.tcard.sel{border-color:var(--accent);background:rgba(56,189,248,0.1)}
+.tcard .tn{font-weight:700;font-size:0.88rem}
+.tcard .tr{color:var(--text2);font-size:0.73rem}
+.badge{padding:2px 9px;border-radius:12px;font-size:0.65rem;font-weight:700;text-transform:uppercase}
+.b-safe{background:rgba(74,222,128,0.18);color:var(--green)}
+.b-out{background:rgba(248,113,113,0.18);color:var(--red)}
+
+/* 步骤流程指示器 */
+.flow-indicator{
+  display:flex;gap:0;margin-bottom:8px;font-size:0.7rem;
+}
+.flow-step{
+  flex:1;text-align:center;padding:6px 2px;border-radius:4px;
+  background:rgba(255,255,255,0.03);color:var(--text2);
+  border:1px solid transparent;transition:0.2s;
+}
+.flow-step.active{
+  background:rgba(56,189,248,0.15);color:var(--accent);
+  border-color:var(--accent);font-weight:700;
+}
+.flow-step.done{
+  background:rgba(74,222,128,0.08);color:var(--green);
+  border-color:rgba(74,222,128,0.3);
+}
+
+/* 步骤日志 */
+.steplog{max-height:220px;overflow-y:auto;font-size:0.76rem}
+.sentry{
+  padding:7px 9px;border-radius:5px;margin-bottom:3px;border-left:3px solid var(--border);
+  background:rgba(255,255,255,0.015);transition:0.2s;
+}
+.sentry.cur{border-left-color:var(--accent);background:rgba(56,189,248,0.08)}
+.sentry .ph{font-weight:700;font-size:0.73rem;margin-bottom:2px}
+.sentry .dt{color:var(--text2);font-size:0.72rem;line-height:1.4}
+
+/* 进度条 */
+.prog{height:3px;background:var(--border);border-radius:2px;margin-top:4px;overflow:hidden}
+.progfill{height:100%;background:var(--accent);border-radius:2px;transition:width 0.3s}
+
+/* ====== 图区覆盖层 ====== */
+.overlay{
+  position:absolute;top:12px;right:16px;z-index:10;pointer-events:none;
+  background:rgba(10,15,26,0.92);border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;font-size:0.8rem;
+}
+.overlay .big{font-size:1.4rem;font-weight:700;color:var(--accent)}
+.overlay .dim{color:var(--text2);font-size:0.68rem}
+
+/* 图区注解 */
+.annotation{
+  position:absolute;z-index:10;pointer-events:none;
+  background:rgba(20,30,45,0.94);border:1px solid var(--gold);
+  border-radius:8px;padding:8px 12px;font-size:0.78rem;max-width:280px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.5);transition:opacity 0.3s;
+}
+
+/* 响应式 */
+@media(max-width:850px){
+  .main{flex-direction:column}
+  .sidebar{width:100%;min-width:unset;max-height:240px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ 顶部栏 ═══════════════ -->
+<div class="topbar">
+  <h1>⚾ 棒球淘汰问题 · <em>Dinic 最大流算法</em></h1>
+  <div class="grp">
+    <select class="sel" id="dsSel">
+      <option value="nlwest">NL West 1996 (4队)</option>
+      <option value="custom5">AL East 1996 (5队·Princeton)</option>
+    </select>
+    <button class="btn btn-o" onclick="resetAll()">🔄 重置</button>
+    <button class="btn btn-o" id="btnPlay" onclick="togglePlay()">▶ 自动播放</button>
+    <span style="color:var(--text2);font-size:0.75rem;">速度</span>
+    <input type="range" id="speedRng" min="300" max="2500" value="900" step="50" style="width:70px;accent-color:var(--accent)">
+  </div>
+</div>
+
+<!-- ═══════════════ 主体 ═══════════════ -->
+<div class="main">
+
+  <!-- ── 左侧面板 ── -->
+  <div class="sidebar">
+
+    <!-- 球队选择 -->
+    <div class="card">
+      <h3>🎯 选择判定球队</h3>
+      <div id="teamCards"></div>
+    </div>
+
+    <!-- 算法流程指示器 -->
+    <div class="card">
+      <h3>📌 算法流程</h3>
+      <div class="flow-indicator" id="flowInd">
+        <div class="flow-step" data-phase="init">📐 建图</div>
+        <div class="flow-step" data-phase="bfs">🔍 BFS</div>
+        <div class="flow-step" data-phase="dfs">🌊 DFS</div>
+        <div class="flow-step" data-phase="augment">💧 增广</div>
+        <div class="flow-step" data-phase="done">🏁 判定</div>
+      </div>
+      <!-- 导航按钮 -->
+      <div style="display:flex;gap:5px;margin-bottom:6px;">
+        <button class="btn btn-o" onclick="stepPrev()" id="btnPrev" style="flex:1;">◀ 上一步</button>
+        <button class="btn btn-p" onclick="stepNext()" id="btnNext" style="flex:1;">下一步 ▶</button>
+      </div>
+      <div class="prog"><div class="progfill" id="progFill" style="width:0%"></div></div>
+      <div style="text-align:center;margin-top:4px;font-size:0.73rem;color:var(--text2);">
+        步骤 <b id="stepCur">0</b> / <b id="stepMax">0</b>
+      </div>
+    </div>
+
+    <!-- 当前步骤详解 -->
+    <div class="card">
+      <h3>📖 步骤详解</h3>
+      <div class="steplog" id="stepLog">
+        <div style="color:var(--text2);">👈 点击左侧球队开始分析</div>
+      </div>
+    </div>
+
+    <!-- 判定结果 -->
+    <div class="card" id="resCard" style="display:none;">
+      <h3>📊 判定结果</h3>
+      <div id="resContent"></div>
+    </div>
+  </div>
+
+  <!-- ── 图形区域 ── -->
+  <div class="content" id="graphWrap">
+    <svg id="mainSvg"></svg>
+
+    <!-- 流值叠加 -->
+    <div class="overlay">
+      <div class="dim">当前流 / 总需求</div>
+      <div class="big"><span id="ovFlow">?</span> / <span id="ovDemand">?</span></div>
+      <div style="margin-top:4px">
+        <div class="dim">当前阶段</div>
+        <div style="font-weight:700;font-size:0.85rem" id="ovPhase">就绪</div>
+      </div>
+    </div>
+
+    <!-- 图内注解气泡 -->
+    <div class="annotation" id="annotation" style="opacity:0;"></div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+//  数据集 (严格按照 Princeton 测试数据格式)
+// ================================================================
+const DS = {
+  nlwest: {
+    name:'NL West 1996-09-08',
+    teams:[
+      {id:'Atlanta',  w:83,l:71,r:8, ag:{Philly:1, NY:6, Montreal:1}},
+      {id:'Philly',   w:80,l:79,r:3, ag:{Atlanta:1, NY:0, Montreal:2}},
+      {id:'NY',       w:78,l:78,r:6, ag:{Atlanta:6, Philly:0, Montreal:0}},
+      {id:'Montreal', w:77,l:82,r:3, ag:{Atlanta:1, Philly:2, NY:0}},
+    ]
+  },
+  custom5: {
+    name:'AL East 1996 (Princeton teams5)',
+    teams:[
+      {id:'New_York',  w:75,l:59,r:28, ag:{Baltimore:3,Boston:8,Toronto:7,Detroit:3}},
+      {id:'Baltimore', w:71,l:63,r:28, ag:{New_York:3,Boston:2,Toronto:7,Detroit:7}},
+      {id:'Boston',    w:69,l:66,r:27, ag:{New_York:8,Baltimore:2,Toronto:0,Detroit:3}},
+      {id:'Toronto',   w:63,l:72,r:27, ag:{New_York:7,Baltimore:7,Boston:0,Detroit:3}},
+      {id:'Detroit',   w:49,l:86,r:27, ag:{New_York:3,Baltimore:7,Boston:3,Toronto:3}},
+    ]
+  }
+};
+
+// ================================================================
+//  Dinic 最大流 — 完整步骤录制
+// ================================================================
+class DinicRecorder {
+  constructor(N){
+    this.N=N; this.cap={}; this.flo={};
+    for(let i=0;i<N;i++){this.cap[i]={};this.flo[i]={};}
+    this.steps=[];
+  }
+  addEdge(u,v,c){
+    this.cap[u][v]=c; this.cap[v][u]=0;
+    this.flo[u][v]=0; this.flo[v][u]=0;
+  }
+  res(u,v){return (this.cap[u][v]||0)-(this.flo[u][v]||0);}
+
+  _bfs(s,t){
+    const lv=new Array(this.N).fill(-1); lv[s]=0;
+    const q=[s], vis=[s];
+    while(q.length){
+      const u=q.shift();
+      for(const v of Object.keys(this.cap[u]).map(Number).sort((a,b)=>a-b)){
+        if(lv[v]===-1 && this.res(u,v)>0){
+          lv[v]=lv[u]+1; q.push(v); vis.push(v);
+        }
+      }
+    }
+    const reach=lv[t]!==-1;
+    this.steps.push({type:'bfs',level:[...lv],reach,visited:[...vis],s,t});
+    return {level:lv,reach};
+  }
+
+  _dfs(u,t,f,level,start,pathEdges){
+    if(u===t) return {pushed:f, edges:[...pathEdges]};
+    const keys=Object.keys(this.cap[u]).map(Number).sort((a,b)=>a-b);
+    while((start[u]||0)<keys.length){
+      const v=keys[start[u]||0];
+      if(level[v]===level[u]+1 && this.res(u,v)>0){
+        const r=this._dfs(v,t,Math.min(f,this.res(u,v)),level,start,[...pathEdges,{u,v}]);
+        if(r.pushed>0){
+          this.flo[u][v]=(this.flo[u][v]||0)+r.pushed;
+          this.flo[v][u]=(this.flo[v][u]||0)-r.pushed;
+          return r;
+        }
+      }
+      start[u]=(start[u]||0)+1;
+    }
+    return {pushed:0,edges:[]};
+  }
+
+  maxFlow(s,t){
+    let total=0,round=0;
+    this.steps.push({type:'start',s,t,N:this.N});
+    while(true){
+      round++;
+      const {level,reach}=this._bfs(s,t);
+      if(!reach){this.steps.push({type:'done',total,round});break;}
+
+      const start=new Array(this.N).fill(0);
+      let rndFlow=0;
+      this.steps.push({type:'dfs_begin',round,level:[...level]});
+
+      while(true){
+        const r=this._dfs(s,t,Infinity,level,start,[]);
+        if(r.pushed===0) break;
+        total+=r.pushed; rndFlow+=r.pushed;
+        this.steps.push({type:'augment',pushed:r.pushed,edges:r.edges,round,totalFlow:total});
+      }
+      this.steps.push({type:'dfs_end',round,roundFlow:rndFlow,totalFlow:total});
+    }
+    return total;
+  }
+}
+
+// ================================================================
+//  构建棒球淘汰流网络
+// ================================================================
+function buildNetwork(teams, targetId){
+  const tgt=teams.find(t=>t.id===targetId);
+  const maxW=tgt.w+tgt.r, others=teams.filter(t=>t.id!==targetId);
+
+  // 平凡淘汰
+  for(const ot of others){
+    if(ot.w>maxW) return {trivial:true,reason:`${ot.id} 已赢 ${ot.w} 场 > ${targetId} 最多可赢 ${maxW} 场 → 直接淘汰`,maxW,totRem:0,pairs:[],others,teams,targetId};
+  }
+
+  // 生成比赛对
+  const pairs=[];
+  for(let i=0;i<others.length;i++){
+    for(let j=i+1;j<others.length;j++){
+      const g1=others[i].ag[others[j].id]||0, g2=others[j].ag[others[i].id]||0;
+      const g=g1+g2;
+      if(g>0) pairs.push({t1:others[i].id,t2:others[j].id,games:g});
+    }
+  }
+
+  const nG=pairs.length, nT=others.length;
+  const SRC=0, SNK=nG+nT+1, totalN=SNK+1;
+  const rec=new DinicRecorder(totalN);
+
+  let totRem=0;
+  for(let i=0;i<nG;i++){rec.addEdge(SRC,i+1,pairs[i].games); totRem+=pairs[i].games;}
+  for(let i=0;i<nG;i++){
+    const gi=i+1;
+    const ti1=nG+1+others.findIndex(t=>t.id===pairs[i].t1);
+    const ti2=nG+1+others.findIndex(t=>t.id===pairs[i].t2);
+    rec.addEdge(gi,ti1,Infinity); rec.addEdge(gi,ti2,Infinity);
+  }
+  for(let i=0;i<nT;i++){
+    const ti=nG+1+i, cap=maxW-others[i].w;
+    if(cap<0) return {trivial:true,reason:`${others[i].id} 容量为负 (${maxW}−${others[i].w}=${cap}) → 淘汰`,maxW,totRem,pairs,others,teams,targetId};
+    rec.addEdge(ti,SNK,cap);
+  }
+
+  return {trivial:false,rec,SRC,SNK,nG,pairs,others,maxW,totRem,teams,targetId};
+}
+
+// ================================================================
+//  全局状态
+// ================================================================
+let curDS='nlwest', selTeam=null, netData=null, visSteps=[], stepIdx=0;
+let playing=false, playTimer=null;
+
+// ================================================================
+//  组装可视化步骤（含详细中文讲解）
+// ================================================================
+function buildVisSteps(nd){
+  const steps=[];
+  if(!nd||nd.trivial){
+    if(nd) steps.push({type:'trivial',phase:'done',title:'平凡淘汰',desc:nd.reason,longDesc:nd.reason,highlightNodes:[],highlightEdges:[],flow:null,level:null});
+    return steps;
+  }
+  const {rec,SRC,SNK,maxW,totRem,pairs,others,nG}=nd;
+
+  // 步骤 0：建图
+  const teamCaps=others.map(t=>`${t.id}(cap=${maxW}-${t.w}=${maxW-t.w})`).join('，');
+  steps.push({
+    type:'init',phase:'init',
+    title:'📐 构建流网络',
+    desc:`判断「${nd.targetId}」是否被淘汰。该队最多可赢 ${maxW} 场 (w=${nd.teams.find(t=>t.id===nd.targetId).w} + r=${nd.teams.find(t=>t.id===nd.targetId).r})。`,
+    longDesc:`【网络结构】
+① 源点 s → 比赛节点：容量 = 该场比赛的剩余场次数（共 ${totRem} 场待分配）
+② 比赛节点 → 参赛球队：容量 = ∞（胜负可以任意分配）
+③ 球队节点 → 汇点 t：容量 = ${maxW} − 该队当前胜场（确保不超目标队）
+   → 各队容量：${teamCaps}
+
+【为什么这样构造】
+每场比赛的胜利必须分配给参赛的两支球队之一（流守恒），且每队最多再赢 (maxW−wins) 场（容量限制），否则目标队就追不上了。`,
+    highlightNodes:[],highlightEdges:[],flow:null,level:null
+  });
+
+  let curFlow={}; for(let i=0;i<rec.N;i++) curFlow[i]={};
+
+  for(const as of rec.steps){
+    const snap=()=>{const s={};for(let i=0;i<rec.N;i++) s[i]={...curFlow[i]};return s;};
+
+    if(as.type==='start'){
+      steps.push({type:'algo_start',phase:'bfs',title:'🚀 开始 Dinic 算法',desc:`从源点 ${as.s} 到汇点 ${as.t} 计算最大流。`,longDesc:`Dinic 算法核心思想：重复「BFS 构建分层图 → DFS 找阻塞流」直到无法到达汇点。每次 BFS 保证找到的增广路径长度递增，从而保证多项式时间复杂度 O(V²E)。`,highlightNodes:[],highlightEdges:[],flow:snap(),level:null});
+    }
+    else if(as.type==='bfs'){
+      const pathStr=as.visited.map(n=>{
+        if(n===SRC) return 's';
+        if(n===SNK) return 't';
+        if(n>=1&&n<=nG) return `G${n}`;
+        const ti=n-nG-1;
+        return others[ti]?others[ti].id:`?`;
+      }).join(' → ');
+      const rtxt=as.reach?'✓ 汇点可达，存在增广路径 → 进入 DFS 阶段':'✗ 汇点不可达 → 算法终止';
+      steps.push({
+        type:'bfs',phase:'bfs',
+        title:`🔍 BFS 构建分层图`,
+        desc:`从源点 BFS，仅沿剩余容量 > 0 的边前进。访问顺序：${pathStr}。${rtxt}`,
+        longDesc:`【BFS 分层原理】
+从源点 s 出发，沿剩余容量 > 0 的边走 BFS，为每个节点标记层次 level[v] = level[u] + 1。
+分层图只保留 level[v] = level[u] + 1 的边，保证找到的都是「最短增广路径」。
+这确保了每次增广后路径长度不减少，是 Dinic 算法 O(V²E) 复杂度的关键。
+
+【本次 BFS 结果】
+${as.reach ? '汇点 t 可达 (level[t]='+as.level[SNK]+')，说明当前残留网络中仍存在从 s 到 t 的路径。' : '汇点 t 不可达，说明残留网络中已无增广路径，算法结束。'}`,
+        highlightNodes:as.visited,highlightEdges:[],flow:snap(),level:as.level,reach:as.reach
+      });
+    }
+    else if(as.type==='dfs_begin'){
+      steps.push({type:'dfs_begin',phase:'dfs',title:`🌊 DFS 搜索阻塞流 (第 ${as.round} 轮)`,desc:`在第 ${as.round} 轮分层图中，用 DFS 找所有增广路径。`,longDesc:`【阻塞流概念】
+在分层图上执行 DFS，每次找到一条从 s 到 t 的路径就推送流量。一次 DFS 可以找到多条增广路径，这些路径合称「阻塞流」—— 因为推送后分层图中不再存在 s→t 路径。
+
+【当前弧优化】
+DFS 时用 start[u] 记录每个节点已尝试到哪条边，避免重复检查已饱和的边，将 DFS 阶段复杂度从指数降到 O(VE)。`,highlightNodes:[],highlightEdges:[],flow:snap(),level:as.level});
+    }
+    else if(as.type==='augment'){
+      for(const {u,v} of as.edges){
+        if(!curFlow[u]) curFlow[u]={}; if(!curFlow[v]) curFlow[v]={};
+        curFlow[u][v]=(curFlow[u][v]||0)+as.pushed;
+        curFlow[v][u]=(curFlow[v][u]||0)-as.pushed;
+      }
+      const pathNodes=[SRC,...as.edges.map(e=>e.v)];
+      const pathEdges=as.edges.map(e=>({from:e.u,to:e.v,label:`+${as.pushed}`}));
+
+      // 构建路径的人读描述
+      const pathDesc=as.edges.map(e=>{
+        const fu=e.u, fv=e.v;
+        let fromName, toName;
+        if(fu===SRC) fromName='s';
+        else if(fu>=1&&fu<=nG) fromName=`比赛[${pairs[fu-1].t1}vs${pairs[fu-1].t2}]`;
+        else{const ti=fu-nG-1; fromName=others[ti]?others[ti].id:'?';}
+        if(fv===SNK) toName='t';
+        else if(fv>=1&&fv<=nG) toName=`比赛[${pairs[fv-1].t1}vs${pairs[fv-1].t2}]`;
+        else{const ti=fv-nG-1; toName=others[ti]?others[ti].id:'?';}
+        return `${fromName} → ${toName}`;
+      }).join('，然后 ');
+
+      steps.push({
+        type:'augment',phase:'augment',
+        title:`💧 增广 +${as.pushed} (累计流 = ${as.totalFlow})`,
+        desc:`推送路径：${pathDesc}。本次推送 ${as.pushed} 单位流量。`,
+        longDesc:`【增广路径含义】
+找到了一条从 s 到 t 的路径，沿该路径推送 ${as.pushed} 单位流量。
+在实际问题中，这表示：将 ${as.pushed} 场剩余比赛的胜利分配给了路径上的球队节点。
+
+【路径详情】
+${pathDesc}
+→ 其中从比赛节点到球队节点代表"该场比赛的胜利判给该球队"，
+从球队节点到汇点代表"该球队消耗了其可赢场次的配额"。
+
+【累计流 = ${as.totalFlow} / 总需求 = ${totRem}】
+${as.totalFlow < totRem ? '⚠ 当前流仍小于总需求，需继续找增广路径' : '✓ 流已等于总需求，所有比赛均可安排'}`,
+        highlightNodes:pathNodes,highlightEdges:pathEdges,flow:snap(),level:null,totalFlow:as.totalFlow
+      });
+    }
+    else if(as.type==='dfs_end'){
+      steps.push({type:'dfs_end',phase:'dfs',title:`✅ 第 ${as.round} 轮完成`,desc:`本轮增广 ${as.roundFlow} 流，累计最大流 = ${as.totalFlow}。`,longDesc:as.roundFlow>0?`第 ${as.round} 轮共推送 ${as.roundFlow} 单位流量。分层图中已无增广路径，返回 BFS 重新分层。`:``,highlightNodes:[],highlightEdges:[],flow:snap(),level:null,totalFlow:as.totalFlow});
+    }
+    else if(as.type==='done'){
+      const elim=as.total<totRem;
+      steps.push({
+        type:'done',phase:'done',
+        title:elim?'❌ 判定：已被淘汰':'✅ 判定：未被淘汰',
+        desc:`最大流 ${as.total} ${elim?'<':'='} 总剩余 ${totRem}。${elim?'存在无法安排的比赛 → 淘汰！':'所有剩余比赛均可安排 → 安全。'}`,
+        longDesc:elim
+          ? `【淘汰原因】
+最大流 = ${as.total} < 总剩余比赛 = ${totRem}。
+说明无论如何安排剩余比赛，至少有一个球队会超过 ${nd.targetId} 的最大可赢场数 ${maxW}。
+${nd.targetId} 已被数学上证明无法夺冠。
+
+【最小割解释】(最大流-最小割定理)
+存在一个割 (S,T)，其容量 = ${as.total} < ${totRem}。
+割中的球队构成了"淘汰证书"——这些球队的内部比赛必然导致某队胜场超过 ${maxW}。`
+          : `【安全原因】
+最大流 = ${as.total} = 总剩余比赛 = ${totRem}。
+存在一种比赛结果安排方案，使得所有球队的胜场都不超过 ${nd.targetId} 的最大可赢场数 ${maxW}。
+${nd.targetId} 仍然有夺冠的理论可能。`,
+        highlightNodes:[],highlightEdges:[],flow:snap(),level:null,totalFlow:as.total,eliminated:elim
+      });
+    }
+  }
+  return steps;
+}
+
+// ================================================================
+//  SVG 布局引擎
+// ================================================================
+let svgG;
+
+function initSvg(){
+  const svg=d3.select('#mainSvg');
+  svg.selectAll('*').remove();
+  const wrap=document.getElementById('graphWrap');
+  const W=wrap.clientWidth, H=wrap.clientHeight;
+  svg.attr('width',W).attr('height',H);
+  svgG=svg.append('g');
+  const zoom=d3.zoom().scaleExtent([0.4,2.5]).on('zoom',e=>svgG.attr('transform',e.transform));
+  svg.call(zoom);
+  svg.call(zoom.transform, d3.zoomIdentity.translate(20, H*0.02).scale(0.9));
+}
+
+function nodePositions(nd,svgW,svgH){
+  if(!nd||nd.trivial) return {};
+  const {SRC,SNK,nG,pairs,others}=nd;
+  const pos={};
+  // 四列均匀分布
+  const margin=120, usableW=Math.max(400,svgW-2*margin);
+  const CX={src:margin, game:margin+usableW*0.27, team:margin+usableW*0.58, sink:margin+usableW*0.88};
+  const CY=svgH*0.48;
+
+  const N=Math.max(nG,1), M=Math.max(others.length,1);
+  const maxNodes=Math.max(N,M);
+  const spacing=Math.min(90, 480/maxNodes);
+
+  pos[SRC]={x:CX.src,y:CY,type:'source',label:'源点\ns'};
+  for(let i=0;i<N;i++){
+    const y=CY-(N-1)*spacing/2+i*spacing;
+    pos[i+1]={x:CX.game,y,type:'game',label:`${pairs[i].t1} vs ${pairs[i].t2}`,sub:`c=${pairs[i].games}`};
+  }
+  for(let i=0;i<M;i++){
+    const y=CY-(M-1)*spacing/2+i*spacing;
+    const cap=nd.maxW-others[i].w;
+    pos[nG+1+i]={x:CX.team,y,type:'team',label:others[i].id,sub:`w=${others[i].w} (cap=${cap})`};
+  }
+  pos[SNK]={x:CX.sink,y:CY,type:'sink',label:'汇点\nt'};
+  return pos;
+}
+
+const NCOLOR={
+  source:{fill:'#2E7D32',bg:'#C8E6C9'},
+  game:{fill:'#1565C0',bg:'#BBDEFB'},
+  team:{fill:'#E65100',bg:'#FFE0B2'},
+  sink:{fill:'#C62828',bg:'#FFCDD2'}
+};
+
+function renderGraph(nd,step,flow){
+  initSvg();
+  if(!nd) return;
+  const wrap=document.getElementById('graphWrap');
+  const W=wrap.clientWidth, H=wrap.clientHeight;
+  const pos=nodePositions(nd,W,H);
+  if(!Object.keys(pos).length) return;
+
+  const {SRC,SNK,nG,pairs,others,maxW,totRem}=nd;
+
+  // ── 层背景 ──
+  const layers=[
+    [30, W*0.18, '源点层 s','#C8E6C9'],
+    [W*0.20, W*0.40, '比赛节点层','#BBDEFB'],
+    [W*0.48, W*0.72, '球队节点层','#FFE0B2'],
+    [W*0.78, W-40, '汇点层 t','#FFCDD2'],
+  ];
+  layers.forEach(([x1,x2,lbl,clr])=>{
+    svgG.append('rect').attr('x',x1).attr('y',20).attr('width',x2-x1).attr('height',H-60)
+      .attr('fill',clr).attr('opacity',0.22).attr('rx',8)
+      .attr('stroke','#475569').attr('stroke-width',1).attr('stroke-dasharray','8,5');
+    svgG.append('text').attr('x',(x1+x2)/2).attr('y',45).attr('text-anchor','middle')
+      .attr('font-size',13).attr('font-weight','700').attr('fill','#64748b').text(lbl);
+  });
+
+  // ── 收集边 ──
+  const edges=[];
+  for(let i=0;i<nG;i++){
+    const gn=i+1, cap=pairs[i].games;
+    const fv=(flow&&flow[SRC]&&flow[SRC][gn])||0;
+    edges.push({from:SRC,to:gn,cap,flow:fv,label:`c=${cap}`,color:'#2E7D32',cls:'sg'});
+  }
+  for(let i=0;i<nG;i++){
+    const gn=i+1;
+    for(const tn of [pairs[i].t1,pairs[i].t2]){
+      const ti=nG+1+others.findIndex(t=>t.id===tn);
+      if(ti<nG+1) continue;
+      const fv=(flow&&flow[gn]&&flow[gn][ti])||0;
+      edges.push({from:gn,to:ti,cap:Infinity,flow:fv,label:'∞',color:'#757575',cls:'gt'});
+    }
+  }
+  for(let i=0;i<others.length;i++){
+    const ti=nG+1+i, cap=maxW-others[i].w;
+    const fv=(flow&&flow[ti]&&flow[ti][SNK])||0;
+    edges.push({from:ti,to:SNK,cap,flow:fv,label:`c=${cap}`,color:'#C62828',cls:'ts'});
+  }
+
+  // 增广路径高亮集合
+  const hlEdgeSet=new Set();
+  if(step&&step.highlightEdges){
+    step.highlightEdges.forEach(h=>hlEdgeSet.add(`${h.from}->${h.to}`));
+  }
+
+  // ── 画边 ──
+  // 先定义箭头
+  const defs=svgG.append('defs');
+  const arrowDefs=[
+    {id:'a-sg',c:'#2E7D32'},{id:'a-gt',c:'#757575'},{id:'a-ts',c:'#C62828'},
+    {id:'a-hl',c:'#fbbf24'},{id:'a-sat',c:'#475569'}
+  ];
+  arrowDefs.forEach(m=>{
+    defs.append('marker').attr('id',m.id).attr('viewBox','0 0 10 10').attr('refX',8).attr('refY',5)
+      .attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto')
+      .append('path').attr('d','M0 0 L10 5 L0 10 z').attr('fill',m.c).attr('opacity',0.65);
+  });
+
+  edges.forEach(e=>{
+    const p1=pos[e.from], p2=pos[e.to];
+    if(!p1||!p2) return;
+    const dx=p2.x-p1.x, dy=p2.y-p1.y, dist=Math.sqrt(dx*dx+dy*dy);
+    const r=35, x1=p1.x+dx/dist*r, y1=p1.y+dy/dist*r, x2=p2.x-dx/dist*r, y2=p2.y-dy/dist*r;
+
+    const saturated=(e.cap!==Infinity&&e.flow>=e.cap);
+    const hl=hlEdgeSet.has(`${e.from}->${e.to}`);
+    const sc=hl?'#fbbf24':(saturated?'#475569':e.color);
+    const sw=hl?5:(saturated?1.2:(e.cls==='gt'?1.5:2.6));
+    const dash=saturated?'5,4':'none';
+    const op=hl?1:(saturated?0.4:0.75);
+    const markerId=hl?'url(#a-hl)':(saturated?'url(#a-sat)':`url(#a-${e.cls})`);
+
+    svgG.append('line')
+      .attr('x1',x1).attr('y1',y1).attr('x2',x2).attr('y2',y2)
+      .attr('stroke',sc).attr('stroke-width',sw).attr('stroke-dasharray',dash)
+      .attr('opacity',op).attr('marker-end',markerId).attr('stroke-linecap','round');
+
+    // 边标签
+    const mx=(x1+x2)/2, my=(y1+y2)/2;
+    const angle=Math.atan2(dy,dx);
+    const nx=-Math.sin(angle)*16, ny=Math.cos(angle)*16;
+    let lbl=e.label;
+    if(e.flow>0&&e.cap!==Infinity) lbl+=` [流:${e.flow}/${e.cap}]`;
+    svgG.append('text')
+      .attr('x',mx+nx).attr('y',my+ny)
+      .attr('text-anchor','middle').attr('font-size',11).attr('font-weight','600')
+      .attr('fill',sc).attr('stroke','var(--bg)').attr('stroke-width',3).attr('paint-order','stroke')
+      .text(lbl);
+  });
+
+  // ── 画节点 ──
+  const hlNodeSet=new Set(step&&step.highlightNodes||[]);
+
+  Object.entries(pos).forEach(([nid,p])=>{
+    const nc=NCOLOR[p.type]||{fill:'#757575',bg:'#ccc'};
+    const R=33, hl=hlNodeSet.has(parseInt(nid));
+
+    // 光晕
+    if(hl){
+      svgG.append('circle').attr('cx',p.x).attr('cy',p.y).attr('r',R+7)
+        .attr('fill','none').attr('stroke','#38bdf8').attr('stroke-width',3.5).attr('opacity',0.9);
+    }
+
+    // 主体
+    svgG.append('circle').attr('cx',p.x).attr('cy',p.y).attr('r',R)
+      .attr('fill',nc.fill).attr('stroke','#fff').attr('stroke-width',2.5)
+      .attr('filter','drop-shadow(0 2px 4px rgba(0,0,0,0.3))');
+
+    // 文本
+    const lines=p.label.split('\n');
+    if(lines.length===1){
+      svgG.append('text').attr('x',p.x).attr('y',p.y+(p.sub?-3:5))
+        .attr('text-anchor','middle').attr('font-size',p.type==='game'?8.5:12)
+        .attr('fill','#fff').attr('font-weight','bold').text(p.label);
+      if(p.sub){
+        svgG.append('text').attr('x',p.x).attr('y',p.y+17)
+          .attr('text-anchor','middle').attr('font-size',8.5)
+          .attr('fill','rgba(255,255,255,0.82)').text(p.sub);
+      }
+    }else{
+      lines.forEach((ln,i)=>{
+        svgG.append('text').attr('x',p.x).attr('y',p.y-7+i*15)
+          .attr('text-anchor','middle').attr('font-size',11)
+          .attr('fill','#fff').attr('font-weight','bold').text(ln);
+      });
+    }
+  });
+
+  // ── BFS 层标签 ──
+  if(step&&step.level){
+    Object.entries(pos).forEach(([nid,p])=>{
+      const lv=step.level[parseInt(nid)];
+      if(lv!==undefined&&lv>=0){
+        svgG.append('circle').attr('cx',p.x+26).attr('cy',p.y-26).attr('r',11)
+          .attr('fill','#7c3aed').attr('stroke','#fff').attr('stroke-width',1.5);
+        svgG.append('text').attr('x',p.x+26).attr('y',p.y-23).attr('text-anchor','middle')
+          .attr('font-size',10).attr('font-weight','bold').attr('fill','#fff').text(lv);
+      }
+    });
+  }
+
+  // ── 图内注解 ──
+  const annEl=document.getElementById('annotation');
+  if(step&&step.longDesc){
+    annEl.style.opacity='1';
+    annEl.style.left='20px';
+    annEl.style.bottom='30px';
+    annEl.innerHTML=step.longDesc.replace(/\n/g,'<br>');
+    annEl.style.maxWidth='380px';
+    annEl.style.maxHeight='300px';
+    annEl.style.overflowY='auto';
+  }else{
+    annEl.style.opacity='0';
+  }
+}
+
+// ================================================================
+//  UI 更新
+// ================================================================
+function renderTeamCards(){
+  const teams=DS[curDS].teams;
+  const ct=document.getElementById('teamCards');
+  ct.innerHTML=teams.map(t=>{
+    const sel=t.id===selTeam?' sel':'';
+    return `<div class="tcard${sel}" onclick="chooseTeam('${t.id}')">
+      <div><div class="tn">${t.id}</div><div class="tr">${t.w}胜 ${t.l}负 · 剩${t.r}场</div></div>
+    </div>`;
+  }).join('');
+}
+
+function updateFlowIndicator(step){
+  if(!step) return;
+  const phases=['init','bfs','dfs','augment','done'];
+  const activePhase=step.phase||'';
+  const activeIdx=phases.indexOf(activePhase);
+  const steps=document.querySelectorAll('#flowInd .flow-step');
+  steps.forEach((el,i)=>{
+    el.classList.remove('active','done');
+    if(i===activeIdx) el.classList.add('active');
+    else if(i<activeIdx) el.classList.add('done');
+  });
+}
+
+function updateLog(){
+  const el=document.getElementById('stepLog');
+  if(!visSteps.length){
+    el.innerHTML='<div style="color:var(--text2);">👈 点击左侧球队开始分析</div>';
+    return;
+  }
+  const s=Math.max(0,stepIdx-1), e=Math.min(visSteps.length, stepIdx+3);
+  let h='';
+  if(s>0) h+=`<div style="color:var(--text2);font-size:0.68rem;text-align:center;">⋯ 前 ${s} 步 ⋯</div>`;
+  for(let i=s;i<e;i++){
+    const st=visSteps[i], cls=i===stepIdx?'sentry cur':'sentry';
+    h+=`<div class="${cls}"><div class="ph">${st.title}</div><div class="dt">${st.desc}</div></div>`;
+  }
+  if(e<visSteps.length) h+=`<div style="color:var(--text2);font-size:0.68rem;text-align:center;">⋯ 后 ${visSteps.length-e} 步 ⋯</div>`;
+  el.innerHTML=h;
+  el.scrollTop=el.scrollHeight;
+}
+
+function updateResCard(){
+  const card=document.getElementById('resCard'), ct=document.getElementById('resContent');
+  const st=visSteps[stepIdx];
+  if(st&&(st.type==='done'||st.type==='trivial')){
+    card.style.display='block';
+    const elim=st.type==='trivial'?true:st.eliminated;
+    const tf=st.type==='done'?st.totalFlow:(netData?netData.totRem||0:0);
+    const tr=netData?netData.totRem||0:0;
+    ct.innerHTML=`<div style="text-align:center;padding:8px;">
+      <div style="font-size:2.4rem;">${elim?'❌':'✅'}</div>
+      <div style="font-size:1rem;font-weight:700;margin:6px 0;color:${elim?'var(--red)':'var(--green)'}">
+        ${st.type==='trivial'?st.desc:(elim?'已被淘汰！':'未被淘汰')}
+      </div>
+      <div style="font-size:0.78rem;color:var(--text2);">
+        最大流 <b>${tf}</b> ${elim?'<':'='} 总剩余比赛 <b>${tr}</b>
+      </div>
+      ${st.type==='trivial'?`<div style="font-size:0.78rem;color:var(--text2);margin-top:4px;">${st.longDesc||st.desc}</div>`:''}
+    </div>`;
+  }else{card.style.display='none';}
+}
+
+function refreshUI(){
+  const st=visSteps[stepIdx];
+  const flow=st&&st.flow?st.flow:null;
+
+  document.getElementById('ovFlow').textContent=(st&&st.totalFlow!==undefined)?st.totalFlow:'?';
+  document.getElementById('ovDemand').textContent=netData?netData.totRem:'?';
+  document.getElementById('ovPhase').textContent=st?st.title.replace(/[^\w\s一-鿿]/g,'').trim():'就绪';
+
+  const pct=visSteps.length>1?(stepIdx/(visSteps.length-1))*100:0;
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('stepCur').textContent=stepIdx;
+  document.getElementById('stepMax').textContent=Math.max(0,visSteps.length-1);
+  document.getElementById('btnPrev').disabled=stepIdx<=0;
+  document.getElementById('btnNext').disabled=stepIdx>=visSteps.length-1;
+
+  updateFlowIndicator(st);
+  if(netData) renderGraph(netData,st,flow);
+  updateLog();
+  updateResCard();
+  renderTeamCards();
+}
+
+// ================================================================
+//  导航控制
+// ================================================================
+function chooseTeam(id){
+  selTeam=id; stepIdx=0;
+  if(playing) stopPlay();
+  const teams=DS[curDS].teams;
+  netData=buildNetwork(teams,id);
+  if(!netData.trivial&&netData.rec) netData.rec.maxFlow(netData.SRC,netData.SNK);
+  visSteps=buildVisSteps(netData);
+  refreshUI();
+}
+function stepNext(){if(stepIdx<visSteps.length-1){stepIdx++;refreshUI();}}
+function stepPrev(){if(stepIdx>0){stepIdx--;refreshUI();}}
+
+function togglePlay(){playing?stopPlay():startPlay();}
+function startPlay(){
+  playing=true;
+  const btn=document.getElementById('btnPlay');
+  btn.textContent='⏸ 暂停'; btn.style.background='var(--red)'; btn.style.color='#fff'; btn.style.borderColor='var(--red)';
+  _advance();
+}
+function stopPlay(){
+  playing=false; if(playTimer) clearTimeout(playTimer);
+  const btn=document.getElementById('btnPlay');
+  btn.textContent='▶ 自动播放'; btn.style.background=''; btn.style.color=''; btn.style.borderColor='';
+}
+function _advance(){
+  if(!playing) return;
+  if(stepIdx<visSteps.length-1){stepNext(); playTimer=setTimeout(_advance,2100-parseInt(document.getElementById('speedRng').value));}
+  else stopPlay();
+}
+
+function resetAll(){
+  stopPlay();
+  selTeam=null; netData=null; visSteps=[]; stepIdx=0;
+  initSvg();
+  renderTeamCards();
+  document.getElementById('stepLog').innerHTML='<div style="color:var(--text2);">👈 点击左侧球队开始分析</div>';
+  document.getElementById('resCard').style.display='none';
+  document.getElementById('ovFlow').textContent='?'; document.getElementById('ovDemand').textContent='?';
+  document.getElementById('ovPhase').textContent='就绪';
+  document.getElementById('progFill').style.width='0%';
+  document.getElementById('stepCur').textContent='0'; document.getElementById('stepMax').textContent='0';
+  document.getElementById('btnPrev').disabled=true; document.getElementById('btnNext').disabled=true;
+  document.getElementById('annotation').style.opacity='0';
+  document.querySelectorAll('#flowInd .flow-step').forEach(el=>el.classList.remove('active','done'));
+}
+
+// ================================================================
+//  事件绑定
+// ================================================================
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'){e.preventDefault();stepNext();}
+  else if(e.key==='ArrowLeft'){e.preventDefault();stepPrev();}
+  else if(e.key===' '){e.preventDefault();togglePlay();}
+});
+document.getElementById('dsSel').addEventListener('change',e=>{curDS=e.target.value;resetAll();});
+document.getElementById('speedRng').addEventListener('input',()=>{if(playing){stopPlay();startPlay();}});
+window.addEventListener('resize',()=>{
+  if(netData&&visSteps.length>0){const st=visSteps[stepIdx];initSvg();renderGraph(netData,st,st&&st.flow?st.flow:null);}
+});
+
+// ================================================================
+//  启动
+// ================================================================
+initSvg();
+renderTeamCards();
+chooseTeam(DS[curDS].teams[0].id);
+console.log('⚾ 棒球淘汰问题 — Dinic 最大流可视化');
+console.log('  ← → 方向键：浏览步骤  |  空格键：播放/暂停');
+console.log('  点击左侧球队切换分析目标');
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+# Unrestricted grammar (length decreasing rule)
+N: S A
+T: a
+P:
+S->SA
+S->a
+SA->A
+A->a
+START: S

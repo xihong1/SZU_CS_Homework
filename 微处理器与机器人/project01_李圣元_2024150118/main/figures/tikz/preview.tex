@@ -1,0 +1,47 @@
+% ============================================================
+%  preview.tex —— 单独预览 / 导出 7 张插图
+%
+%  编译：xelatex preview.tex        （或 latexmk -xelatex preview.tex）
+%  输出：preview.pdf，每页一张图
+%  需要图片时，用 Acrobat / pdf 阅读器把某一页导出成 PNG 即可。
+% ============================================================
+\documentclass[UTF8,zihao=5,fontset=fandol]{ctexart}
+
+\usepackage[a4paper,top=1.5cm,bottom=1.5cm,left=1cm,right=1cm]{geometry}
+\usepackage{fontspec}
+\usepackage{xcolor}
+
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
+
+\input{report-figs}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\centering
+\FigPinMap
+\clearpage
+
+\FigLedCircuit
+\clearpage
+
+\FigSystemBlock
+\clearpage
+
+\FigModuleTree
+\clearpage
+
+\FigKeyFlow
+\clearpage
+
+\FigMainFlow
+\clearpage
+
+\FigClockTree
+\clearpage
+
+\end{document}

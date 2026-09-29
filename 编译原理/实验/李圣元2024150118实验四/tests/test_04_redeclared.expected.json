@@ -1,0 +1,12 @@
+{
+  "errors": [
+    { "type": "REDECLARED", "line": 4, "col": 5, "symbol": "x" },
+    { "type": "TYPE_MISMATCH", "line": 5, "col": 5, "expected": "int", "found": "float" }
+  ],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "testRedeclared", "type": "void()", "scope": "global", "line": 2 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 7 },
+    { "name": "x", "type": "int", "scope": "function", "line": 3 }
+  ]
+}

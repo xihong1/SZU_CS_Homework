@@ -1,0 +1,10 @@
+{
+  "errors": [],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "factorial", "type": "int(int)", "scope": "global", "line": 2 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 7 },
+    { "name": "n", "type": "int", "scope": "function", "line": 2 },
+    { "name": "result", "type": "int", "scope": "function", "line": 8 }
+  ]
+}

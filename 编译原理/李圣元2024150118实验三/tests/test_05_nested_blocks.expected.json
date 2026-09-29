@@ -1,0 +1,78 @@
+{
+  "ast": {
+    "type": "Program", "line": 2, "col": 1,
+    "funcs": [
+      {
+        "type": "FuncDecl", "name": "nested", "return_type": "int", "line": 2, "col": 1,
+        "params": [
+          { "type": "ParamDecl", "name": "n", "param_type": "int", "line": 2, "col": 19 }
+        ],
+        "body": [
+          {
+            "type": "IfStmt", "else": null, "line": 3, "col": 5,
+            "cond": {
+              "type": "BinaryExpr", "op": ">", "line": 3, "col": 8,
+              "left": { "type": "TypedVarRef", "name": "n", "ref_type": "int", "line": 3, "col": 8 },
+              "right": { "type": "IntLiteral", "value": "0", "line": 3, "col": 16 }
+            },
+            "then": [
+              {
+                "type": "IfStmt", "line": 4, "col": 9,
+                "cond": {
+                  "type": "BinaryExpr", "op": ">", "line": 4, "col": 12,
+                  "left": { "type": "TypedVarRef", "name": "n", "ref_type": "int", "line": 4, "col": 12 },
+                  "right": { "type": "IntLiteral", "value": "5", "line": 4, "col": 20 }
+                },
+                "then": [
+                  {
+                    "type": "ReturnStmt", "line": 5, "col": 13,
+                    "expr": { "type": "IntLiteral", "value": "1", "line": 5, "col": 20 }
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "ReturnStmt", "line": 7, "col": 13,
+                    "expr": { "type": "IntLiteral", "value": "2", "line": 7, "col": 20 }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "ReturnStmt", "line": 8, "col": 5,
+            "expr": { "type": "IntLiteral", "value": "0", "line": 8, "col": 12 }
+          }
+        ]
+      },
+      {
+        "type": "FuncDecl", "name": "main", "return_type": "void", "line": 10, "col": 1,
+        "params": [],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "r", "line": 11, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 12, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "r", "ref_type": "int", "line": 12, "col": 5 },
+            "value": {
+              "type": "CallExpr", "line": 12, "col": 13,
+              "callee": { "type": "Identifier", "name": "nested", "line": 12, "col": 13 },
+              "args": [
+                { "type": "IntLiteral", "value": "10", "line": 12, "col": 22 }
+              ]
+            }
+          },
+          {
+            "type": "ExprStmt", "line": 13, "col": 5,
+            "expr": {
+              "type": "CallExpr", "line": 13, "col": 5,
+              "callee": { "type": "Identifier", "name": "print", "line": 13, "col": 5 },
+              "args": [
+                { "type": "TypedVarRef", "name": "r", "ref_type": "int", "line": 13, "col": 13 }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

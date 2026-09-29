@@ -1,0 +1,158 @@
+\section{Method}
+\label{sec:method}
+
+We present MSAE-AD, a few-shot anomaly detection framework that models the normal feature manifold using a hierarchical sparse autoencoder.
+Following the minimalist philosophy of SubspaceAD, our method operates in three stages: (1) feature extraction using a frozen DINOv2 backbone, (2) MSAE-based nonlinear manifold modeling of normal patch features, and (3) anomaly scoring via multi-scale reconstruction error.
+An overview of the proposed framework is illustrated in \cref{fig:framework}.
+
+\subsection{Problem Formulation}
+
+Following the standard few-shot anomaly detection setup~\cite{Lendering2025SubspaceAD,Huang2022WinCLIP}, we are given a small set of $k$ anomaly-free training images $\mathcal{I}_{\text{train}} = \{I_1, \ldots, I_k\}$ for each object category, where $k \in \{1, 2, 4\}$.
+The objective is to define an anomaly scoring function $A(I_{\text{test}}, p) \in [0, 1]$ that predicts the anomaly likelihood for every spatial position $p$ in a test image $I_{\text{test}}$.
+
+The key challenge is to model the manifold of normal patch features using only $k$ clean samples, such that anomalous regions---which deviate from this manifold---receive high anomaly scores.
+SubspaceAD~\cite{Lendering2025SubspaceAD} addresses this by fitting a linear PCA subspace.
+We propose to instead fit a nonlinear hierarchical sparse autoencoder that can capture more complex normal feature distributions.
+
+\subsection{Feature Extraction}
+
+We adopt the same feature extraction pipeline as SubspaceAD to ensure fair comparison and isolate the effect of replacing PCA with MSAE.
+A frozen DINOv2-G model~\cite{Oquab2023DINOv2} serves as the feature extractor.
+Given an input image, the model produces a sequence of patch tokens, each corresponding to a $14 \times 14$ pixel region.
+
+Following~\cite{Lendering2025SubspaceAD}, we aggregate patch tokens from multiple intermediate transformer layers (layers 22--28) rather than using only the final layer.
+For each spatial position $p$, the feature vector $\mathbf{x}_p \in \mathbb{R}^D$ is obtained by mean-pooling across the selected layers:
+
+\begin{equation}
+    \mathbf{x}_p = \frac{1}{|\mathcal{L}|} \sum_{l \in \mathcal{L}} \mathbf{f}_l(p),
+    \label{eq:feature_agg}
+\end{equation}
+
+where $\mathbf{f}_l(p)$ denotes the patch token at position $p$ from transformer block $l$, $\mathcal{L} = \{22, \ldots, 28\}$, and $D = 1536$ for DINOv2-G.
+This multi-layer fusion balances high-level semantics with low-level spatial detail, improving sensitivity to subtle anomalies.
+
+To enrich the limited training data, we apply $N_a = 30$ random rotations (from $0^\circ$ to $345^\circ$) to each normal image, following the augmentation strategy of~\cite{Lendering2025SubspaceAD}.
+Features are extracted from all $k \times (1 + N_a)$ images, forming the set of normal patch features $\mathcal{X}_{\text{normal}}$.
+
+\subsection{MSAE-Based Normal Manifold Modeling}
+
+\label{sec:msae_modeling}
+
+The core innovation of MSAE-AD lies in replacing the linear PCA subspace with a Matryoshka Sparse Autoencoder (MSAE)~\cite{Zaigrajew2025MSAE} to model the distribution of normal patch features.
+
+\subsubsection{Matryoshka Sparse Autoencoder}
+
+An MSAE is a hierarchical sparse autoencoder that learns representations at $M$ nested granularity levels simultaneously.
+Given an input feature vector $\mathbf{x} \in \mathbb{R}^D$, the MSAE encoder $E: \mathbb{R}^D \rightarrow \mathbb{R}^{d_{\text{latent}}}$ maps it to a latent representation $\mathbf{z} = E(\mathbf{x})$, where $d_{\text{latent}}$ is the latent dimension (expansion factor $\times D$).
+The decoder $G: \mathbb{R}^{d_{\text{latent}}} \rightarrow \mathbb{R}^D$ reconstructs the input from the latent code.
+
+The key insight of MSAE is that instead of training with a single sparsity level, it trains with $M$ predefined granularity levels $\{k_1, k_2, \ldots, k_M\}$.
+For each level $m$, only the top-$k_m$ latent neurons (ranked by activation magnitude) are retained, and the remaining activations are set to zero.
+The training loss is a weighted sum of reconstruction losses across all granularity levels:
+
+\begin{equation}
+    \mathcal{L}_{\text{MSAE}} = \sum_{m=1}^{M} \alpha_m \cdot \mathcal{L}_{\text{recon}}\big(\mathbf{x}, G(\text{TopK}_{k_m}(\mathbf{z}))\big),
+    \label{eq:msae_loss}
+\end{equation}
+
+where $\text{TopK}_{k_m}(\cdot)$ zeroes out all but the $k_m$ largest activations, and $\mathcal{L}_{\text{recon}}$ is the mean squared error between the original and reconstructed features.
+
+\subsubsection{Weighting Strategies}
+
+We experiment with two MSAE weighting variants~\cite{Zaigrajew2025MSAE}:
+
+\begin{itemize}
+    \item \textbf{Uniform Weighting (UW):} $\alpha_m = 1/M$ for all $m$. All granularity levels contribute equally to the training objective, encouraging balanced reconstruction quality across all sparsity levels.
+    \item \textbf{Reverse Weighting (RW):} $\alpha_m \propto 1/k_m$, normalized such that $\sum_m \alpha_m = 1$. Higher-sparsity (smaller $k_m$) reconstructions receive larger weights, incentivizing the model to learn more compact and efficient representations.
+\end{itemize}
+
+In our experiments, we use $M = 2$ granularity levels with $k \in \{128, 256\}$, an expansion factor of 8, and train the MSAE on the normal patch features $\mathcal{X}_{\text{normal}}$ extracted from the $k$ normal images of each category.
+Training is performed per category, consistent with the one-class anomaly detection paradigm.
+
+\subsubsection{Training Protocol}
+
+For each object category, we train a dedicated MSAE model on the patch features $\mathcal{X}_{\text{normal}}$ extracted from the $k$ normal images and their augmentations.
+The model is trained to minimize \cref{eq:msae_loss} using the AdamW optimizer with a learning rate of $10^{-3}$ and a cosine annealing schedule.
+Training proceeds for a maximum of 50 epochs, with early stopping based on validation reconstruction loss.
+The best checkpoint is selected according to the lowest reconstruction error on a held-out subset of normal features.
+
+\subsection{Anomaly Scoring and Localization}
+
+At inference time, a test image $I_{\text{test}}$ is processed through the frozen DINOv2-G backbone to obtain its patch feature map $\mathbf{X}_{\text{test}} \in \mathbb{R}^{h \times w \times D}$.
+
+\subsubsection{Multi-Scale Patch-Level Scoring}
+
+For each patch feature vector $\mathbf{x}_p$, we compute the MSAE reconstruction using the trained model and derive a reconstruction error:
+
+\begin{equation}
+    \hat{\mathbf{x}}_p = G\big(\text{TopK}_{k_1}(\mathbf{z}_p)\big), \quad \mathbf{z}_p = E(\mathbf{x}_p),
+    \label{eq:recon}
+\end{equation}
+
+where $k_1$ is the smallest granularity level (highest sparsity).
+The patch-level anomaly score is defined as the squared $\ell_2$ reconstruction error:
+
+\begin{equation}
+    S(\mathbf{x}_p) = \|\mathbf{x}_p - \hat{\mathbf{x}}_p\|_2^2.
+    \label{eq:score}
+\end{equation}
+
+The intuition is that normal patches, whose features lie on the learned manifold, will be accurately reconstructed by the MSAE, whereas anomalous patches deviate from the manifold and yield large reconstruction errors.
+By using the highest-sparsity granularity level $k_1$, we force the MSAE to reconstruct using only the most essential learned features, amplifying the reconstruction gap for anomalous inputs.
+
+\subsubsection{Multi-Granularity Fusion}
+
+In addition to single-granularity scoring, we explore a multi-granularity fusion strategy that aggregates reconstruction errors across multiple sparsity levels:
+
+\begin{equation}
+    S_{\text{fusion}}(\mathbf{x}_p) = \sum_{m=1}^{M} \beta_m \cdot \|\mathbf{x}_p - G(\text{TopK}_{k_m}(\mathbf{z}_p))\|_2^2,
+    \label{eq:fusion_score}
+\end{equation}
+
+where $\beta_m$ are fusion weights (we use $\beta_m = \alpha_m$, the same weights as in training).
+This multi-scale approach leverages the hierarchical nature of MSAE: coarse-grained reconstructions (high sparsity) capture global normality structure, while fine-grained reconstructions (low sparsity) provide sensitivity to local detail deviations.
+
+\subsubsection{Image-Level Aggregation}
+
+To aggregate patch-level scores into a single image-level anomaly prediction, we employ the tail value-at-risk (TVaR) statistic, following~\cite{Lendering2025SubspaceAD,Deng2024AnomalyDINO}:
+
+\begin{equation}
+    s_{\text{img}} = \text{mean}\big(\mathcal{H}(M)\big),
+    \label{eq:tvar}
+\end{equation}
+
+where $\mathcal{H}(M)$ denotes the set of patch scores in the anomaly map $M$ at or above the $(100 - \tau)$-th percentile.
+We set $\tau = 1\%$, which balances sensitivity to subtle defects with robustness to sparse false positives.
+
+\subsubsection{Pixel-Level Localization}
+
+For pixel-level evaluation and visualization, the patch-level anomaly map $M \in \mathbb{R}^{h \times w}$ is bilinearly upsampled to the original image resolution and smoothed with a Gaussian filter ($\sigma = 4$) to suppress high-frequency noise while preserving localization accuracy.
+The final normalized anomaly score map is:
+
+\begin{equation}
+    A(I_{\text{test}}, p) = \text{Norm}\big(S(\mathbf{x}_p)\big),
+    \label{eq:norm_score}
+\end{equation}
+
+where $\text{Norm}(\cdot)$ denotes min-max normalization to $[0, 1]$.
+
+\subsection{Comparison with PCA-Based SubspaceAD}
+
+It is instructive to compare MSAE-AD with the original PCA-based SubspaceAD~\cite{Lendering2025SubspaceAD}.
+In SubspaceAD, the normal manifold is modeled as a linear subspace spanned by the top-$r$ principal components:
+
+\begin{equation}
+    \mathbf{x}_{\text{proj}} = \boldsymbol{\mu} + \mathbf{C}\mathbf{C}^\top(\mathbf{x}_p - \boldsymbol{\mu}),
+\end{equation}
+
+where $\mathbf{C} \in \mathbb{R}^{D \times r}$ contains the $r$ dominant eigenvectors.
+The anomaly score is the squared residual $\|\mathbf{x}_p - \mathbf{x}_{\text{proj}}\|_2^2$.
+
+MSAE-AD generalizes this formulation in two important ways:
+\begin{enumerate}
+    \item \textbf{Nonlinearity:} The MSAE encoder-decoder architecture can capture nonlinear manifold structure that a linear PCA subspace cannot represent, potentially modeling more complex normal feature distributions.
+    \item \textbf{Hierarchical sparsity:} MSAE learns representations at multiple granularities, enabling multi-scale anomaly detection that can be sensitive to both global structural deviations and fine-grained texture anomalies.
+\end{enumerate}
+
+However, PCA offers advantages in terms of simplicity, interpretability (eigenvalues directly indicate explained variance), and closed-form fitting without iterative optimization.
+Our experiments aim to characterize when each approach excels and whether they provide complementary signals.

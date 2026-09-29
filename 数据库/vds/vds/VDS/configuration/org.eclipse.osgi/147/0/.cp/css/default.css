@@ -1,0 +1,88 @@
+ /** 文本框可编辑背景色*/
+.text-background-enable {
+	background-color: white;
+}
+ /** 文本框不可编辑背景色*/
+.text-background-disable {
+	 background-color: #F1F1F1;
+}
+/** 表格swt样式 */
+.table-swt-style {
+	swt-style-attribute: "SWT.MULTI | SWT.FULL_SELECTION | SWT.CHECK | SWT.BORDER | SWT.NO_MOVE";
+}
+
+ /** 表格swt样式-没有复选框 */
+ .table-swt-swt-no-check-style {
+	 swt-no-check-style-attribute: "SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER | SWT.NO_MOVE";
+ }
+
+.grid-swt-control-css {
+	swt-control-margin-left : -6;
+	swt-control-margin-right : -6;
+}
+
+.modern {
+	tree-structure-painter: background padding tree;
+	table-border-color: auto;
+	cell-background-color: white;
+	text-align: left;
+	padding: 0 5;
+}
+
+.modern:select {
+	painter-resolution: false;
+	color: white;
+	cell-background-color: #BFCFDC;
+	font-family: "Segoe UI";
+	font-size: 9;
+	font-style: normal;
+	invert-icons: true;
+}
+
+.modern > .selectionAnchor:select {
+	color: white;
+	cell-background-color: #BFCFDC;
+}
+
+.modern > .CORNER {
+	render-grid-lines: true;
+	cell-background-color: #F5F5F5;
+}
+
+.modern > .COLUMN_HEADER {
+	render-grid-lines: true;
+	cell-background-color: #F5F5F5;
+	color: black;
+	font: "Segoe UI" 9 normal;
+	text-align: middle;
+	padding: 0 5;
+}
+
+.modern > .COLUMN_HEADER:select {
+	cell-background-color: #c0c0c0;
+	color: white;
+}
+
+.modern > .ROW_HEADER {
+	render-grid-lines: true;
+	cell-background-color: #F5F5F5;
+	color: black;
+	font: "Segoe UI" 10 normal;
+	text-align: center;
+	row-height: auto;
+}
+
+.modern > .ROW_HEADER:select {
+	cell-background-color: #c0c0c0;
+	color: white;
+}
+
+.modern > .genderLabel {
+	painter: background padding combobox;
+}
+ /** 设置查询结果底部信息字体颜色 */
+ .grid-status-bar-font-color {
+	 color: #0000FF;
+ }
+
+

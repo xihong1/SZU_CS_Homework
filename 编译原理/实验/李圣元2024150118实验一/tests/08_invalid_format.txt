@@ -1,0 +1,7 @@
+# Invalid production line format
+N: S
+T: a
+P:
+S->a
+S a
+START: S

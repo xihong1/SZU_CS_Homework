@@ -1,0 +1,16 @@
+{
+  "errors": [],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "computeAvg", "type": "float(int,int)", "scope": "global", "line": 2 },
+    { "name": "roundDown", "type": "int(float)", "scope": "global", "line": 7 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 12 },
+    { "name": "a", "type": "int", "scope": "function", "line": 2 },
+    { "name": "b", "type": "int", "scope": "function", "line": 2 },
+    { "name": "result", "type": "float", "scope": "function", "line": 3 },
+    { "name": "f", "type": "float", "scope": "function", "line": 7 },
+    { "name": "r", "type": "int", "scope": "function", "line": 8 },
+    { "name": "avg", "type": "float", "scope": "function", "line": 13 },
+    { "name": "intResult", "type": "int", "scope": "function", "line": 14 }
+  ]
+}

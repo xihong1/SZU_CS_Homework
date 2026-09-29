@@ -1,0 +1,13 @@
+// T3: Nested blocks
+fn(int) nested -> n@int:
+    if n@int > 0:
+        if n@int > 5:
+            return 1
+        else:
+            return 2
+    return 0
+
+fn(void) main ->:
+    int r
+    r@int = nested->(10)
+    print->(r@int)

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心页面</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #f3f5f8;
+            color: #1f2937;
+        }
+
+        .page {
+            width: min(1200px, 96vw);
+            margin: 24px auto;
+        }
+
+        .title {
+            margin: 0 0 16px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .layout {
+            display: flex;
+            gap: 16px;
+            min-height: 920px;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #f0f7ff 0%, #f8fbff 60%, #eef6ff 100%);
+            border: 1px solid #c8d8f4;
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 10px 20px rgba(43, 97, 168, 0.12);
+        }
+
+        .profile {
+            text-align: center;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #d4e2f8;
+            margin-bottom: 14px;
+        }
+
+        .avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e5e7eb;
+        }
+
+        .name {
+            margin: 10px 0 2px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #193a6a;
+        }
+
+        .class-info,
+        .mail {
+            margin: 4px 0 0;
+            font-size: 13px;
+            color: #425466;
+            word-break: break-all;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .menu a,
+        .menu span {
+            display: block;
+            text-decoration: none;
+            border: 1px solid #bfd2f4;
+            border-radius: 8px;
+            padding: 14px 14px;
+            font-size: 18px;
+            font-weight: 600;
+            background: #ffffff;
+            width: 100%;
+        }
+
+        .menu a {
+            color: #18457a;
+        }
+
+        .menu a:hover {
+            background: #e2efff;
+            border-color: #8fb5ef;
+            transform: translateX(2px);
+            transition: all 0.2s ease;
+        }
+
+        .menu span {
+            color: #8493a7;
+            background: #f4f7fc;
+        }
+
+        .content {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #d7deea;
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 920px;
+        }
+
+        .content-head {
+            height: 46px;
+            background: #eaf1ff;
+            border-bottom: 1px solid #d7deea;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        iframe {
+            width: 100%;
+            flex: 1;
+            border: 0;
+            background: #fff;
+        }
+
+        @media (max-width: 900px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .content {
+                min-height: 620px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <h1 class="title">个人中心</h1>
+
+        <div class="layout">
+            <aside class="sidebar">
+                <div class="profile">
+                    <img class="avatar" src="照片/人头像.jpeg" alt="头像">
+                    <p class="name">李圣元</p>
+                    <p class="class-info">班级：人工智能卓越班</p>
+                    <p class="mail">邮箱：lishengyuan@szu.edu.cn</p>
+                </div>
+                <nav class="menu">
+                    <a href="个人简历优化.html" target="centerFrame">简介</a>
+                    <a href="我的课表.html" target="centerFrame">课表</a>
+                    <span target="centerFrame" title="当前版本暂未开放">学业成绩</span>
+                </nav>
+            </aside>
+            <section class="content">
+                <div class="content-head">内容展示区（默认显示：简介）</div>
+                <iframe name="centerFrame" src="个人简历优化.html" title="个人中心内容"></iframe>
+            </section>
+        </div>
+    </div>
+</body>
+
+</html>

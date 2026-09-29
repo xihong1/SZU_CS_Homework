@@ -1,0 +1,1 @@
+{"fileName":"20092026102851968.hist","query":"SELECT * FROM EMP2024150118 WHERE COMM IS NOT NULL;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 10:28:51.819 CST","elapsedTime":"26 ms","isPinned":false,"finalStatus":true,"resultSetSize":5,"querySizeToStore":1000}

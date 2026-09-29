@@ -1,0 +1,29 @@
+func_fib:
+# --- Function: fib (1 params) ---
+    alloc n:int
+    t0 = 1
+    t1 = n <= t0
+    if_false t1 goto endif1
+    return n
+endif1:
+    t2 = 1
+    t3 = n - t2
+    param t3
+    t4 = call func_fib, 1
+    t5 = 2
+    t6 = n - t5
+    param t6
+    t7 = call func_fib, 1
+    t8 = t4 + t7
+    return t8
+func_main:
+# --- Function: main (0 params) ---
+    alloc n:int
+    alloc answer:int
+    t9 = 8
+    n = t9
+    param n
+    t10 = call func_fib, 1
+    answer = t10
+    print answer
+    return

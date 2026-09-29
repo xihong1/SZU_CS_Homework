@@ -1,0 +1,5 @@
+// T5: Syntax error - missing right paren
+fn(void) main ->:
+    int x
+    x@int = (1 + 2
+    print->(x@int)

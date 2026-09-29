@@ -1,0 +1,11 @@
+// T6-1: auto 类型推导（选做）
+fn(void) testAuto ->:
+    auto a = 5
+    auto b = 3.14
+    auto c = true
+    print->(a@int)
+    print->(b@float)
+    print->(c@bool)
+
+fn(void) main ->:
+    testAuto->()

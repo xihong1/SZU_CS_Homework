@@ -1,0 +1,244 @@
+\documentclass[UTF8,zihao=5,fontset=fandol]{ctexart}
+
+\usepackage[letterpaper,top=1in,bottom=1in,left=1.25in,right=1.25in]{geometry}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
+
+% ============================================================
+% 模板固定文字（课程信息、教师信息、各段标题等）
+% ============================================================
+\input{template-info}
+
+% ============================================================
+% 学生信息填写区
+% 只需修改下面各命令第二对花括号中的内容。
+% ============================================================
+\newcommand{\MajorName}{}              % 专业
+\newcommand{\StudentName}{}            % 姓名
+\newcommand{\StudentID}{}              % 学号
+\newcommand{\ClassName}{}              % 班级
+\newcommand{\ExperimentDate}{年\quad 月\quad 日} % 实验时间
+\newcommand{\SubmissionDate}{年\quad 月\quad 日} % 实验报告提交时间
+
+% ============================================================
+% 模板排版设置（通常不需要修改）
+% ============================================================
+\pagestyle{empty}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0pt}
+\setlength{\fboxsep}{5pt}
+\setlength{\fboxrule}{0.4pt}
+\setlist{nosep,leftmargin=2em}
+
+\definecolor{codegray}{RGB}{245,245,245}
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codegray},
+  frame=single,
+  rulecolor=\color{black!30},
+  numbers=left,
+  numberstyle=\tiny\color{black!55},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  tabsize=4
+}
+
+% 固定宽度的带下划线字段。
+\newcommand{\reportfield}[2]{%
+  \underline{\makebox[#1][c]{\strut #2}}%
+}
+
+% 封面各行左端对齐，下划线右端对齐，内容按整行的中心线对齐。
+\newlength{\coverrowwidth}
+\newlength{\coverlabelwidth}
+\newlength{\coverfieldwidth}
+\setlength{\coverrowwidth}{13.8cm}
+\newcommand{\coverrow}[2]{%
+  \settowidth{\coverlabelwidth}{#1}%
+  \setlength{\coverfieldwidth}{\dimexpr\coverrowwidth-\coverlabelwidth-0.5em\relax}%
+  \makebox[0pt][l]{#1\hspace{0.5em}\reportfield{\coverfieldwidth}{}}%
+  \makebox[\coverrowwidth][c]{\strut #2}%
+}
+
+% 正文页的外框尺寸与原 Word 模板一致。
+\newlength{\reportinnerheight}
+\setlength{\reportinnerheight}{\dimexpr\textheight-2\fboxsep-2\fboxrule\relax}
+\newsavebox{\reportpagebox}
+\newenvironment{reportpage}
+  {\begin{lrbox}{\reportpagebox}\begin{minipage}[t][\reportinnerheight][t]{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}}
+  {\end{minipage}\end{lrbox}\noindent\fbox{\usebox{\reportpagebox}}}
+
+\newcommand{\reportheading}[2]{%
+  \noindent\textbf{#1}%
+  \if\relax\detokenize{#2}\relax\else #2\fi\par
+}
+
+% 正文内容框会根据内容自动增高，并在空间不足时自动分页。
+\newtcolorbox{reportsection}[2]{
+  enhanced jigsaw,
+  breakable,
+  colback=white,
+  colframe=black,
+  boxrule=\fboxrule,
+  arc=0pt,
+  outer arc=0pt,
+  left=5pt,
+  right=5pt,
+  top=5pt,
+  bottom=5pt,
+  before skip=0pt,
+  after skip=0pt,
+  before upper={\reportheading{#1}{#2}}
+}
+
+\begin{document}
+
+% ============================================================
+% 第 1 页：封面
+% ============================================================
+\noindent \AttachmentText
+
+\vspace{2.2em}
+{\centering\bfseries\fontsize{22pt}{28pt}\selectfont \ReportTitle\par}
+
+\vspace{2.8em}
+{\bfseries\fontsize{14pt}{21pt}\selectfont
+\setlength{\parindent}{0pt}
+\centering
+\coverrow{\CourseLabel}{\CourseName}\par\vspace{1.5em}
+\coverrow{\ExperimentLabel}{\ExperimentName}\par\vspace{1.5em}
+\coverrow{\CollegeLabel}{\CollegeName}\par\vspace{1.5em}
+\coverrow{\MajorLabel}{\MajorName}\par\vspace{1.5em}
+\coverrow{\InstructorLabel}{\InstructorName}\par\vspace{1.5em}
+\coverrow{\StudentLabel}{\StudentLine}\par\vspace{1.5em}
+\coverrow{\ClassLabel}{\ClassName}\par\vspace{1.5em}
+\coverrow{\ExperimentDateLabel}{\ExperimentDate}\par\vspace{1.5em}
+\coverrow{\SubmissionDateLabel}{\SubmissionDate}\par
+}
+
+\vfill
+{\centering\bfseries\fontsize{12pt}{16pt}\selectfont \OfficeText\par}
+
+\newpage
+
+% ============================================================
+% 报告正文：各部分按内容自动增高、自动分页
+% ============================================================
+\begin{reportsection}{\PurposeTitle}{}
+  % ---------- “实验目的与要求”填写区开始 ----------
+  STM32 定时器可用于建立时间基准、产生 PWM、测量外部脉冲以及实现硬件保护。本实验基于 DNF429/F767/H743-EB 实验箱，首先完成 OLED 基础显示并建立统一显示接口，再将基本定时器、通用定时器和高级定时器分别应用于反应速度测试、三色呼吸灯、频率与占空比测量以及固定次数闪光和硬件急停，使学生在可观察、可测量的任务中掌握不同类型定时器的功能与差异。
+
+  \textbf{相关预备知识：}
+  \begin{itemize}
+    \item \textbf{参考STM32F429阿波罗开发指南_V1.0.pdf的第19章-第21章，第23章}
+    \item \textbf{定时器时钟：}能够从实际核心板的 RCC 时钟树确定定时器内核时钟，理解 CPU、AHB、APB 与定时器时钟之间的关系，不直接把 CPU 主频当作所有定时器的输入时钟。
+    \item \textbf{更新周期：}向上计数时，定时器更新频率为
+    \[
+      f_{\mathrm{update}}
+      =\frac{f_{\mathrm{TIM}}}{(\mathrm{PSC}+1)(\mathrm{ARR}+1)}.
+    \]
+    应能根据目标周期选择 PSC 和 ARR，并说明计数分辨率和最大定时时间。
+    \item \textbf{PWM 输出：}边沿对齐模式下，PWM 频率由 PSC 和 ARR 决定，占空比近似为
+    \[
+      D=\frac{\mathrm{CCR}}{\mathrm{ARR}+1}\times 100\%.
+    \]
+    同一定时器的多个通道共用 PSC 和 ARR，但可分别设置 CCR。
+    \item \textbf{输入捕获：}理解上升沿、下降沿、捕获寄存器和计数器时间戳，能够由周期计数值和高电平计数值计算输入信号的频率与占空比。
+    \item \textbf{高级定时器：}了解重复计数器 RCR、单脉冲模式 OPM、主输出使能 MOE 和刹车输入 BKIN 的作用，理解硬件自动停止和硬件关断相对于软件控制的特点。
+    \item \textbf{按键与显示：}掌握按键消抖、按下事件检测和 OLED 基本显示；显示刷新和长时间串口输出不得放入高频定时器中断。
+  \end{itemize}
+
+  \textbf{实验目的：}
+  \begin{enumerate}[label=\arabic*)]
+    \item 掌握 OLED 模块的初始化、清屏、字符和数字显示方法，能够封装供后续定时器任务复用的显示接口。
+    \item 掌握基本定时器更新中断的配置方法，能够建立准确的毫秒级时间基准，并用事件和状态机组织非阻塞程序。
+    \item 理解定时器时钟、PSC、ARR 与定时周期之间的关系，能够针对实际 F429、F767 或 H743 核心板独立完成参数计算。
+    \item 掌握通用定时器多通道 PWM 输出，理解 PWM 频率、占空比、CCR 预装载和 LED 平均亮度之间的关系。
+    \item 掌握通用定时器输入捕获或 PWM Input 模式，能够测量信号频率、周期和占空比，并分析测量误差及量程。
+    \item 掌握高级定时器产生固定数量 PWM 周期的方法，理解 RCR、OPM 和 MOE 的配合关系。
+    \item 掌握 BKIN 硬件急停功能，理解故障安全状态、故障锁存和人工确认恢复的工程意义。
+    \item 培养时钟树分析、硬件接线、模块化编程、测试数据记录和故障定位能力。
+  \end{enumerate}
+
+  \textbf{实验要求：}
+  \begin{enumerate}[label=\arabic*)]
+    \item \textbf{OLED 基础显示实验：}按照实际 OLED 模块接口完成 GPIO 和通信时序配置，实现 OLED 初始化、清屏、字符、字符串和十进制数字显示。在屏幕上显示实验名称、学生姓名与学号，并动态更新一个递增计数值。应将底层写命令、写数据与上层文本显示分离，至少封装清屏、指定位置显示字符串和显示整数三个接口。该任务用于验证显示硬件并为后续实验提供统一结果显示功能，不要求使用定时器。
+
+    \item \textbf{随机反应速度测试器：}使用基本定时器产生 1~ms 时间基准。开始后随机等待 2～5~s，再点亮提示 LED 并开始计时；按键按下后在 OLED 显示本次反应时间。程序应能识别提前按键的“抢跑”，并至少保存最好成绩。定时器中断中只允许计数和设置事件标志。
+
+    \item \textbf{三色流水呼吸灯：}使用一个通用定时器的三个 PWM 通道分别驱动红、绿、蓝三个 LED，PWM 频率建议为 1~kHz。通过周期性修改三个 CCR，使三路亮度按照不同相位平滑变化。按键应能切换同步呼吸、三色流水和警灯闪烁等至少三种模式；选做使用电位器调节动画速度。
+
+    \item \textbf{频率与占空比自测仪：}使用一个通用定时器产生 PWM，并用杜邦线连接到另一个通用定时器的输入捕获通道。至少测试 100~Hz/25\%、1~kHz/50\% 和 10~kHz/75\% 三组信号，在 OLED 上显示设定值、测量值及相对误差。断开跳线后应在规定时间内显示“无信号”，不得继续显示旧数据。
+
+    \item \textbf{N 次闪光与硬件急停：}使用按键选择 1～9 的目标数，利用高级定时器 PWM、重复计数器和单脉冲模式，使 LED 准确闪烁 N 次后自动停止。边沿对齐模式下应说明为何通常设置 $\mathrm{RCR}=N-1$。将另一个按键连接到 BKIN；按下后定时器输出必须立即进入安全状态，释放后不得自动恢复，必须通过确认操作重新使能输出。
+
+
+    \item 所有外接 LED 必须串联 1~k$\Omega$ 限流电阻；PWM 输出与捕获输入跳接前必须确认捕获端不是推挽输出，禁止两个输出引脚直接相连。BKIN 实验仅用于 3.3~V 逻辑演示，不得连接电机或功率负载。
+
+  \end{enumerate}
+  % ---------- “实验目的与要求”填写区结束 ----------
+\end{reportsection}
+
+\begin{reportsection}{\MethodTitle}{\MethodHint}
+  % ---------- “方法、步骤”填写区开始 ----------
+  % 请在这里填写内容。
+  % ---------- “方法、步骤”填写区结束 ----------
+\end{reportsection}
+
+\begin{reportsection}{\ProcessTitle}{\ProcessHint}
+  % ---------- “实验过程及内容”填写区开始 ----------
+  % 请在这里填写内容。
+  % ---------- “实验过程及内容”填写区结束 ----------
+\end{reportsection}
+
+\begin{reportsection}{\ConclusionTitle}{\ConclusionHint}
+  % ---------- “实验结论”填写区开始 ----------
+  % 请在这里填写内容。
+  % ---------- “实验结论”填写区结束 ----------
+\end{reportsection}
+
+\begin{reportsection}{\ReflectionTitle}{\ReflectionHint}
+  % ---------- “实验体会”填写区开始 ----------
+  % 请在这里填写内容。
+  % ---------- “实验体会”填写区结束 ----------
+
+  \par\medskip\noindent \ReviewNote
+\end{reportsection}
+
+\clearpage
+
+% ============================================================
+% 教师批阅页（学生无需填写）
+% ============================================================
+\begin{reportpage}
+  \begin{minipage}[t][0.56\reportinnerheight][t]{\linewidth}
+    \noindent \ReviewTitle
+  \end{minipage}
+  \par\nointerlineskip\rule{\linewidth}{\fboxrule}\par
+  \begin{minipage}[t][0.15\reportinnerheight][t]{\linewidth}
+    \vspace{5pt}\noindent \GradeTitle
+  \end{minipage}
+  \par\nointerlineskip\rule{\linewidth}{\fboxrule}\par
+  \begin{minipage}[t][0.16\reportinnerheight][t]{\linewidth}
+    \vspace{5pt}
+    \hfill \SignatureTitle\hspace{2em}\par
+    \vspace{1.5em}
+    \hfill 年\hspace{2em}月\hspace{2em}日\hspace{2em}
+  \end{minipage}
+  \par\nointerlineskip\rule{\linewidth}{\fboxrule}\par
+  \vspace{5pt}\noindent \RemarksTitle
+\end{reportpage}
+
+\end{document}

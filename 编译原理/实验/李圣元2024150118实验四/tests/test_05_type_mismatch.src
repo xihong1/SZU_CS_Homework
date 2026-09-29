@@ -1,0 +1,15 @@
+// T3-1: 类型不匹配（赋值与运算）
+fn(void) testAssignMismatch ->:
+    int a
+    string s
+    s@string = "hello"
+    a@int = s@string
+
+fn(int) testReturnMismatch ->:
+    float f
+    f@float = 3.14
+    return f@float
+
+fn(void) main ->:
+    testAssignMismatch->()
+    print->(testReturnMismatch->())

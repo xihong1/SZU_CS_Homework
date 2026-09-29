@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset=utf-8>
+    <meta http-equiv=X-UA-Compatible content="IE=edge">
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <title>Postgres EXPLAIN Visualizer 2 (pev2)</title>
+    <link rel="shortcut icon" href=favicon.ico type=image/x-icon>
+    <link rel="stylesheet" type="text/css" href="style/tipps.css">
+    <link rel="stylesheet" href="style/styles.css" type="text/css">
+    <link rel="stylesheet" href="style/styles2.css" type="text/css">
+    <link rel="stylesheet" href="style/customstyles.css" type="text/css">
+    <script src="js/popper.min.js"></script>
+    <script src="js/tipps.js"></script>
+</head>
+<body>
+<noscript><strong>We're sorry but pev2 doesn't work properly without JavaScript enabled. Please enable it to
+    continue.</strong></noscript>
+<div class="d-flex flex-column vh-100">
+    <div class="plan-container d-flex flex-column overflow-hidden flex-grow-1 bg-light">
+        <div class="tab-content flex-grow-1 d-flex overflow-hidden"><!---->
+            <div class="tab-pane flex-grow-1 overflow-hidden show active d-flex">
+                <!-- 经典 -->
+                <div class="d-flex flex-column flex-grow-1 overflow-hidden compact classic" id="orientation">
+                    <!-- 最上方 数据展示栏 id=top_plan-->
+                    <div class="plan-stats flex-shrink-0 d-flex border-bottom border-top form-inline" id="top_plan">
+                        <div class="d-inline-block border-left px-2">
+                            Total Run Time:
+                            <span class="stat-value">
+                                <span class="mb-0 p-0 px-1 alert c-2" id="top_run_time">0.00ms</span>
+                            </span>
+                        </div>
+                        <button class="border-left btn btn-sm p-0 px-2 ml-auto text-primary" id="setting_button">
+                            <i class="fa fa-cog p-0"></i> Settings
+                        </button>
+                    </div>
+                    <!-- 全部 -->
+                    <div class="flex-grow-1 d-flex overflow-hidden">
+                        <!-- 左侧柱状图 + 右侧内容区域 非Setting设置模块 -->
+                        <div class="flex-grow-1 overflow-hidden">
+                            <div class="default-theme splitpanes splitpanes--vertical">
+                                <!-- 左侧横向柱状图 20%-->
+                                <div class="splitpanes__pane d-flex" id="splitpanes_left" style="width: 20%;">
+                                    <div class="diagram d-flex flex-column flex-grow-1 overflow-hidden plan-diagram">
+                                        <div class="flex-shrink-0">
+                                            <div class="form-group text-center my-1">
+                                                <div class="btn-group btn-group-xs" id="left-button-group">
+                                                    <button id="left-button-time" class="btn btn-outline-secondary active">time</button>
+                                                    <button id="left-button-rows" class="btn btn-outline-secondary">rows</button>
+                                                    <button id="left-button-cost" class="btn btn-outline-secondary">cost</button>
+                                                </div>
+                                            </div> <!---->
+                                            <div class="legend text-center"><!----></div>
+                                        </div>
+                                        <!-- 左侧柱状图 展示模块 -->
+                                        <div class="overflow-auto flex-grow-1" id="plan_left">
+                                            <!--此处填充左侧柱状表格元素-->
+                                        </table>
+                                        </div>
+                                        <div id="tipps-test"></div>
+                                    </div>
+                                </div>
+                                <!-- 分割线 Split -->
+                                <div class="splitpanes__splitter" id="splitpanes_self"></div>
+                                <!-- 右侧内容 -->
+                                <div id="plan_content" class="splitpanes__pane plan d-flex flex-column flex-grow-1 grab-bing overflow-auto" style="width: 80%;">
+                                    <!--此处填充中间卡片元素-->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Settings右侧区域 -->
+                        <div class="small p-2 border-left" id="setting_div" style="display: block">
+                            <hr>
+                            <div class="form-group">
+                                <div class="btn-group btn-group-sm" id="btn_style">
+                                    <button class="btn btn-outline-secondary active" id="btn_style_classic"><i class="fa fa-list"></i>
+                                        Classic
+                                    </button>
+                                    <button class="btn btn-outline-secondary" id="btn_style_2D"><i class="fa fa-sitemap"></i>
+                                        2D
+                                    </button>
+                                </div>
+                            </div>
+                            <hr>
+                            <label class="text-uppercase">Display Content</label>
+                            <div class="form-group">
+                                <div class="btn-group btn-group-sm" id="btn_show_content">
+                                    <button class="btn btn-outline-secondary active" id="show_content_none">none</button>
+                                    <button class="btn btn-outline-secondary" id="show_content_time">time</button>
+                                    <button class="btn btn-outline-secondary" id="show_content_rows">rows</button>
+                                    <button class="btn btn-outline-secondary" id="show_content_cost">cost</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/chunk-vendors.37bde6c6.js"></script>
+<script src="js/index.js"></script>
+<script src="js/index_node_explain_en.js"></script>
+<script src="js/index_initData_en.js"></script>
+</body>
+</html>

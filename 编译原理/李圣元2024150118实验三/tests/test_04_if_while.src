@@ -1,0 +1,10 @@
+// T2: If and While statements
+fn(void) main ->:
+    int x
+    x@int = 5
+    if x@int > 0:
+        print->(x@int)
+    else:
+        print->(0)
+    while x@int > 0:
+        x@int = x@int - 1

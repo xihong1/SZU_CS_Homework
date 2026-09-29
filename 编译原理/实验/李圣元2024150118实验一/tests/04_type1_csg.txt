@@ -1,0 +1,9 @@
+# Context-sensitive grammar (valid TYPE_1)
+N: S A B
+T: a b
+P:
+S -> A B
+AB -> BA
+A -> a
+B -> b
+START: S

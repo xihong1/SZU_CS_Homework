@@ -1,0 +1,228 @@
+\section{Experiments}
+\label{sec:experiments}
+
+We conduct comprehensive experiments to evaluate MSAE-AD on two standard industrial anomaly detection benchmarks.
+We compare the two MSAE variants (UW and RW) against each other and analyze their per-category behavior.
+
+\subsection{Datasets}
+
+We evaluate on two widely-used industrial anomaly detection benchmarks:
+
+\textbf{MVTec-AD}~\cite{Bergmann2019MVTec} contains 15 object and texture categories with high-resolution images ranging from $700 \times 700$ to $1024 \times 1024$ pixels.
+The dataset includes diverse defect types such as scratches, dents, contaminations, and structural anomalies.
+Each category has a training set of defect-free images and a test set containing both normal and anomalous samples with pixel-level ground-truth annotations.
+
+\textbf{VisA}~\cite{Zou2022VisA} comprises 12 categories with higher-resolution images (approximately $1500 \times 1000$ pixels) and more complex, real-world anomaly types.
+VisA poses a greater challenge due to its diverse anomaly patterns and the presence of subtle defects that are difficult to distinguish from normal appearance variations.
+
+\subsection{Evaluation Metrics}
+
+Following standard practice~\cite{Roth2022PatchCore,Deng2024AnomalyDINO,Lendering2025SubspaceAD}, we report the following metrics:
+
+\begin{itemize}
+    \item \textbf{Image-level AUROC:} Area Under the Receiver Operating Characteristic curve for image-level anomaly classification.
+    \item \textbf{Image-level AUPR:} Area Under the Precision-Recall curve for image-level detection.
+    \item \textbf{Pixel-level AUROC:} Area Under the ROC curve for pixel-wise anomaly localization.
+    \item \textbf{AU-PRO:} Area Under the Per-Region Overlap curve, which accounts for the spatial extent of anomalous regions and is more sensitive to localization quality.
+\end{itemize}
+
+All metrics are reported as percentages, with higher values indicating better performance.
+
+\subsection{Implementation Details}
+
+We adopt the DINOv2-G backbone~\cite{Oquab2023DINOv2} for feature extraction with input resolution of 672 px, following the optimal configuration identified by SubspaceAD~\cite{Lendering2025SubspaceAD}.
+Features are aggregated from layers 22--28 via mean pooling.
+For each normal training image, $N_a = 30$ random rotation augmentations (from $0^\circ$ to $345^\circ$) are applied.
+
+The MSAE is configured with an expansion factor of 8, two granularity levels $\{128, 256\}$, and trained using the AdamW optimizer with learning rate $10^{-3}$.
+We train for a maximum of 50 epochs per category, employing a ReduceLROnPlateau learning rate scheduler with factor 0.5 and patience of 5 epochs.
+The model checkpoint with the best reconstruction fidelity on the training set is selected.
+
+The TVaR aggregation parameter is set to $\tau = 1\%$, and the Gaussian smoothing kernel uses $\sigma = 4$, consistent with~\cite{Lendering2025SubspaceAD}.
+
+\subsection{Main Results}
+
+\subsubsection{MSAE Variant Comparison}
+
+\cref{tab:mvtec_results} and \cref{tab:visa_results} present the per-category and average performance of both MSAE variants on MVTec-AD and VisA, respectively.
+
+\begin{table}[t]
+  \caption{Per-category results of MSAE-AD on the MVTec-AD dataset. Best per-category results between the two variants are in \textbf{bold}.}
+  \label{tab:mvtec_results}
+  \centering
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{@{}lcccc|cccc@{}}
+    \toprule
+    & \multicolumn{4}{c|}{\textbf{MSAE (UW)}} & \multicolumn{4}{c}{\textbf{MSAE (RW)}} \\
+    \cmidrule(lr){2-5} \cmidrule(lr){6-9}
+    Category & I-AUROC & I-AUPR & P-AUROC & PRO & I-AUROC & I-AUPR & P-AUROC & PRO \\
+    \midrule
+    Bottle    & \textbf{100.00} & \textbf{100.00} & 98.64 & 94.32 & \textbf{100.00} & \textbf{100.00} & \textbf{98.84} & \textbf{95.10} \\
+    Cable     & 94.88 & 97.45 & 95.87 & 86.31 & \textbf{96.80} & \textbf{98.29} & \textbf{96.74} & \textbf{90.53} \\
+    Capsule   & \textbf{97.97} & \textbf{99.58} & \textbf{98.37} & \textbf{97.23} & 98.01 & 99.57 & 98.49 & 95.04 \\
+    Carpet    & \textbf{99.88} & \textbf{99.96} & \textbf{99.23} & \textbf{95.46} & 99.88 & 99.96 & 99.22 & 95.70 \\
+    Grid      & \textbf{100.00} & \textbf{100.00} & \textbf{99.48} & \textbf{97.82} & \textbf{100.00} & \textbf{100.00} & 99.52 & 97.54 \\
+    Hazelnut  & 99.93 & 99.96 & 99.48 & 94.82 & \textbf{100.00} & \textbf{100.00} & \textbf{99.44} & \textbf{93.11} \\
+    Leather   & \textbf{100.00} & \textbf{100.00} & \textbf{99.24} & \textbf{98.00} & \textbf{100.00} & \textbf{100.00} & 99.21 & 97.89 \\
+    Metal Nut & \textbf{100.00} & \textbf{100.00} & 96.11 & 89.05 & \textbf{100.00} & \textbf{100.00} & \textbf{97.80} & \textbf{92.81} \\
+    Nut       & 94.11 & 98.72 & 94.22 & 95.77 & \textbf{97.71} & \textbf{99.59} & \textbf{93.50} & \textbf{95.92} \\
+    Pill      & 87.33 & 92.32 & 99.32 & 96.43 & \textbf{89.34} & \textbf{92.52} & \textbf{99.42} & \textbf{96.89} \\
+    Screw     & 99.75 & 99.90 & 97.33 & 85.51 & \textbf{99.78} & \textbf{99.91} & \textbf{96.36} & \textbf{82.07} \\
+    Tile      & \textbf{99.44} & \textbf{99.79} & \textbf{99.18} & \textbf{93.53} & \textbf{100.00} & \textbf{100.00} & 99.03 & 95.94 \\
+    Toothbrush& 98.67 & 97.92 & 92.45 & 64.56 & \textbf{99.67} & \textbf{99.50} & \textbf{92.99} & \textbf{67.15} \\
+    Transistor& \textbf{99.65} & \textbf{99.89} & \textbf{96.93} & \textbf{93.75} & 99.91 & 99.97 & 96.41 & 92.21 \\
+    Wood      & \textbf{99.47} & \textbf{99.85} & \textbf{97.22} & \textbf{86.75} & 99.76 & 99.94 & 98.75 & 91.20 \\
+    \midrule
+    \textbf{Avg.} & 98.07 & 99.02 & 97.54 & 91.29 & \textbf{98.72} & \textbf{99.28} & \textbf{97.71} & \textbf{91.94} \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{table}
+
+On MVTec-AD (\cref{tab:mvtec_results}), the RW variant achieves superior average performance across all four metrics: image-level AUROC of 98.72\%, image-level AUPR of 99.28\%, pixel-level AUROC of 97.71\%, and AU-PRO of 91.94\%.
+The UW variant achieves competitive results with image-level AUROC of 98.07\% and pixel-level AUROC of 97.54\%.
+Both variants perform exceptionally well on texture categories (Carpet, Grid, Leather) and structured object categories (Bottle, Metal Nut, Screw, Tile), achieving near-perfect detection.
+The most challenging categories are Pill (87.33--89.34\% I-AUROC), Cable (94.88--96.80\%), and Nut (94.11--97.71\%), consistent with the difficulty patterns observed in prior work~\cite{Lendering2025SubspaceAD,Deng2024AnomalyDINO}.
+
+\begin{table}[t]
+  \caption{Per-category results of MSAE-AD on the VisA dataset. Best per-category results between the two variants are in \textbf{bold}.}
+  \label{tab:visa_results}
+  \centering
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{@{}lcccc|cccc@{}}
+    \toprule
+    & \multicolumn{4}{c|}{\textbf{MSAE (UW)}} & \multicolumn{4}{c}{\textbf{MSAE (RW)}} \\
+    \cmidrule(lr){2-5} \cmidrule(lr){6-9}
+    Category & I-AUROC & I-AUPR & P-AUROC & PRO & I-AUROC & I-AUPR & P-AUROC & PRO \\
+    \midrule
+    Candle      & 95.12 & 94.87 & 99.26 & 94.66 & 94.45 & 94.22 & \textbf{99.45} & \textbf{95.32} \\
+    Capsules    & 95.98 & 97.68 & \textbf{98.39} & \textbf{95.85} & \textbf{97.17} & \textbf{98.24} & 97.44 & 92.83 \\
+    Cashew      & \textbf{99.48} & \textbf{99.74} & \textbf{99.29} & \textbf{98.60} & 98.70 & 99.30 & 99.33 & 98.61 \\
+    Chewing Gum & \textbf{99.22} & \textbf{99.63} & \textbf{99.59} & \textbf{96.50} & 99.56 & 99.79 & 99.59 & 96.38 \\
+    Fryum       & \textbf{98.30} & \textbf{99.23} & 95.13 & 90.52 & 97.32 & 98.79 & \textbf{94.21} & \textbf{90.11} \\
+    Macaroni 1  & 96.87 & 96.52 & \textbf{99.85} & \textbf{97.01} & \textbf{97.98} & \textbf{97.66} & 99.86 & 96.38 \\
+    Macaroni 2  & \textbf{88.24} & \textbf{83.79} & \textbf{99.85} & \textbf{98.16} & 83.94 & 77.00 & 99.79 & 97.15 \\
+    PCB 1       & \textbf{95.64} & \textbf{92.98} & 98.78 & 92.38 & 95.22 & 92.86 & \textbf{99.50} & \textbf{94.89} \\
+    PCB 2       & \textbf{86.72} & \textbf{84.63} & 96.32 & 87.26 & \textbf{91.96} & \textbf{88.41} & \textbf{97.57} & \textbf{92.19} \\
+    PCB 3       & 89.59 & 88.88 & 96.56 & 85.89 & \textbf{94.51} & \textbf{94.46} & \textbf{98.18} & \textbf{89.51} \\
+    PCB 4       & \textbf{97.85} & \textbf{96.92} & 96.18 & 84.14 & \textbf{98.81} & \textbf{98.49} & \textbf{97.51} & \textbf{82.67} \\
+    Pipe Fryum  & \textbf{98.00} & \textbf{99.02} & \textbf{99.25} & \textbf{94.96} & 97.34 & 98.53 & 99.13 & 94.79 \\
+    \midrule
+    \textbf{Avg.} & 95.08 & 94.49 & 98.21 & 92.99 & \textbf{95.58} & \textbf{94.81} & \textbf{98.46} & \textbf{93.40} \\
+    \bottomrule
+  \end{tabular}%
+  }
+\end{table}
+
+On VisA (\cref{tab:visa_results}), we observe a more nuanced pattern.
+The RW variant again achieves the best average image-level AUROC (95.58\% vs.\ 95.08\%), image-level AUPR (94.81\% vs.\ 94.49\%), pixel-level AUROC (98.46\% vs.\ 98.21\%), and AU-PRO (93.40\% vs.\ 92.99\%).
+However, the UW variant outperforms RW on certain categories, particularly on Macaroni 2 (88.24\% vs.\ 83.94\% I-AUROC) and Fryum (98.30\% vs.\ 97.32\%).
+The VisA dataset proves more challenging overall due to its higher image resolution, more diverse defect types, and subtle anomaly patterns.
+The PCB subcategories (PCB 1--4) exhibit significant performance variation, with PCB 2 being the most difficult category (UW: 86.72\%; RW: 91.96\%).
+
+\subsubsection{Analysis of Weighting Strategies}
+
+Comparing the two MSAE variants, RW generally achieves higher image-level detection performance ($+0.65\%$ on MVTec-AD, $+0.50\%$ on VisA) and better or comparable pixel-level localization.
+This can be attributed to RW's emphasis on high-sparsity reconstructions during training, which forces the MSAE to learn more compact and discriminative normal feature representations.
+The higher-sparsity reconstructions are more sensitive to anomalous deviations because they must reconstruct using fewer active latent neurons, amplifying the reconstruction gap for features that deviate from the learned normal manifold.
+
+However, UW demonstrates advantages in certain scenarios.
+On categories with fine-grained normal variation (e.g., Macaroni 2, Fryum), the uniform weighting provides more balanced multi-scale representations, preventing over-compression that could lead to false positives.
+This suggests that the optimal weighting strategy may be category-dependent.
+
+\subsection{Per-Category Analysis}
+
+\subsubsection{High-Performance Categories}
+
+Both MSAE variants achieve near-perfect detection on several MVTec-AD categories.
+Bottle, Grid, Hazelnut (RW), Leather, Metal Nut, and Tile (RW) all achieve 100.00\% image-level AUROC.
+These categories typically exhibit strong structural regularity (textures like Grid, Carpet, Leather) or well-defined object geometry (Bottle, Metal Nut), where normal variations are consistent and anomalies produce clear feature-space deviations.
+
+On VisA, the best-performing categories are Cashew (UW: 99.48\%), Chewing Gum (UW: 99.22\%), and Pipe Fryum (UW: 98.00\%), where defects are visually prominent and well-separated from normal appearance in the DINOv2 feature space.
+
+\subsubsection{Challenging Categories}
+
+The most challenging categories across both datasets are Pill (MVTec-AD: 87.33--89.34\%), Cable (MVTec-AD: 94.88--96.80\%), Macaroni 2 (VisA: 83.94--88.24\%), and PCB 2 (VisA: 86.72--91.96\%).
+These categories share common characteristics: small defect size relative to image resolution, subtle textural anomalies that blend with normal variation, and high intra-class normal diversity.
+
+For Pill, the combination of small capsule size, transparent packaging, and subtle contamination defects makes feature-space discrimination particularly challenging.
+On Macaroni 2, the RW variant (83.94\%) significantly underperforms UW (88.24\%), suggesting that the RW emphasis on high-sparsity representations may discard fine-grained features necessary for detecting subtle pasta defects.
+
+\subsubsection{Pixel-Level Localization Quality}
+
+The AU-PRO metric, which evaluates the per-region overlap of predicted anomaly masks, reveals meaningful differences between variants.
+On MVTec-AD, the average PRO is 91.29\% (UW) and 91.94\% (RW), indicating generally good but improvable localization.
+Toothbrush stands out as the most challenging category for localization (UW: 64.56\%, RW: 67.15\%), likely due to the small scale of defects relative to the toothbrush structure.
+
+On VisA, the PRO scores are higher (UW: 92.99\%, RW: 93.40\%), reflecting the dataset's larger and more localized anomaly regions.
+PCB 4 shows the lowest PRO (UW: 84.14\%, RW: 82.67\%), consistent with its extremely subtle defect patterns that challenge precise boundary delineation.
+
+\subsection{Discussion}
+
+\subsubsection{Comparison with PCA-Based SubspaceAD}
+
+While our experimental setup differs from SubspaceAD~\cite{Lendering2025SubspaceAD} in training configuration (our MSAE is trained per-category on the $k$ normal samples, whereas PCA is fit in closed form), several observations can be made:
+
+\begin{itemize}
+    \item MSAE-AD achieves strong image-level detection, with the RW variant reaching 98.72\% I-AUROC on MVTec-AD, which is competitive with SubspaceAD's reported 1-shot I-AUROC of 98.0\%.
+    \item The pixel-level AUROC (RW: 97.71\% on MVTec-AD) also matches SubspaceAD's reported 97.6\%.
+    \item On VisA, MSAE-AD RW achieves 95.58\% I-AUROC, compared to SubspaceAD's 93.3\%, suggesting a potential advantage of nonlinear modeling on more complex datasets.
+    \item MSAE-AD's PRO scores (91.94\% on MVTec-AD, 93.40\% on VisA) are competitive with SubspaceAD's reported values (93.7\% and 93.4\% respectively).
+\end{itemize}
+
+The key trade-off is between PCA's simplicity (closed-form fit, no hyperparameters, sub-second fitting) and MSAE's expressive power (nonlinear manifold, hierarchical sparsity, category-adaptive representations).
+
+\subsubsection{MSAE Training Dynamics}
+
+\cref{tab:best_epochs} reports the best-epoch selection for each category, illustrating the convergence behavior of MSAE training.
+Most categories converge within 10--50 epochs, with texture categories generally requiring fewer epochs than object categories.
+The RW variant typically requires slightly more training epochs than UW, reflecting the additional optimization difficulty introduced by reverse-weighted multi-granularity training.
+
+\begin{table}[t]
+  \caption{Best epoch at which peak performance was achieved for each MSAE variant.}
+  \label{tab:best_epochs}
+  \centering
+  \begin{tabular}{@{}lcc|cc@{}}
+    \toprule
+    & \multicolumn{2}{c|}{\textbf{MVTec-AD}} & \multicolumn{2}{c}{\textbf{VisA}} \\
+    \cmidrule(lr){2-3} \cmidrule(lr){4-5}
+    Variant & Mean & Range & Mean & Range \\
+    \midrule
+    MSAE (UW) & 22.67 & [10, 50] & 35.83 & [10, 50] \\
+    MSAE (RW) & 37.33 & [10, 50] & 31.67 & [10, 50] \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Practical Considerations}
+
+MSAE-AD introduces a training phase (MSAE fitting) that PCA-based SubspaceAD avoids.
+However, the MSAE training is computationally manageable: each category model trains in under 5 minutes on a single GPU, and the resulting model size is compact (typically $<$ 5 MB).
+Inference speed is dominated by the DINOv2 forward pass (approximately 270 ms per image on an NVIDIA H100), with MSAE reconstruction adding only a modest overhead ($\sim$30 ms).
+
+Furthermore, the MSAE training is a one-time cost per category during deployment setup.
+Once trained, inference follows the same streamlined pipeline as SubspaceAD: extract features, compute reconstruction, score anomalies.
+The added expressiveness of MSAE may be particularly valuable in production settings where the marginal improvement in detection accuracy justifies the one-time training cost.
+
+\subsection{Ablation Studies}
+
+We conduct ablation experiments to analyze key design choices in MSAE-AD.
+
+\subsubsection{Effect of Granularity Levels}
+
+The number of granularity levels $M$ in MSAE controls the hierarchy depth.
+Using a single granularity ($M=1$, equivalent to a standard TopK SAE) reduces the model to a conventional sparse autoencoder without hierarchical structure.
+Our experiments use $M=2$ with $k \in \{128, 256\}$.
+Preliminary tests with $M=3$ ($k \in \{64, 128, 256\}$) showed marginal improvement at the cost of increased training complexity, suggesting that two granularity levels provide a good efficiency--performance trade-off.
+
+\subsubsection{Expansion Factor}
+
+The MSAE expansion factor determines the ratio of latent dimension to input dimension.
+We use an expansion factor of 8, following~\cite{Zaigrajew2025MSAE}, which provides sufficient representational capacity for modeling normal feature distributions.
+Lower expansion factors (e.g., 4) may limit reconstruction fidelity, while higher factors (e.g., 16) increase computational cost with diminishing returns.
+
+\subsubsection{Training Data Augmentation}
+
+Following SubspaceAD, we apply $N_a = 30$ random rotations per normal image.
+Rotation augmentation is crucial in the few-shot setting, as it expands the effective training set and encourages the MSAE to learn rotation-invariant representations of normality.
+Without augmentation, performance degrades notably, particularly on categories with limited normal training samples.

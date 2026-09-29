@@ -1,0 +1,12 @@
+{
+  "errors": [
+    { "type": "TYPE_MISMATCH", "line": 7, "col": 13, "expected": "int", "found": "bool" }
+  ],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "testLogicalOp", "type": "void()", "scope": "global", "line": 2 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 9 },
+    { "name": "a", "type": "int", "scope": "function", "line": 3 },
+    { "name": "b", "type": "bool", "scope": "function", "line": 4 }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "errors": [
+    { "type": "TYPE_MISMATCH", "line": 6, "col": 5, "expected": "int", "found": "string" },
+    { "type": "RETURN_TYPE_MISMATCH", "line": 11, "col": 5, "expected": "int", "found": "float" }
+  ],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "testAssignMismatch", "type": "void()", "scope": "global", "line": 2 },
+    { "name": "testReturnMismatch", "type": "int()", "scope": "global", "line": 8 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 13 },
+    { "name": "a", "type": "int", "scope": "function", "line": 3 },
+    { "name": "s", "type": "string", "scope": "function", "line": 4 },
+    { "name": "f", "type": "float", "scope": "function", "line": 9 }
+  ]
+}

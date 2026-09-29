@@ -1,0 +1,562 @@
+% ============================================================
+%  report-figs.tex —— 实验报告插图（TikZ 矢量图形）
+%
+%  用法：
+%    1) 在 main.tex 的导言区加一行：\input{figures/tikz/report-figs}
+%    2) 正文中用 \FigPinMap、\FigMainFlow 等命令插入图形
+%    3) 重新编译：latexmk -xelatex main.tex
+%
+%  只用到 pgf/TikZ 自带的库，不需要额外的绘图软件包。
+%  想单独预览：在 figures/tikz/ 下用 xelatex 编译 preview.tex
+% ============================================================
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,shapes.geometric,calc,fit,backgrounds}
+
+% ---------------------------- 配色 ----------------------------
+\definecolor{figBluD}{RGB}{47,95,158}     % 深蓝：处理框
+\definecolor{figBluL}{RGB}{237,243,251}   % 浅蓝：处理框填充
+\definecolor{figGrnD}{RGB}{47,125,79}     % 深绿：起止框 / 肯定分支
+\definecolor{figGrnL}{RGB}{236,247,240}
+\definecolor{figOrgD}{RGB}{176,116,20}    % 深橙：判断框
+\definecolor{figOrgL}{RGB}{255,247,232}
+\definecolor{figRedD}{RGB}{176,58,58}     % 深红：外设
+\definecolor{figRedL}{RGB}{253,239,239}
+\definecolor{figPurD}{RGB}{106,79,163}    % 紫：注释 / 回环
+\definecolor{figPurL}{RGB}{243,239,250}
+\definecolor{figGryD}{RGB}{74,74,74}      % 灰：连线
+\definecolor{figGryL}{RGB}{242,242,242}
+
+% ------------------------ 通用样式与连线 ------------------------
+\tikzset{
+  % 箭头：细线 + 小实心箭头
+  arr/.style={-{Latex[length=1.7mm,width=1.3mm]}, draw=figGryD,
+              line width=0.6pt},
+  % 彩色箭头，用法：arrc=figGrnD
+  arrc/.style={-{Latex[length=1.7mm,width=1.3mm]}, draw=#1, line width=0.6pt},
+  % 灰色虚线箭头（表示“未选用”的备选路径）
+  arrg/.style={-{Latex[length=1.7mm,width=1.3mm]}, draw=figGryD!55,
+               dashed, line width=0.6pt},
+  % 无箭头连线
+  lnk/.style={draw=figGryD, line width=0.6pt},
+  lnkg/.style={draw=figGryD!45, dashed, line width=0.6pt},
+  %
+  % 流程图 —— 起止（圆角胶囊）
+  termn/.style={draw=figGrnD, fill=figGrnL, rounded corners=4.5mm,
+                align=center, inner sep=3pt, line width=0.6pt,
+                minimum height=8mm, minimum width=3.8cm, font=\small\bfseries},
+  % 流程图 —— 处理（矩形，主干宽度统一）
+  proc/.style={draw=figBluD, fill=figBluL, rectangle, align=center,
+               inner sep=3.5pt, line width=0.6pt, minimum height=9mm,
+               text width=7.2cm, font=\small},
+  % 流程图 —— 主干右侧的小处理框
+  procR/.style={draw=figBluD, fill=figBluL, rectangle, align=center,
+                inner sep=3.5pt, line width=0.6pt, minimum height=9mm,
+                text width=4.8cm, font=\footnotesize},
+  % 流程图 —— 判断（菱形）
+  dec/.style={draw=figOrgD, fill=figOrgL, diamond, aspect=3.6, align=center,
+              inner sep=0pt, line width=0.6pt, font=\small},
+  % 汇合点
+  joint/.style={circle, fill=figGryD, draw=none, inner sep=0pt,
+                minimum size=1.6mm},
+  % 文字样式
+  note/.style={font=\footnotesize, text=figGryD, align=left},
+  yeslab/.style={font=\footnotesize, text=figGrnD, inner sep=1.5pt},
+  nolab/.style={font=\footnotesize, text=figGryD, inner sep=1.5pt},
+  %
+  % 框图 —— 通用方块
+  blk/.style={draw=figBluD, fill=figBluL, rounded corners=2pt, align=center,
+              inner sep=3.5pt, line width=0.6pt, font=\small},
+  blkg/.style={blk, draw=figGrnD, fill=figGrnL},
+  blkr/.style={blk, draw=figRedD, fill=figRedL},
+  blko/.style={blk, draw=figOrgD, fill=figOrgL},
+  blkp/.style={blk, draw=figPurD, fill=figPurL},
+  blkgy/.style={blk, draw=figGryD!70, fill=figGryL},
+}
+
+
+% ============================================================
+%  图 1  8 路 LED 引脚分配图
+% ============================================================
+\newcommand{\FigPinMap}{%
+\begin{tikzpicture}[x=1cm, y=1cm, line width=0.6pt]
+  % ---- 芯片（GPIOB 端口）外框：只包住引脚，不留大片空白 ----
+  \draw[draw=figGryD, fill=figGryL, rounded corners=3pt]
+        (2.05,0) rectangle (4.30,-8.70);
+  \node[font=\small\bfseries, text=figGryD] at (3.17,-0.42) {GPIOB 端口};
+  \draw[draw=figGryD!35] (2.20,-0.82) -- (4.15,-0.82);
+
+  % ---- 8 行：引脚 → LED → 掩码 ----
+  \foreach \pin/\led/\bit/\hex [count=\i from 0] in {%
+      PB0/LED7/7/0x80, PB3/LED0/0/0x01, PB4/LED1/1/0x02, PB5/LED2/2/0x04,
+      PB6/LED3/3/0x08, PB7/LED4/4/0x10, PB8/LED5/5/0x20, PB9/LED6/6/0x40}{%
+    \node[anchor=east, font=\small\ttfamily, text=figBluD]
+         at (4.03, -1.28-\i*0.92) {\pin};
+    \draw[arrc=figBluD] (4.30, -1.28-\i*0.92) -- (5.62, -1.28-\i*0.92);
+    \node[draw=figRedD, fill=figRedL, rounded corners=1.5pt,
+          minimum width=2.35cm, minimum height=0.60cm, line width=0.6pt,
+          font=\small\bfseries, text=figRedD]
+         at (6.87, -1.28-\i*0.92) {\led};
+    \node[anchor=west, font=\footnotesize, text=figPurD]
+         at (8.22, -1.28-\i*0.92) {掩码 bit\bit};
+    \node[anchor=west, font=\footnotesize\ttfamily, text=figGryD]
+         at (9.97, -1.28-\i*0.92) {\hex};
+  }
+
+  % ---- 说明 ----
+  \node[note, anchor=north west, text width=12.6cm] at (2.05,-9.10)
+       {说明：8 路 LED 全部挂在 GPIOB 上，\textbf{均为低电平点亮}（GPIO 输出 0 时回路闭合点亮，输出 1 时熄灭）。
+        引脚没有从 PB0 顺序排到 PB7，是因为 \texttt{PB1} 已被板载 DS0 红色指示灯占用，故 LED0 从 PB3 开始；
+        板载 DS1 绿灯复用为 LED7，接在 PB0 上。};
+\end{tikzpicture}%
+}
+
+
+% ============================================================
+%  图 2  单路 LED 驱动电路（两种电平状态对比）
+% ============================================================
+% \ledbranch{<y 基准>}{<1 = 点亮 / 0 = 熄灭>}{<GPIO 电平文字>}{<小标题>}{<结论色>}{<结论文字>}
+\newcommand{\ledbranch}[6]{%
+  \begin{scope}[shift={(0,#1)}]
+    % 小标题
+    \node[anchor=south west, font=\small\bfseries, text=figGryD]
+         at (-0.15, 1.55) {#4};
+
+    % +3.3 V 电源符号
+    \draw[draw=figRedD, line width=1.0pt] (1.00,0) -- (1.00,0.50);
+    \draw[draw=figRedD, line width=1.0pt] (0.68,0.50) -- (1.32,0.50);
+    \node[anchor=east, font=\footnotesize, text=figRedD]
+         at (0.60,0.50) {+3.3\,V};
+
+    % 电源 → 限流电阻
+    \draw[draw=figGryD, line width=0.9pt] (1.00,0) -- (2.05,0);
+    \draw[draw=figGryD, fill=white, line width=0.8pt]
+         (2.05,-0.30) rectangle (3.55,0.30);
+    \node[font=\footnotesize, text=figGryD] at (2.80,0) {1\,k$\Omega$};
+
+    % 限流电阻 → LED
+    \draw[draw=figGryD, line width=0.9pt] (3.55,0) -- (4.75,0);
+
+    % LED：阳极三角 + 阴极横线
+    \ifnum#2=1
+      \filldraw[draw=figRedD, fill=figRedL, line width=0.9pt]
+        (4.75,-0.34) -- (4.75,0.34) -- (5.55,0) -- cycle;
+      \draw[draw=figRedD, line width=1.4pt] (5.55,-0.40) -- (5.55,0.40);
+      % 发光箭头
+      \draw[arrc=figOrgD] (5.28,0.46) -- (5.68,0.92);
+      \draw[arrc=figOrgD] (5.70,0.38) -- (6.10,0.84);
+      % 电流方向
+      \draw[arrc=figGrnD] (2.55,1.02) -- (4.55,1.02);
+      \node[font=\footnotesize, text=figGrnD] at (3.55,0.74) {电流 $I$};
+    \else
+      \filldraw[draw=figGryD!55, fill=figGryL, line width=0.9pt]
+        (4.75,-0.34) -- (4.75,0.34) -- (5.55,0) -- cycle;
+      \draw[draw=figGryD!55, line width=1.4pt] (5.55,-0.40) -- (5.55,0.40);
+    \fi
+
+    % LED → GPIO 引脚
+    \draw[draw=figGryD, line width=0.9pt] (5.55,0) -- (6.90,0);
+    \node[draw=figBluD, fill=figBluL, rounded corners=2pt, line width=0.6pt,
+          align=center, inner sep=3pt, minimum width=3.20cm,
+          minimum height=0.92cm, font=\small]
+         at (8.50,0) {GPIOB 引脚（如 PB3）\\[1.5pt] \footnotesize #3};
+
+    % 结论条
+    \node[draw=#5, fill=#5!7, rounded corners=2pt, line width=0.6pt,
+          align=center, inner sep=4pt, minimum width=12.0cm,
+          font=\small, text=#5] at (5.85,-1.05) {#6};
+  \end{scope}%
+}
+\newcommand{\FigLedCircuit}{%
+\begin{tikzpicture}[x=1cm, y=1cm, line width=0.6pt]
+  \ledbranch{0}{1}{输出低电平（0\,V）}%
+             {（a）GPIO 输出低电平 $\Rightarrow$ LED 点亮}%
+             {figGrnD}%
+             {引脚相当于接地：3.3\,V $\rightarrow$ 限流电阻 $\rightarrow$ LED $\rightarrow$ 引脚 形成回路，LED 点亮}
+  \ledbranch{-3.85}{0}{输出高电平（3.3\,V）}%
+             {（b）GPIO 输出高电平 $\Rightarrow$ LED 熄灭}%
+             {figGryD}%
+             {引脚与电源同电位：回路两端没有电压差，没有电流流过，LED 熄灭}
+  \node[note, anchor=north west, text width=12.6cm] at (-0.15,-5.45)
+       {说明：8 路 LED 的接法完全相同，只是把图中的“PB3”依次换成 PB4、PB5、PB6、PB7、PB8、PB9、PB0。
+        LED 是二极管，具有单向导电性，长脚（阳极）必须朝向限流电阻一侧、短脚（阴极）接单片机引脚，接反则始终不亮。};
+\end{tikzpicture}%
+}
+
+
+% ============================================================
+%  图 3  系统总体结构框图
+% ============================================================
+\newcommand{\FigSystemBlock}{%
+\begin{tikzpicture}[x=1cm, y=1cm, line width=0.6pt]
+
+  % ---------- 控制器内部各层 ----------
+  \node[blk, text width=3.00cm, minimum height=1.35cm] (key)
+       {key.c / key.h\\[1.5pt]\footnotesize 按键扫描与消抖\\
+        \texttt{key\_scan( )}};
+  \node[blk, text width=3.00cm, minimum height=1.35cm, right=4mm of key] (led)
+       {led.c / led.h\\[1.5pt]\footnotesize 灯效算法与掩码刷新\\
+        \texttt{effect\_run( )}};
+
+  \node[blkp, text width=6.25cm, minimum height=1.10cm, anchor=north west]
+       (main) at ($(key.south west)+(0,-0.35)$)
+       {main.c\\[1.5pt]\footnotesize 主循环调度：扫描按键 $\rightarrow$ 推进灯效
+        $\rightarrow$ 蜂鸣器计时（全部非阻塞）};
+
+  \node[blk, text width=6.25cm, minimum height=1.10cm, below=3.5mm of main] (beep)
+       {beep.c / beep.h\\[1.5pt]\footnotesize 软件 I2C 时序 + PCF8574 读写 + 鸣响计时};
+
+  \node[blko, text width=6.25cm, minimum height=1.00cm, below=3.5mm of beep] (hal)
+       {STM32F4xx HAL 库\\[1.5pt]\footnotesize GPIO 读写 / 系统滴答
+        \texttt{HAL\_GetTick( )}};
+
+  % ---------- 控制器外框（标题竖排在左侧，避免与引线打架） ----------
+  \begin{scope}[on background layer]
+    \node[draw=figBluD, fill=figBluL!45, rounded corners=3pt, line width=0.8pt,
+          fit=(key)(led)(main)(beep)(hal), inner sep=6pt] (mcu) {};
+  \end{scope}
+  \node[rotate=90, anchor=center, font=\small\bfseries, text=figBluD]
+       at ($(mcu.west)+(-0.42,0)$) {STM32F429IGT6 主控制器};
+
+  % ---------- 上方：按键输入 ----------
+  \node[blkg, text width=3.30cm, minimum height=1.95cm, anchor=south]
+       (keys) at ($(key.north)+(0,1.70)$)
+       {\textbf{4 个独立按键}\\[3pt]\footnotesize
+        KEY0 = PH3\\ KEY1 = PH2\\ KEY2 = PC13\\ KEY3 = PA0};
+  \draw[arrc=figGrnD] (keys.south) -- (key.center |- mcu.north)
+        node[midway, right, font=\footnotesize, text=figGrnD] {按键电平};
+
+  % ---------- 上方：LED 输出 ----------
+  \node[blkr, text width=3.30cm, minimum height=1.95cm, anchor=south]
+       (leds) at ($(led.north)+(0,1.70)$)
+       {\textbf{8 路 LED}\\[3pt]\footnotesize
+        PB0 = LED7\\ PB3 $\sim$ PB9\\ = LED0 $\sim$ LED6\\
+        \textbf{低电平点亮}};
+  \draw[arrc=figRedD] (led.center |- mcu.north) -- (leds.south)
+        node[midway, left, font=\footnotesize, text=figRedD] {8 位掩码};
+
+  % ---------- 下方：PCF8574 → 蜂鸣器 ----------
+  \node[blko, text width=4.10cm, minimum height=1.20cm, anchor=north]
+       (pcf) at ($(mcu.south)+(0,-1.35)$)
+       {\textbf{PCF8574（I2C 扩展芯片）}\\[2pt]\footnotesize
+        SCL = PH4，SDA = PH5\\ 7 位地址 0x20，写地址 0x40};
+  \draw[arrc=figOrgD] (mcu.south) -- (pcf.north)
+        node[midway, right, font=\footnotesize, text=figOrgD] {软件模拟 I2C};
+
+  \node[blko, text width=4.10cm, minimum height=1.05cm, anchor=north]
+       (buz) at ($(pcf.south)+(0,-1.15)$)
+       {\textbf{板载蜂鸣器}\\[1.5pt]\footnotesize 接在 PCF8574 的 P0 脚};
+  \draw[arrc=figOrgD] (pcf.south) -- (buz.north)
+        node[midway, right, font=\footnotesize, text=figOrgD] {P0 = 0 时鸣响};
+
+  % ---------- 底部说明 ----------
+  \node[note, anchor=north west, text width=13.4cm]
+       at ($(keys.west |- buz.south)+(0,-0.70)$)
+       {说明：应用层（main.c）只描述“先干什么、后干什么”，驱动层（led / key / beep）只关心“某个外设怎么操作”，
+        硬件抽象层由 ST 官方 HAL 库提供。三层之间接口极窄，任何一层的改动都不会大面积影响其它层。};
+\end{tikzpicture}%
+}
+
+
+% ============================================================
+%  图 4  软件模块层次与调用关系
+% ============================================================
+\newcommand{\FigModuleTree}{%
+\begin{tikzpicture}[x=1cm, y=1cm, line width=0.6pt]
+
+  \node[blkp, text width=6.8cm, minimum height=1.05cm, font=\small\bfseries]
+       (main) {main.c\\[1.5pt]\footnotesize\mdseries 初始化 $\rightarrow$
+               \texttt{while(1)} 主循环调度};
+
+  \node[blkr, text width=3.80cm, minimum height=3.90cm, anchor=north west]
+       (led) at ($(main.south west)+(0,-1.05)$)
+       {\textbf{led.c / led.h}\\[4pt]\footnotesize
+        \texttt{led\_init( )}\\ \texttt{led\_write( mask )}\\
+        \texttt{effect\_run( )}\\ \texttt{effect\_interval( )}\\[6pt]
+        端口初始化 / 掩码刷新\\ 四种灯效算法\\ 步进间隔时间};
+  \node[blkg, text width=3.80cm, minimum height=3.90cm, right=5mm of led] (key)
+       {\textbf{key.c / key.h}\\[4pt]\footnotesize
+        \texttt{key\_init( )}\\ \texttt{key\_scan( )}\\
+        \texttt{key\_is\_pressed( )}\\[6pt]
+        端口初始化 / 扫描消抖\\ 统一为“1 = 按下”\\
+        \texttt{KEY\_DEBOUNCE\_MS = 10}};
+  \node[blko, text width=3.80cm, minimum height=3.90cm, right=5mm of key] (beep)
+       {\textbf{beep.c / beep.h}\\[4pt]\footnotesize
+        \texttt{beep\_init( )}\\ \texttt{beep\_start( ms )}\\
+        \texttt{beep\_task( )}\\[6pt]
+        软件 I2C 时序\\ PCF8574 读写\\ 到点自动关闭};
+
+  \node[blk, text width=12.0cm, minimum height=1.05cm, below=9mm of key] (hal)
+       {\textbf{STM32F4xx HAL 库}\\[2pt]\footnotesize
+        \texttt{HAL\_GPIO\_Init( )}\quad \texttt{HAL\_GPIO\_WritePin( )}\quad
+        \texttt{HAL\_GPIO\_ReadPin( )}\quad \texttt{HAL\_GetTick( )}};
+  \node[blkgy, text width=12.0cm, minimum height=1.05cm, below=5mm of hal] (hw)
+       {\textbf{硬件层}\\[2pt]\footnotesize
+        GPIOB（8 路 LED）\quad GPIOH / GPIOC / GPIOA（4 个按键）\\
+        PH4 / PH5 软件 I2C $\rightarrow$ PCF8574 $\rightarrow$ 蜂鸣器};
+
+  % ---------- 调用关系（只向下） ----------
+  \draw[arrc=figPurD] ($(main.south)+(-2.2,0)$) -- ($(main.south)+(-2.2,-0.32)$)
+        -| (led.north);
+  \draw[arrc=figPurD] (main.south) -- (key.north);
+  \draw[arrc=figPurD] ($(main.south)+(2.2,0)$) -- ($(main.south)+(2.2,-0.32)$)
+        -| (beep.north);
+  \draw[arrc=figRedD] ($(led.south)+(0,-0.32)$) -- (led.south |- hal.north);
+  \draw[arrc=figGrnD] (key.south) -- (hal.north);
+  \draw[arrc=figOrgD] ($(beep.south)+(0,-0.32)$) -- (beep.south |- hal.north);
+  \draw[arrc=figBluD] (hal.south) -- (hw.north);
+
+  \node[note, anchor=north west, text width=13.6cm]
+       at ($(hw.south west)+(0,-0.60)$)
+       {说明：下层只被上层调用，不会反过来调用上层。主循环通过 \texttt{effect\_run( )} 一个统一入口使用全部灯效，
+        通过 \texttt{key\_scan( )} 一个统一入口取得按键事件，三个驱动模块之间没有横向依赖。};
+\end{tikzpicture}%
+}
+
+
+% ============================================================
+%  图 7  按键扫描与消抖流程图
+% ============================================================
+\newcommand{\FigKeyFlow}{%
+\begin{tikzpicture}[x=1cm, y=1cm, line width=0.6pt]
+
+  % ---------------- 主干 ----------------
+  \node[termn] (start) {进入 \texttt{key\_scan( )}};
+  \node[proc, below=5.4mm of start] (init)
+       {$i = 0$；$ret = 0$；$now = $ \texttt{HAL\_GetTick( )}};
+  \node[dec, below=5.4mm of init, minimum width=3.30cm] (d1) {$i < 4$ ？};
+  \node[proc, below=5.4mm of d1] (raw)
+       {$raw = $ 读取第 $i$ 个按键电平\\[1pt]
+        （高电平有效的按键取反，统一为 1 = 按下）};
+  \node[dec, below=5.4mm of raw, minimum width=5.20cm] (d2)
+       {$raw \neq last\_raw[i]$ ？};
+  \node[dec, below=15mm of d2, minimum width=8.20cm, aspect=4.4] (d3)
+       {$now - change\_tick[i] \geq 10$\,ms\\[1pt]
+        且 $raw \neq stable[i]$ ？};
+  \node[procR, text width=3.30cm, minimum height=1.00cm, below=13mm of d3] (inc)
+       {$i{+}{+}$};
+
+  % ---------------- 主干连线 ----------------
+  \draw[arr] (start) -- (init);
+  \draw[arr] (init) -- (d1);
+  \draw[arr] (d1) -- (raw);
+  \draw[arr] (raw) -- (d2) node[nolab, midway, right] {否};
+  \draw[arr] (d2) -- (d3) node[nolab, midway, right] {否};
+  \draw[arr] (d3) -- (inc) node[nolab, midway, right] {否};
+
+  % ---------------- 分支一：raw ≠ last_raw[i] ？是 ----------------
+  \node[procR, anchor=west, text width=4.10cm, minimum height=1.75cm]
+       (b1) at ($(d2.east)+(1.05,0)$)
+       {\texttt{last\_raw[i] = raw}\\
+        \texttt{change\_tick[i] = now}\\[3pt]
+        \footnotesize 电平刚跳变，重新开始计时};
+  \draw[arrc=figGrnD] (d2.east) -- (b1.west) node[yeslab, midway, above] {是};
+
+  % ---------------- 分支二：i < 4 ？否 → 返回 ret ----------------
+  \node[termn, anchor=west] (ret) at ($(b1.west |- d1.center)$) {返回 $ret$};
+  \draw[arrc=figRedD] (d1.east) -- (ret.west)
+        node[nolab, midway, above, text=figRedD] {否};
+
+  % ---------------- 分支三：计时到且状态确实变了 ？是 ----------------
+  \node[procR, anchor=west, text width=4.10cm, minimum height=2.00cm]
+       (b2) at ($(b1.west |- d3.center)$)
+       {\texttt{stable[i] = raw}\\[3pt]
+        \footnotesize 若 $raw = 1$（按下）\\ 则 $ret = i + 1$\\[3pt]
+        \footnotesize 按住不放不重复触发};
+  \draw[arrc=figGrnD] (d3.east) -- (b2.west) node[yeslab, midway, above] {是};
+
+  % ---------------- 两路分支回到主干 ----------------
+  \coordinate (m1) at ($(d2.south)!0.72!(d3.north)$);
+  \coordinate (m2) at ($(d3.south)!0.70!(inc.north)$);
+  \draw[arrc=figGrnD] (b1.south) |- (0,0 |- m1);
+  \draw[arrc=figGrnD] (b2.south) |- (0,0 |- m2);
+  \node[joint] at (0,0 |- m1) {};
+  \node[joint] at (0,0 |- m2) {};
+
+  % ---------------- 回环：i++ → i < 4 ？ ----------------
+  \draw[arrc=figPurD] (inc.west) -- (-5.60,0 |- inc.west)
+        -- (-5.60,0 |- d1.west) -- (d1.west);
+  \node[note, anchor=south, text=figPurD, font=\footnotesize, inner sep=2pt]
+       at (-3.30,0 |- inc.west) {循环扫描下一个按键};
+
+  \node[note, anchor=north west, text width=13.4cm]
+       at ($(inc.south west)+(0,-0.70)$)
+       {说明：整个函数不含任何延时，执行时间为微秒量级。\texttt{last\_raw}、\texttt{change\_tick}、
+        \texttt{stable} 三个状态数组都声明为 \texttt{static}，在两次调用之间保留各自按键的“记忆”，
+        未显式初始化时自动清零，正好符合“初始为松开、计时起点为 0”的预期。};
+\end{tikzpicture}%
+}
+
+
+% ============================================================
+%  图 8  主程序流程图
+% ============================================================
+\newcommand{\FigMainFlow}{%
+\begin{tikzpicture}[x=1cm, y=1cm, line width=0.6pt]
+
+  % ---------------- 初始化阶段 ----------------
+  \node[termn] (start) {开始};
+  \node[proc, below=5.6mm of start] (i1)
+       {\textbf{系统初始化}\\[1.5pt]
+        \texttt{HAL\_Init( )}\quad \texttt{SystemClock\_Config( )}\quad
+        \texttt{MX\_GPIO\_Init( )}};
+  \node[proc, below=5.6mm of i1] (i2)
+       {\textbf{外设初始化}\\[1.5pt]
+        \texttt{led\_init( )}\quad \texttt{key\_init( )}\quad
+        \texttt{beep\_init( )}};
+  \node[proc, below=5.6mm of i2] (i3)
+       {\textbf{显示初始灯效}\\[1.5pt]
+        \texttt{effect\_run(cur\_effect, 0)}\quad
+        \texttt{effect\_tick = HAL\_GetTick( )}};
+
+  \draw[arr] (start) -- (i1);
+  \draw[arr] (i1) -- (i2);
+  \draw[arr] (i2) -- (i3);
+
+  % ---------------- 主循环 ----------------
+  \node[proc, below=14mm of i3] (p1)
+       {\textbf{1. 扫描按键}\\[1.5pt] \texttt{key = key\_scan( )}};
+  \node[dec, below=5.6mm of p1, minimum width=4.30cm] (d1) {$key \neq 0$ ？};
+  \node[dec, below=24mm of d1, minimum width=5.90cm, aspect=4.2] (d2)
+       {\texttt{HAL\_GetTick( )} $- $ \texttt{effect\_tick}\\[1pt]
+        $\geq$ \texttt{effect\_interval( )} ？};
+  \node[proc, below=16mm of d2] (p3)
+       {\textbf{3. 处理蜂鸣器计时}\\[1.5pt] \texttt{beep\_task( )}};
+
+  \draw[arr] (i3) -- (p1);
+  \draw[arr] (p1) -- (d1);
+  \draw[arr] (d1) -- (d2) node[nolab, midway, right] {否};
+  \draw[arr] (d2) -- (p3) node[nolab, midway, right] {否};
+
+  % ---------------- 右侧分支一：切换灯效 + 蜂鸣器响一声 ----------------
+  \coordinate (rx) at (4.30,0);
+  \node[procR, anchor=west, text width=4.40cm, minimum height=2.55cm]
+       (b1) at (rx |- d1.center)
+       {\textbf{切换到第 key 种灯效}\\[3pt]
+        \texttt{cur\_effect = key - 1}\\
+        \texttt{effect\_step = 0}\\
+        \texttt{effect\_tick = HAL\_GetTick( )}\\
+        \texttt{effect\_run(cur\_effect, 0)}\\[3pt]
+        \texttt{beep\_start(80)}（只响一声，不阻塞）};
+  \draw[arrc=figGrnD] (d1.east) -- (b1.west) node[yeslab, midway, above] {是};
+
+  % ---------------- 右侧分支二：推进到下一步 ----------------
+  \node[procR, anchor=west, text width=4.40cm, minimum height=2.20cm]
+       (b2) at (rx |- d2.center)
+       {\textbf{2. 推进到下一步}\\[4pt]
+        \texttt{effect\_tick = HAL\_GetTick( )}\\
+        \texttt{effect\_step++}\\
+        \texttt{effect\_run(cur\_effect, effect\_step)}\\[4pt]
+        \footnotesize 用时间戳判断，不用 \texttt{HAL\_Delay}};
+  \draw[arrc=figGrnD] (d2.east) -- (b2.west) node[yeslab, midway, above] {是};
+
+  % ---------------- 两路分支回到主干 ----------------
+  \coordinate (m1) at ($(d1.south)!0.78!(d2.north)$);
+  \coordinate (m2) at ($(d2.south)!0.78!(p3.north)$);
+  \draw[arrc=figGrnD] (b1.south) |- (0,0 |- m1);
+  \draw[arrc=figGrnD] (b2.south) |- (0,0 |- m2);
+  \node[joint] at (0,0 |- m1) {};
+  \node[joint] at (0,0 |- m2) {};
+
+  % ---------------- 回环 ----------------
+  \coordinate (back) at ($(i3.south)!0.5!(p1.north)$);
+  \draw[arrc=figPurD] (p3.west) -- (-4.95,0 |- p3.west)
+        -- (-4.95,0 |- back) -- (0,0 |- back);
+  \node[joint] at (0,0 |- back) {};
+  \node[note, anchor=south west, text=figPurD, font=\footnotesize, inner sep=2pt]
+       at (-2.10,0 |- back) {主循环入口};
+
+  \node[note, anchor=north west, text width=12.4cm]
+       at ($(p3.south west)+(0,-0.70)$)
+       {说明：主循环每一轮固定做上面三件事，任何一件都不阻塞，单轮耗时只有几十微秒。
+        切换灯效时把 \texttt{effect\_step} 清零并立即调用一次 \texttt{effect\_run( )}，
+        是为了让新灯效马上从第 0 步开始显示，避免亮点从“中间某个奇怪的位置”突然出现。};
+\end{tikzpicture}%
+}
+
+
+% ============================================================
+%  图 9  系统时钟树
+% ============================================================
+\newcommand{\FigClockTree}{%
+\begin{tikzpicture}[x=1cm, y=1cm, line width=0.6pt]
+
+  % ---------------- 左侧：振荡器 ----------------
+  \node[blkg, text width=3.00cm, minimum height=1.25cm, font=\small\bfseries]
+       (hse) {HSE 外部晶振\\[1.5pt]\footnotesize\mdseries
+              25\,MHz（本实验选用）};
+  \node[blkgy, text width=3.00cm, minimum height=1.20cm, below=7mm of hse] (hsi)
+       {HSI 内部 RC\\[1.5pt]\footnotesize 16\,MHz\\（未选用）};
+  \node[blkgy, text width=3.00cm, minimum height=1.20cm, below=7mm of hsi] (lse)
+       {LSE 外部晶振\\[1.5pt]\footnotesize 32.768\,kHz\\（供 RTC，未选用）};
+
+  % ---------------- 中间：主 PLL ----------------
+  \node[blk, text width=3.00cm, minimum height=3.20cm, anchor=west]
+       (pll) at ($(hse.east)+(1.20,0)$)
+       {\textbf{主 PLL 倍频}\\[6pt]\footnotesize
+        PLLM = 25\\ PLLN = 360\\ PLLP = 2\\ PLLQ = 4\\[6pt]
+        $25 \div 25 = 1$\,MHz\\
+        $1 \times 360 = 360$\,MHz\\
+        $360 \div 2 = 180$\,MHz};
+
+  \draw[arrc=figGrnD] (hse.east) -- (pll.west |- hse)
+        node[midway, above, font=\footnotesize, text=figGrnD] {25\,MHz};
+  \draw[arrg] (hsi.east) -- (pll.west |- hsi)
+        node[midway, above, font=\footnotesize, text=figGryD] {16\,MHz};
+
+  % ---------------- 右侧：时钟分配 ----------------
+  \node[blkr, text width=4.10cm, minimum height=1.45cm, anchor=west]
+       (sysclk) at ($(pll.east)+(1.50,0)$)
+       {\textbf{SYSCLK = 180\,MHz}\\[2pt]\footnotesize\mdseries
+        时钟源选 PLLCLK\\ AHB 预分频 $\div 1$};
+  \draw[arrc=figBluD] (pll.east) -- (sysclk.west)
+        node[midway, above, font=\footnotesize, text=figBluD] {PLL 输出};
+
+  \node[blko, text width=4.10cm, minimum height=1.15cm, below=6mm of sysclk] (hclk)
+       {HCLK = 180\,MHz\\[1.5pt]\footnotesize 内核、AHB 总线、SysTick};
+  \draw[arrc=figRedD] (sysclk.south) -- (hclk.north);
+
+  \node[blko, text width=4.10cm, minimum height=1.15cm, below=13mm of hclk] (apb1)
+       {APB1 预分频 $\div 4$\\[1.5pt]\footnotesize
+        PCLK1 = 45\,MHz\\ 定时器时钟 90\,MHz};
+  \node[blko, text width=4.10cm, minimum height=1.15cm, below=6mm of apb1] (apb2)
+       {APB2 预分频 $\div 2$\\[1.5pt]\footnotesize
+        PCLK2 = 90\,MHz\\ 定时器时钟 180\,MHz};
+
+  % HCLK → APB1 / APB2 分叉（右支绕过 APB1 从右侧进入 APB2）
+  \coordinate (sp) at ($(hclk.south)+(0,-0.60)$);
+  \coordinate (bl) at ($(sp)+(-1.20,0)$);
+  \coordinate (br) at ($(sp)+(2.55,0)$);
+  \coordinate (br2) at (br |- apb2.center);
+  \coordinate (bot) at ($(apb2.south)+(0,-1.20)$);
+  \draw[lnk, draw=figOrgD] (hclk.south) -- (sp);
+  \draw[lnk, draw=figOrgD] (bl) -- (br);
+  \draw[arrc=figOrgD] (bl) -- (bl |- apb1.north);
+  \draw[lnk, draw=figOrgD] (br) -- (br2);
+  \draw[arrc=figOrgD] (br2) -- (apb2.east);
+  \node[joint] at (sp) {};
+
+  % ---------------- 底部：配套设置 ----------------
+  \node[blkp, text width=13.2cm, minimum height=1.00cm, font=\small,
+        anchor=north west] (cfg) at (hse.west |- bot)
+       {\textbf{配套设置：}\quad Flash 等待周期 \texttt{FLASH\_LATENCY\_5}\quad
+        电压调节档位 \texttt{PWR\_REGULATOR\_VOLTAGE\_SCALE1}\quad
+        APBx 定时器时钟自动 $\times 2$};
+\end{tikzpicture}%
+}
+
+
+% ============================================================
+%  正文插入命令：与 \reportfigure 的编号方式一致，但图形为矢量
+%  用法：\reportfiguretikz[缩放比例]{标签}{图形}{图题}
+% ============================================================
+\newcommand{\reportfiguretikz}[4][1]{%
+  \par\medskip
+  \refstepcounter{figcnt}%
+  \begin{center}
+    \scalebox{#1}{#3}\\[0.45em]
+    {\small\textbf{图\,\thefigcnt}\quad #4}%
+  \end{center}
+  \label{#2}%
+  \par\medskip
+}

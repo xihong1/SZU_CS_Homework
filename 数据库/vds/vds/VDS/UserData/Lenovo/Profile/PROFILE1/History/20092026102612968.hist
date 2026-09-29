@@ -1,0 +1,1 @@
+{"fileName":"20092026102612968.hist","query":"SELECT * FROM EMP2024150118 WHERE ENAME LIKE \u0027%S\u0027;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 10:26:12.801 CST","elapsedTime":"15 ms","isPinned":false,"finalStatus":true,"resultSetSize":5,"querySizeToStore":1000}

@@ -1,0 +1,1 @@
+{"fileName":"20092026102302747.hist","query":"SELECT * \nFROM EMP2024150118 \nWHERE JOB \u003d \u0027SALESMAN\u0027 OR (JOB \u003d \u0027ANALYST\u0027 AND DEPTNO \u003d 20);","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 10:23:02.579 CST","elapsedTime":"12 ms","isPinned":false,"finalStatus":true,"resultSetSize":7,"querySizeToStore":1000}

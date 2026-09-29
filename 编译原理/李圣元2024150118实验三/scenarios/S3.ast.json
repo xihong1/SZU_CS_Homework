@@ -1,0 +1,96 @@
+{
+  "ast": {
+    "type": "Program", "line": 4, "col": 1,
+    "funcs": [
+      {
+        "type": "FuncDecl", "name": "average", "return_type": "float", "line": 4, "col": 1,
+        "params": [
+          { "type": "ParamDecl", "name": "a", "param_type": "int", "line": 4, "col": 22 },
+          { "type": "ParamDecl", "name": "b", "param_type": "int", "line": 4, "col": 29 }
+        ],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "sum", "line": 5, "col": 5 },
+          { "type": "VarDecl", "var_type": "float", "name": "result", "line": 6, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 7, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "sum", "ref_type": "int", "line": 7, "col": 5 },
+            "value": {
+              "type": "BinaryExpr", "op": "+", "line": 7, "col": 15,
+              "left": { "type": "TypedVarRef", "name": "a", "ref_type": "int", "line": 7, "col": 15 },
+              "right": { "type": "TypedVarRef", "name": "b", "ref_type": "int", "line": 7, "col": 23 }
+            }
+          },
+          {
+            "type": "AssignStmt", "line": 8, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "result", "ref_type": "float", "line": 8, "col": 5 },
+            "value": {
+              "type": "BinaryExpr", "op": "/", "line": 8, "col": 20,
+              "left": {
+                "type": "MethodCall", "method": "toFloat", "line": 8, "col": 20,
+                "object": { "type": "TypedVarRef", "name": "sum", "ref_type": "int", "line": 8, "col": 20 },
+                "args": []
+              },
+              "right": { "type": "FloatLiteral", "value": "2.0", "line": 8, "col": 40 }
+            }
+          },
+          {
+            "type": "ReturnStmt", "line": 9, "col": 5,
+            "expr": { "type": "TypedVarRef", "name": "result", "ref_type": "float", "line": 9, "col": 12 }
+          }
+        ]
+      },
+      {
+        "type": "FuncDecl", "name": "main", "return_type": "void", "line": 11, "col": 1,
+        "params": [],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "m", "line": 12, "col": 5 },
+          { "type": "VarDecl", "var_type": "int", "name": "n", "line": 13, "col": 5 },
+          { "type": "VarDecl", "var_type": "float", "name": "avg", "line": 14, "col": 5 },
+          { "type": "VarDecl", "var_type": "int", "name": "rounded", "line": 15, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 17, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "m", "ref_type": "int", "line": 17, "col": 5 },
+            "value": { "type": "IntLiteral", "value": "7", "line": 17, "col": 13 }
+          },
+          {
+            "type": "AssignStmt", "line": 18, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "n", "ref_type": "int", "line": 18, "col": 5 },
+            "value": { "type": "IntLiteral", "value": "10", "line": 18, "col": 13 }
+          },
+          {
+            "type": "AssignStmt", "line": 19, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "avg", "ref_type": "float", "line": 19, "col": 5 },
+            "value": {
+              "type": "CallExpr", "line": 19, "col": 17,
+              "callee": { "type": "Identifier", "name": "average", "line": 19, "col": 17 },
+              "args": [
+                { "type": "TypedVarRef", "name": "m", "ref_type": "int", "line": 19, "col": 27 },
+                { "type": "TypedVarRef", "name": "n", "ref_type": "int", "line": 19, "col": 34 }
+              ]
+            }
+          },
+          {
+            "type": "AssignStmt", "line": 22, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "rounded", "ref_type": "int", "line": 22, "col": 5 },
+            "value": {
+              "type": "MethodCall", "method": "toInt", "line": 22, "col": 19,
+              "object": { "type": "TypedVarRef", "name": "avg", "ref_type": "float", "line": 22, "col": 19 },
+              "args": []
+            }
+          },
+          {
+            "type": "ExprStmt", "line": 23, "col": 5,
+            "expr": {
+              "type": "CallExpr", "line": 23, "col": 5,
+              "callee": { "type": "Identifier", "name": "print", "line": 23, "col": 5 },
+              "args": [
+                { "type": "TypedVarRef", "name": "rounded", "ref_type": "int", "line": 23, "col": 13 }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

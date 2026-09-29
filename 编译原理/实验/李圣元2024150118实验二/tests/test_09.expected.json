@@ -1,0 +1,11 @@
+﻿{
+  "tokens": [
+    {"type": "NUM", "value": "10", "line": 1, "col": 1},
+    {"type": "NUM", "value": "20", "line": 1, "col": 4},
+    {"type": "EOF", "value": "", "line": 2, "col": 1}
+  ],
+  "errors": [
+    {"type": "ILLEGAL_CHAR", "value": "$", "line": 1, "col": 3},
+    {"type": "UNCLOSED_STRING", "value": "\"hello\n", "line": 1, "col": 7}
+  ]
+}

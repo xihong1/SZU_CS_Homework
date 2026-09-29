@@ -1,0 +1,21 @@
+// T1-1: 嵌套作用域与变量遮蔽
+fn(int) testScope -> a@int:
+    int x
+    x@int = a@int
+
+    if a@int > 0:
+        int x
+        x@int = a@int + 10
+        if x@int > 5:
+            int x
+            x@int = 100
+            return x@int
+
+        return x@int
+
+    return x@int
+
+fn(void) main ->:
+    int r
+    r@int = testScope->(3)
+    print->(r@int)

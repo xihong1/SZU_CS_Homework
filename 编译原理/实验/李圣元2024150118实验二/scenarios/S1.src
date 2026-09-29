@@ -1,0 +1,14 @@
+// S1: 递归函数（斐波那契）
+// 逻辑：标准递归定义，fib(n)=fib(n-1)+fib(n-2)
+
+fn(int) fib -> n@int:
+    if n@int <= 1:
+        return n@int
+    return fib->(n@int - 1) + fib->(n@int - 2)
+
+fn(void) main ->:
+    int n
+    int answer
+    n@int = 8
+    answer@int = fib->(n@int)
+    print->(answer@int)

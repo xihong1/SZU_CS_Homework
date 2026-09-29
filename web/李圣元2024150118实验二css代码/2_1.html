@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(to right, #ffe0b2, #90caf9);
+            position: relative;
+            font-family: Arial, sans-serif;
+        }
+        .business-card {
+            width: 300px;
+            height: 200px;
+            border-radius: 15px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82)),
+                url("照片/肖宫画像.jpg") center/cover no-repeat;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            text-align: center;
+        }
+        .name {
+            font-family: "Arial Black", Arial, sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .position {
+            font-style: italic;
+            color: #808080;
+        }
+        .contact-info {
+            color: blue;
+            text-decoration: underline;
+            cursor: default;
+            transition: color 0.2s ease;
+        }
+        .contact-info:hover {
+            color: darkblue;
+        }
+        .social-icon {
+            width: 28px;
+            height: 28px;
+        }
+        .social-icon:hover {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="business-card">
+        <div class="name">John Doe</div>
+        <div class="position">Web Designer</div>
+        <div class="contact-info">john@example.com</div>
+        <img src="http://172.31.233.204/resource/img/email.png" class="social-icon" />
+    </div>
+</body>
+
+</html>

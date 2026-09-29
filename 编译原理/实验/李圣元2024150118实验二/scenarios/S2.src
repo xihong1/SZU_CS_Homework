@@ -1,0 +1,24 @@
+// S2: 嵌套作用域与变量遮蔽
+// 逻辑：展示内层同名 value 遮蔽外层 value
+
+fn(int) scopeDemo -> x@int:
+    int value
+    value@int = x@int + 1
+
+    if x@int > 0:
+        int value
+        value@int = x@int + 100
+
+        if value@int > 50:
+            int value
+            value@int = 999
+            print->(value@int)
+
+        print->(value@int)
+
+    return value@int
+
+fn(void) main ->:
+    int r
+    r@int = scopeDemo->(3)
+    print->(r@int)

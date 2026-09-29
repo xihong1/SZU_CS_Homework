@@ -1,0 +1,7 @@
+{
+  "ast": null,
+  "errors": [
+    { "type": "ILLEGAL_CHAR", "value": "$", "line": 7, "col": 16 },
+    { "type": "SYNTAX_ERROR", "expected": ":", "found": "\n", "line": 13, "col": 17, "message": "expected ':' before '\n'" }
+  ]
+}

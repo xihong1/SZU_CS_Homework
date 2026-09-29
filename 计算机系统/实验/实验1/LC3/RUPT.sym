@@ -1,0 +1,17 @@
+//Symbol Name		Page Address
+//----------------	------------
+//	COUNT                   3026
+//	DELAY                   301C
+//	ENTRY                   3024
+//	ICS1                    3028
+//	ICS2                    302F
+//	IE                      3025
+//	KBSR                    3036
+//	NEXTLINE                3037
+//	PRINT1                  3008
+//	PRINT2                  3012
+//	REP                     301E
+//	RUPT                    3023
+//	SAVER1                  3027
+//	STACK                   3022
+//	START                   3006

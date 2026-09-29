@@ -1,0 +1,6 @@
+// this is a comment
+int x = 1
+/* multi
+line
+comment */
+x = 2

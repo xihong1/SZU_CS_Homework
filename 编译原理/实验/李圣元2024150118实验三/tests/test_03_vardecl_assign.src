@@ -1,0 +1,10 @@
+// T2: VarDecl and AssignStmt
+fn(void) main ->:
+    int a
+    float b
+    string c
+    bool d
+    a@int = 10
+    b@float = 3.14
+    c@string = "hello"
+    d@bool = true

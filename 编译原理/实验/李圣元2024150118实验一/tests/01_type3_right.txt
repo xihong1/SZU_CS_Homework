@@ -1,0 +1,8 @@
+# Right linear regular grammar
+N: S A B
+T: a b
+P:
+S -> a A
+A -> a A | b B
+B -> b B | b
+START: S

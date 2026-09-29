@@ -1,0 +1,11 @@
+{
+  "errors": [],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "fib", "type": "int(int)", "scope": "global", "line": 4 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 9 },
+    { "name": "n", "type": "int", "scope": "function", "line": 4 },
+    { "name": "n", "type": "int", "scope": "function", "line": 10 },
+    { "name": "answer", "type": "int", "scope": "function", "line": 11 }
+  ]
+}

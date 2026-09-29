@@ -1,0 +1,64 @@
+func_scopeDemo:
+# --- Function: scopeDemo (1 params) ---
+    alloc x:int
+    alloc value:int
+    t0 = 1
+    t1 = x + t0
+    value = t1
+    t2 = 0
+    t3 = x > t2
+    if_false t3 goto endif1
+    alloc value:int
+    t4 = 100
+    t5 = x + t4
+    value = t5
+    t6 = 50
+    t7 = value > t6
+    if_false t7 goto endif3
+    alloc value:int
+    t8 = 999
+    value = t8
+    print value
+endif3:
+    print value
+endif1:
+    return value
+func_main:
+# --- Function: main (0 params) ---
+    alloc r:int
+    t9 = 3
+    param t9
+    t10 = call func_scopeDemo, 1
+    r = t10
+    print r
+    return
+
+// ====== OPTIMIZED ======
+func_scopeDemo:
+# --- Function: scopeDemo (1 params) ---
+    alloc x:int
+    alloc value:int
+    t1 = x + 1
+    value = t1
+    t3 = x > 0
+    if_false t3 goto endif1
+    alloc value:int
+    t5 = x + 100
+    value = t5
+    t7 = true
+    if_false t7 goto endif3
+    alloc value:int
+    value = 999
+    print 999
+endif3:
+    print 999
+endif1:
+    return 999
+func_main:
+# --- Function: main (0 params) ---
+    alloc r:int
+    param 3
+    t10 = call func_scopeDemo, 1
+    r = t10
+    print r
+    return

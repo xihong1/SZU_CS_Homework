@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>xterm.js</title>
+    <link rel="stylesheet" type="text/css" href="xterm.css"/>
+    <link rel="stylesheet" type="text/css" href="xtermScroll.css"/>
+    <script src="xterm.js"></script>
+    <script src="customFitAddon.js"></script>
+    <script src="javafxXterm.js"></script>
+    <script src="swtBrowserXterm.js"></script>
+    <script src="xtermCopy.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #terminal-container {
+            width: 100%;
+            height: 100%;
+            background-color: black;
+        }
+    </style>
+</head>
+
+<body>
+<div id="terminal-container"></div>
+</body>
+
+<script type='text/javascript'>
+    // 获取容器元素
+    const container = document.getElementById("terminal-container");
+    var prefix = "$ ";
+    var curLine = 0;
+    //当前行长度
+    var curMaxX = 0;
+    var historys = [];
+    var historyIndex = 0;
+    var cmds = new String("");
+    var wait = false;
+    var charInMiddle = false;
+    //javafx = 0 / swt browser = 1
+    var browserMode = 0;
+    var allowWrite = false;
+    var moreflag = false;
+    var moreChars = "--More--";
+    //列数
+    var termCols = 0;
+    //行数
+    var termRows = 10;
+
+    var url = window.location.href;
+    var paramValues = getParameterByName(window.location.href);
+    var browser = paramValues["browser"];
+    var fontSize = paramValues["fontSize"] * 2;
+    var fontColor = paramValues["fontColor"];
+    var bgColor = paramValues["bgColor"];
+    var contentEncode = paramValues["contentEncode"];//单引号替换
+    var mockParam = paramValues["mock"];//mock = false
+
+    var passwordGuideFlag = false;
+    var passwordInput = "";
+    var prefixAfterPWInput = prefix;
+
+    var regex = null;
+    if (contentEncode != null) {
+        regex = new RegExp(contentEncode, 'g');
+    }
+
+    mock = false;
+    if (mockParam != "false") {
+        mock = true;
+        browser = "0";
+        fontSize = "20";
+        fontColor = "#fff";
+        bgColor = "#000";
+    }
+
+    function executeCmd(content) {
+        if (mock) {
+            return;
+        }
+        if (browserMode == 0) {
+            javaConnector.sendToJava(content);
+        } else {
+            if (content.length > 0) {
+                content = escape(content);
+                //处理富文本空格字符
+                content = content.replace(/%A0/g, "%20");
+                content = unescape(content);
+            }
+            executeVsql(content);
+        }
+    }
+
+    function sendToJava(content) {
+
+        if (content.trim().length == 0) {
+            term.write(prefix);
+            allowWrite = true;
+            return;
+        }
+        content = content.replace(/\s+$/g, '');
+        executeCmd(content);
+        if (historys.length > 0 && historys[0] == content) {
+            //
+        } else {
+            historys.unshift(contentHandleBeforeCache(content));
+        }
+        historyIndex = -1;
+    }
+
+    function contentHandleBeforeCache(copyContent) {
+        if (/\r|\n/.test(copyContent)) {
+            var copyContent_ = copyContent.replace(/[\r\n]/g, "@LINEREPLACE");
+            var arr = copyContent_.split("@LINEREPLACE");
+            return arr[arr.length - 1];
+        }
+        return copyContent;
+    }
+
+    var defaultMode = 1;
+
+    function setMode() {
+    }
+
+    // 创建 xterm.js 终端实例
+    const term = new Terminal({
+        theme: {
+            background: bgColor,
+            foreground: fontColor
+        },
+        fontSize: fontSize,
+        cols: 60,
+        cursorBlink: true, // 光标闪烁
+        cursorStyle: "block", // 光标样式  null | 'block' | 'underline' | 'bar'
+        scrollback: 5000, //回滚
+        tabStopWidth: 8, //制表宽度
+        scrollSensitivity: 1
+    });
+    term.attachCustomKeyEventHandler((e) => {
+        // 处理你的逻辑
+        return true;
+    });
+    // 将终端附加到容器
+    term.open(container);
+    termCols = Math.floor(window.innerWidth / 9);
+    window.addEventListener('resize', function (event) {
+        resize();
+    });
+
+    function allowInput() {
+        return allowWrite;
+    }
+
+    function getCurrentCursorY() {
+        term.refresh(0, 0);
+        var len = term.buffer.normal.length;
+        var cursorY = 0;
+        if (len > termRows) {
+            cursorY = term.buffer.normal.length - 1;
+        } else {
+            cursorY = term.buffer.active.cursorY;
+        }
+        return cursorY;
+    }
+
+    function getEnterLIne(term) {
+        return handlerEnter(lines);
+    }
+
+    function getLine(cursorY) {
+        return term.buffer.active.getLine(cursorY).translateToString();
+    }
+
+    function handlerEnter(enterCmd) {
+
+        if (enterCmd.startsWith(prefix)) {
+            enterCmd = enterCmd.slice(prefix.length);
+        }
+        return enterCmd;
+    }
+
+    function xtermInit_(browserM) {
+        browserMode = browserM;
+    }
+
+    function writeToXterm_(content) {
+        if (contentEncode != null) {
+            content = decodingContent(content);
+        }
+        content = contentRender(content);
+        term.writeln(content);
+    }
+
+    function coverWrite_(content) {
+        if (contentEncode != null) {
+            content = decodingContent(content);
+        }
+        content = contentRender(content);
+        term.write('\r\x1B[K');
+        term.writeln(content);
+    }
+
+    function inputCmd_(content) {
+        if (contentEncode != null) {
+            content = decodingContent(content);
+        }
+        var param = getInsertLineParam(content, false, "",
+            term.buffer.active.cursorX, getCurrentCursorY());
+        param.clear = true;
+        var result = refreshLine(param);
+        term.write(prefix + content);
+        term.refresh(0, 0);
+        allowWrite = true;
+    }
+    
+    function decodingContent(content){
+    	return decodeURIComponent(escape(atob(content)));
+    }
+
+    function waitPrint_(prefix_) {
+        allowWrite = true;
+        more = false;
+        if (prefix_ != null) {
+            prefix = prefix_;
+        }
+        term.refresh(0, 0);
+        term.write("\x1b[0G" + prefix);
+        var cursorX = term.buffer.active.cursorX;
+        setMode();
+        curMaxX = prefix_.length;
+    }
+
+    function moreTip_() {
+        allowWrite = true;
+        moreflag = true;
+        term.refresh(0, 0);
+        term.write("\x1b[0G" + moreChars);
+    }
+
+    function write(content) {
+        term.write(content);
+    }
+
+    function getJsConnector() {
+        return jsConnector;
+    }
+
+    function printContent(content) {
+    }
+
+    function printContentPlus(content) {
+    }
+
+    function resize() {
+        var geometry = addon(term);
+        termCols = geometry.cols;
+        termRows = geometry.rows;
+        term.resize(geometry.cols, geometry.rows);
+    }
+
+    function readHistory(back) {
+        if (historys.length == 0) {
+            return null;
+        }
+        if (back) {
+            if (historyIndex < historys.length - 1) {
+                historyIndex = historyIndex + 1;
+            }
+            var h = historys[historyIndex];
+            return h;
+        } else {
+            if (historyIndex > 0) {
+                historyIndex = historyIndex - 1;
+            }
+            var h = historys[historyIndex];
+            return h;
+        }
+    }
+
+    function endMoreIn() {
+        if (browserMode == 0) {
+            javaConnector.endMoreIn();
+        } else {
+            endMoreInVsql();
+        }
+    }
+
+    function endMoreOut_() {
+        term.write('\r\x1B[K'); // 将光标移到行首并清空该行
+        waitPrint_(prefix);
+        moreflag = false;
+    }
+
+    function readMoreIn() {
+        if (browserMode == 0) {
+            javaConnector.readMoreIn();
+        } else {
+            readMoreVsql();
+        }
+    }
+
+    function contentRender(content) {
+        content = content.replace(/ERROR/g, "\x1B[1;31mERROR\x1B[0m");
+        content = content.replace(/Error/g, "\x1B[1;31mERROR\x1B[0m");
+        return content.replace(/错误/g, "\x1B[1;31mERROR\x1B[0m");
+    }
+
+    resize();
+
+    function resetFontAndBgColor_(fontSize, fontColor, bgColor) {
+
+        if (fontSize != null && fontSize != undefined && fontSize != "") {
+            term.setOption('fontSize', 30);
+            resize();
+        }
+        if (bgColor != null && bgColor != undefined && bgColor != "") {
+            term.setOption('theme', {
+                foreground: '#dddddd', // 设置背景颜色
+                background: '#ffffff', // 设置背景颜色
+            });
+        }
+    }
+
+    function getParameterByName(url) {
+        var params = url.substring(url.indexOf("?") + 1, url.lenght);
+        var arr = params.split("&");
+        var objs = {};
+        for (index in arr) {
+            var arrs = arr[index].split("=");
+            objs[arrs[0]] = arrs[1];
+        }
+        return objs;
+    }
+
+    function resetFontAndBgColor_(fontSize_, fontColor_, bgColor_) {
+
+        if (fontSize_ != null && fontSize_ != undefined && fontSize_ != "") {
+            if (fontSize != fontSize_ * 2) {
+                fontSize = fontSize_ * 2;
+                term.setOption('fontSize', fontSize);
+                resize();
+            }
+        }
+        if (fontColor_ != null && fontColor_ != undefined && fontColor_ != "") {
+            fontColor = fontColor_;
+        }
+        if (bgColor_ != null && bgColor_ != undefined && bgColor_ != "") {
+            bgColor = bgColor_;
+        }
+        term.setOption('theme', {
+            foreground: fontColor, // 设置背景颜色
+            background: bgColor, // 设置背景颜色
+        });
+    }
+
+    function updatePrefix_(prefix_) {
+        prefix = prefix_;
+    }
+
+    function passwordGuide_(prefix_) {
+        passwordGuideFlag = true;
+        prefixAfterPWInput = prefix;
+        prefix = prefix_;
+        waitPrint_(prefix_);
+    }
+
+    function collectionPW(data) {
+
+        if (data === '\u001b[D' || data === '\u001b[C' || data === '\u001b[A' || data === '\u001b[B') {
+            return;
+        }
+        if (data === '\x7F' || data === '\u0008') {
+            if (passwordInput.length > 0) {
+                passwordInput = passwordInput.slice(0, passwordInput.length - 1)
+            }
+            return;
+        } else if (data === '\r') {
+            enterPW();
+            return;
+        }
+        passwordInput = passwordInput + data;
+    }
+
+    function enterPW() {
+        // 处理回车键
+        allowWrite = false;
+        passwordGuideFlag = false;
+        prefix = prefixAfterPWInput;
+        term.write("\r\n");
+        currentLine = passwordInput;
+        clearLine();
+        if (mock) {
+            mockSendToJava(passwordInput);
+        } else {
+            sendPWToJava(passwordInput);
+        }
+        passwordInput = "";
+        charInMiddle = false;
+    }
+
+    function paste(content) {
+        if (moreflag || passwordGuideFlag) {
+            return;
+        }
+        copyWrite(content);
+    }
+
+    function sendPWToJava(content) {
+        executeCmd(content);
+    }
+
+    function logInfo(msg) {
+        if (browserMode == 0) {
+            javaConnector.sendToLog(msg);
+        }
+    }
+
+</script>
+
+<script src="XtermKey.js"></script>
+<script src="debug.js"></script>
+
+</html>

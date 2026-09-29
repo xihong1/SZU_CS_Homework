@@ -1,0 +1,5 @@
+// T5: Syntax error - invalid statement
+fn(void) main ->:
+    int x
+    x@int = 5
+    123 = x@int

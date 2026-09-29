@@ -1,0 +1,16 @@
+// T1-2: 变量遮蔽（同名变量在不同作用域）
+fn(int) shadowTest -> x@int:
+    int value
+    value@int = x@int
+
+    if x@int > 10:
+        int value
+        value@int = x@int + 100
+        return value@int
+
+    return value@int
+
+fn(void) main ->:
+    int v
+    v@int = shadowTest->(20)
+    print->(v@int)

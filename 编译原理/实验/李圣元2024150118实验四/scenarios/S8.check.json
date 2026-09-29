@@ -1,0 +1,38 @@
+{
+  "errors": [
+    { "type": "UNDECLARED", "line": 7, "col": 13, "symbol": "y" },
+    { "type": "REDECLARED", "line": 12, "col": 5, "symbol": "x" },
+    { "type": "TYPE_MISMATCH", "line": 19, "col": 5, "expected": "int", "found": "string" },
+    { "type": "RETURN_TYPE_MISMATCH", "line": 25, "col": 5, "expected": "int", "found": "string" },
+    { "type": "ARG_COUNT_MISMATCH", "line": 33, "col": 13, "symbol": "add", "expected": "2", "found": "1" },
+    { "type": "ARG_TYPE_MISMATCH", "line": 40, "col": 13, "symbol": "add", "expected": "int", "found": "string" },
+    { "type": "NOT_A_FUNCTION", "line": 46, "col": 13, "symbol": "x" },
+    { "type": "TYPE_MISMATCH", "line": 54, "col": 13, "expected": "int", "found": "bool" }
+  ],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "testUndeclared", "type": "void()", "scope": "global", "line": 5 },
+    { "name": "testRedeclared", "type": "void()", "scope": "global", "line": 10 },
+    { "name": "testTypeMismatch", "type": "void()", "scope": "global", "line": 16 },
+    { "name": "testReturnMismatch", "type": "int()", "scope": "global", "line": 22 },
+    { "name": "add", "type": "int(int,int)", "scope": "global", "line": 28 },
+    { "name": "testArgCount", "type": "void()", "scope": "global", "line": 31 },
+    { "name": "testArgType", "type": "void()", "scope": "global", "line": 36 },
+    { "name": "testNotFunc", "type": "void()", "scope": "global", "line": 43 },
+    { "name": "testOpType", "type": "void()", "scope": "global", "line": 49 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 56 },
+    { "name": "a", "type": "int", "scope": "function", "line": 6 },
+    { "name": "x", "type": "int", "scope": "function", "line": 11 },
+    { "name": "a", "type": "int", "scope": "function", "line": 17 },
+    { "name": "s", "type": "string", "scope": "function", "line": 18 },
+    { "name": "s", "type": "string", "scope": "function", "line": 23 },
+    { "name": "a", "type": "int", "scope": "function", "line": 28 },
+    { "name": "b", "type": "int", "scope": "function", "line": 28 },
+    { "name": "x", "type": "int", "scope": "function", "line": 32 },
+    { "name": "x", "type": "int", "scope": "function", "line": 37 },
+    { "name": "s", "type": "string", "scope": "function", "line": 38 },
+    { "name": "x", "type": "int", "scope": "function", "line": 44 },
+    { "name": "a", "type": "int", "scope": "function", "line": 50 },
+    { "name": "b", "type": "bool", "scope": "function", "line": 51 }
+  ]
+}

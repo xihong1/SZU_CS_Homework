@@ -1,0 +1,10 @@
+// T1: Expression associativity
+fn(int) calc -> a@int:
+    int result
+    result@int = 10 - 3 - 2
+    return result@int
+
+fn(void) main ->:
+    int x
+    x@int = 8 / 2 / 2
+    print->(x@int)

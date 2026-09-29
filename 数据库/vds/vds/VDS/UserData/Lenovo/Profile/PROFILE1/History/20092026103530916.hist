@@ -1,0 +1,1 @@
+{"fileName":"20092026103530916.hist","query":"SELECT * FROM EMP2024150118 WHERE JOB\u003d\u0027SALESMAN\u0027 ORDER BY COMM / SAL ASC;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 10:35:30.730 CST","elapsedTime":"27 ms","isPinned":false,"finalStatus":true,"resultSetSize":5,"querySizeToStore":1000}

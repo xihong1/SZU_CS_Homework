@@ -1,0 +1,10 @@
+// T1: Expression precedence
+fn(int) calc -> a@int, b@int, c@int:
+    int result
+    result@int = a@int + b@int * c@int
+    return result@int
+
+fn(void) main ->:
+    int x
+    x@int = 1 + 2 * 3
+    print->(x@int)

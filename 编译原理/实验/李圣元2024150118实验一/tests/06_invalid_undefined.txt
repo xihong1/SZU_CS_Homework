@@ -1,0 +1,8 @@
+# Undefined symbol X
+N: S A
+T: a
+P:
+S->AX
+S->a
+A->a
+START: S

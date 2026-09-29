@@ -1,0 +1,66 @@
+{
+  "ast": {
+    "type": "Program", "line": 2, "col": 1,
+    "funcs": [
+      {
+        "type": "FuncDecl", "name": "calc", "return_type": "int", "line": 2, "col": 1,
+        "params": [
+          { "type": "ParamDecl", "name": "a", "param_type": "int", "line": 2, "col": 17 },
+          { "type": "ParamDecl", "name": "b", "param_type": "int", "line": 2, "col": 24 },
+          { "type": "ParamDecl", "name": "c", "param_type": "int", "line": 2, "col": 31 }
+        ],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "result", "line": 3, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 4, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "result", "ref_type": "int", "line": 4, "col": 5 },
+            "value": {
+              "type": "BinaryExpr", "op": "+", "line": 4, "col": 18,
+              "left": { "type": "TypedVarRef", "name": "a", "ref_type": "int", "line": 4, "col": 18 },
+              "right": {
+                "type": "BinaryExpr", "op": "*", "line": 4, "col": 26,
+                "left": { "type": "TypedVarRef", "name": "b", "ref_type": "int", "line": 4, "col": 26 },
+                "right": { "type": "TypedVarRef", "name": "c", "ref_type": "int", "line": 4, "col": 34 }
+              }
+            }
+          },
+          {
+            "type": "ReturnStmt", "line": 5, "col": 5,
+            "expr": { "type": "TypedVarRef", "name": "result", "ref_type": "int", "line": 5, "col": 12 }
+          }
+        ]
+      },
+      {
+        "type": "FuncDecl", "name": "main", "return_type": "void", "line": 7, "col": 1,
+        "params": [],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "x", "line": 8, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 9, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "x", "ref_type": "int", "line": 9, "col": 5 },
+            "value": {
+              "type": "BinaryExpr", "op": "+", "line": 9, "col": 13,
+              "left": { "type": "IntLiteral", "value": "1", "line": 9, "col": 13 },
+              "right": {
+                "type": "BinaryExpr", "op": "*", "line": 9, "col": 17,
+                "left": { "type": "IntLiteral", "value": "2", "line": 9, "col": 17 },
+                "right": { "type": "IntLiteral", "value": "3", "line": 9, "col": 21 }
+              }
+            }
+          },
+          {
+            "type": "ExprStmt", "line": 10, "col": 5,
+            "expr": {
+              "type": "CallExpr", "line": 10, "col": 5,
+              "callee": { "type": "Identifier", "name": "print", "line": 10, "col": 5 },
+              "args": [
+                { "type": "TypedVarRef", "name": "x", "ref_type": "int", "line": 10, "col": 13 }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

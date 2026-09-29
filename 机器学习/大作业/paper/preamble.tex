@@ -1,0 +1,31 @@
+%% Preamble for MSAE-AD paper
+
+%% For 2-column teaser figure
+\usepackage{cuted}
+
+%% For auto-referencing of figures
+\usepackage{currfile}
+
+%% caption and spacing overrides
+\usepackage{caption}
+
+%% Math definitions
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+%% Inline annotations
+\newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\todo}[1]{{\color{red}#1}}
+\newcommand{\TODO}[1]{\textbf{\color{red}[TODO: #1]}}
+
+%% Compact itemize
+\usepackage[shortlabels,inline]{enumitem}
+\setlist[itemize]{noitemsep,leftmargin=*,topsep=0em}
+\setlist[enumerate]{noitemsep,leftmargin=*,topsep=0em}
+
+%% For framework diagram
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, calc, shapes.geometric, backgrounds, fit}
+
+%% For better text layout
+% \usepackage{microtype}

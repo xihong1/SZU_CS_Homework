@@ -1,0 +1,10 @@
+// T3: Nested expressions
+fn(int) calc -> a@int, b@int:
+    int result
+    result@int = (a@int + b@int) * (a@int - b@int)
+    return result@int
+
+fn(void) main ->:
+    int x
+    x@int = calc->(5, 3)
+    print->(x@int)

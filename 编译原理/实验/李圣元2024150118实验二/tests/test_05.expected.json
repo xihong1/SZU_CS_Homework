@@ -1,0 +1,10 @@
+﻿{
+  "tokens": [
+    {"type": "STRING", "value": "\"\"", "line": 1, "col": 1},
+    {"type": "STRING", "value": "\"hello\\nworld\"", "line": 1, "col": 4},
+    {"type": "STRING", "value": "\"escaped \\\" quote\"", "line": 1, "col": 19},
+    {"type": "STRING", "value": "\"\\\\\"", "line": 1, "col": 38},
+    {"type": "EOF", "value": "", "line": 2, "col": 1}
+  ],
+  "errors": []
+}

@@ -1,0 +1,1 @@
+{"fileName":"20092026102539447.hist","query":"SELECT ENAME FROM EMP2024150118 WHERE JOB \u003d \u0027PRESIDENT\u0027;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 10:25:39.311 CST","elapsedTime":"11 ms","isPinned":false,"finalStatus":true,"resultSetSize":1,"querySizeToStore":1000}

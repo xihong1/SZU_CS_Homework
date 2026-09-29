@@ -1,0 +1,111 @@
+func_nestedFlow:
+# --- Function: nestedFlow (1 params) ---
+    alloc limit:int
+    alloc i:int
+    alloc total:int
+    t0 = 0
+    i = t0
+    t1 = 0
+    total = t1
+while0:
+    t2 = i < limit
+    if_false t2 goto wend1
+    t3 = 2
+    t4 = i % t3
+    t5 = 0
+    t6 = t4 == t5
+    if_false t6 goto else2
+    alloc j:int
+    t7 = 0
+    j = t7
+while4:
+    t8 = j < i
+    if_false t8 goto wend5
+    t9 = 3
+    t10 = j % t9
+    t11 = 0
+    t12 = t10 == t11
+    if_false t12 goto else6
+    t13 = total + j
+    total = t13
+    goto endif7
+else6:
+    t14 = 1
+    t15 = total + t14
+    total = t15
+endif7:
+    t16 = 1
+    t17 = j + t16
+    j = t17
+    goto while4
+wend5:
+    goto endif3
+else2:
+    t18 = total + i
+    total = t18
+endif3:
+    t19 = 1
+    t20 = i + t19
+    i = t20
+    goto while0
+wend1:
+    return total
+func_main:
+# --- Function: main (0 params) ---
+    alloc out:int
+    t21 = 8
+    param t21
+    t22 = call func_nestedFlow, 1
+    out = t22
+    print out
+    return
+
+// ====== OPTIMIZED ======
+func_nestedFlow:
+# --- Function: nestedFlow (1 params) ---
+    alloc limit:int
+    alloc i:int
+    alloc total:int
+    i = 0
+    total = 0
+while0:
+    t2 = 0 < limit
+    if_false t2 goto wend1
+    t6 = true
+    if_false t6 goto else2
+    alloc j:int
+    j = 0
+while4:
+    t8 = false
+    if_false t8 goto wend5
+    t12 = true
+    if_false t12 goto else6
+    t13 = 0
+    total = t13
+    goto endif7
+else6:
+    t15 = 1
+    total = t15
+endif7:
+    t17 = 1
+    j = t17
+    goto while4
+wend5:
+    goto endif3
+else2:
+    t18 = 0
+    total = t18
+endif3:
+    t20 = 1
+    i = t20
+    goto while0
+wend1:
+    return 0
+func_main:
+# --- Function: main (0 params) ---
+    alloc out:int
+    param 8
+    t22 = call func_nestedFlow, 1
+    out = t22
+    print out
+    return

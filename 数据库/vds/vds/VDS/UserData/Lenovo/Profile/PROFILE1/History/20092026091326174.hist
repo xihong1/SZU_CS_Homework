@@ -1,0 +1,1 @@
+{"fileName":"20092026091326174.hist","query":"SELECT ENAME, EMPNO, SAL, DEPTNO FROM EMP2024150118;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 09:13:25.885 CST","elapsedTime":"19 ms","isPinned":false,"finalStatus":true,"resultSetSize":17,"querySizeToStore":1000}

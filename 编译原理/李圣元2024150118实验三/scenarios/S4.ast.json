@@ -1,0 +1,163 @@
+{
+  "ast": {
+    "type": "Program", "line": 4, "col": 1,
+    "funcs": [
+      {
+        "type": "FuncDecl", "name": "nestedFlow", "return_type": "int", "line": 4, "col": 1,
+        "params": [
+          { "type": "ParamDecl", "name": "limit", "param_type": "int", "line": 4, "col": 23 }
+        ],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "i", "line": 5, "col": 5 },
+          { "type": "VarDecl", "var_type": "int", "name": "total", "line": 6, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 7, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 7, "col": 5 },
+            "value": { "type": "IntLiteral", "value": "0", "line": 7, "col": 13 }
+          },
+          {
+            "type": "AssignStmt", "line": 8, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "total", "ref_type": "int", "line": 8, "col": 5 },
+            "value": { "type": "IntLiteral", "value": "0", "line": 8, "col": 17 }
+          },
+          {
+            "type": "WhileStmt", "line": 10, "col": 5,
+            "cond": {
+              "type": "BinaryExpr", "op": "<", "line": 10, "col": 11,
+              "left": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 10, "col": 11 },
+              "right": { "type": "TypedVarRef", "name": "limit", "ref_type": "int", "line": 10, "col": 19 }
+            },
+            "body": [
+              {
+                "type": "IfStmt", "line": 11, "col": 9,
+                "cond": {
+                  "type": "BinaryExpr", "op": "==", "line": 11, "col": 12,
+                  "left": {
+                    "type": "BinaryExpr", "op": "%", "line": 11, "col": 12,
+                    "left": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 11, "col": 12 },
+                    "right": { "type": "IntLiteral", "value": "2", "line": 11, "col": 20 }
+                  },
+                  "right": { "type": "IntLiteral", "value": "0", "line": 11, "col": 25 }
+                },
+                "then": [
+                  { "type": "VarDecl", "var_type": "int", "name": "j", "line": 12, "col": 13 },
+                  {
+                    "type": "AssignStmt", "line": 13, "col": 13,
+                    "target": { "type": "TypedVarRef", "name": "j", "ref_type": "int", "line": 13, "col": 13 },
+                    "value": { "type": "IntLiteral", "value": "0", "line": 13, "col": 21 }
+                  },
+                  {
+                    "type": "WhileStmt", "line": 14, "col": 13,
+                    "cond": {
+                      "type": "BinaryExpr", "op": "<", "line": 14, "col": 19,
+                      "left": { "type": "TypedVarRef", "name": "j", "ref_type": "int", "line": 14, "col": 19 },
+                      "right": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 14, "col": 27 }
+                    },
+                    "body": [
+                      {
+                        "type": "IfStmt", "line": 15, "col": 17,
+                        "cond": {
+                          "type": "BinaryExpr", "op": "==", "line": 15, "col": 20,
+                          "left": {
+                            "type": "BinaryExpr", "op": "%", "line": 15, "col": 20,
+                            "left": { "type": "TypedVarRef", "name": "j", "ref_type": "int", "line": 15, "col": 20 },
+                            "right": { "type": "IntLiteral", "value": "3", "line": 15, "col": 28 }
+                          },
+                          "right": { "type": "IntLiteral", "value": "0", "line": 15, "col": 33 }
+                        },
+                        "then": [
+                          {
+                            "type": "AssignStmt", "line": 16, "col": 21,
+                            "target": { "type": "TypedVarRef", "name": "total", "ref_type": "int", "line": 16, "col": 21 },
+                            "value": {
+                              "type": "BinaryExpr", "op": "+", "line": 16, "col": 33,
+                              "left": { "type": "TypedVarRef", "name": "total", "ref_type": "int", "line": 16, "col": 33 },
+                              "right": { "type": "TypedVarRef", "name": "j", "ref_type": "int", "line": 16, "col": 45 }
+                            }
+                          }
+                        ],
+                        "else": [
+                          {
+                            "type": "AssignStmt", "line": 18, "col": 21,
+                            "target": { "type": "TypedVarRef", "name": "total", "ref_type": "int", "line": 18, "col": 21 },
+                            "value": {
+                              "type": "BinaryExpr", "op": "+", "line": 18, "col": 33,
+                              "left": { "type": "TypedVarRef", "name": "total", "ref_type": "int", "line": 18, "col": 33 },
+                              "right": { "type": "IntLiteral", "value": "1", "line": 18, "col": 45 }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "AssignStmt", "line": 19, "col": 17,
+                        "target": { "type": "TypedVarRef", "name": "j", "ref_type": "int", "line": 19, "col": 17 },
+                        "value": {
+                          "type": "BinaryExpr", "op": "+", "line": 19, "col": 25,
+                          "left": { "type": "TypedVarRef", "name": "j", "ref_type": "int", "line": 19, "col": 25 },
+                          "right": { "type": "IntLiteral", "value": "1", "line": 19, "col": 33 }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "type": "AssignStmt", "line": 21, "col": 13,
+                    "target": { "type": "TypedVarRef", "name": "total", "ref_type": "int", "line": 21, "col": 13 },
+                    "value": {
+                      "type": "BinaryExpr", "op": "+", "line": 21, "col": 25,
+                      "left": { "type": "TypedVarRef", "name": "total", "ref_type": "int", "line": 21, "col": 25 },
+                      "right": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 21, "col": 37 }
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "AssignStmt", "line": 23, "col": 9,
+                "target": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 23, "col": 9 },
+                "value": {
+                  "type": "BinaryExpr", "op": "+", "line": 23, "col": 17,
+                  "left": { "type": "TypedVarRef", "name": "i", "ref_type": "int", "line": 23, "col": 17 },
+                  "right": { "type": "IntLiteral", "value": "1", "line": 23, "col": 25 }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ReturnStmt", "line": 25, "col": 5,
+            "expr": { "type": "TypedVarRef", "name": "total", "ref_type": "int", "line": 25, "col": 12 }
+          }
+        ]
+      },
+      {
+        "type": "FuncDecl", "name": "main", "return_type": "void", "line": 27, "col": 1,
+        "params": [],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "out", "line": 28, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 29, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "out", "ref_type": "int", "line": 29, "col": 5 },
+            "value": {
+              "type": "CallExpr", "line": 29, "col": 15,
+              "callee": { "type": "Identifier", "name": "nestedFlow", "line": 29, "col": 15 },
+              "args": [
+                { "type": "IntLiteral", "value": "8", "line": 29, "col": 28 }
+              ]
+            }
+          },
+          {
+            "type": "ExprStmt", "line": 30, "col": 5,
+            "expr": {
+              "type": "CallExpr", "line": 30, "col": 5,
+              "callee": { "type": "Identifier", "name": "print", "line": 30, "col": 5 },
+              "args": [
+                { "type": "TypedVarRef", "name": "out", "ref_type": "int", "line": 30, "col": 13 }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

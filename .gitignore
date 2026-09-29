@@ -1,0 +1,832 @@
+# === 自动生成，请勿手动修改上半部分 ===
+# 嵌套 .git 备份
+*.git_backup_*
+
+# 编译/缓存目录
+**/node_modules/
+**/__pycache__/
+**/.ipynb_checkpoints/
+**/.vs/
+**/.vscode/
+**/.idea/
+**/Debug/
+**/Release/
+**/build/
+**/dist/
+**/out/
+**/target/
+**/bin/
+**/obj/
+
+# 临时文件
+*.tmp
+*.log
+*.bak
+*.swp
+*.swo
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# === 以下为自动扫描的忽略文件 ===
+李圣元2024150118实验一实验报告.docx
+JAVA/1_《Java网络编程(第4版)》www.wuying521.cn.pdf
+JAVA/李圣元-2024150118大作业.zip
+JAVA/李圣元-2024150118实验三.zip
+JAVA/李圣元-2024150118实验四.zip
+JAVA/李圣元_2024150118实验1.zip
+JAVA/李圣元_2024150118实验二.zip
+JAVA/实验1/3_课程实验1：基础知识、基本类型和类的初级应用 (1).docx
+JAVA/李圣元-2024150118大作业/李圣元-2024150118大作业 .docx
+JAVA/李圣元-2024150118实验三/李圣元2024150118实验三.docx
+JAVA/李圣元-2024150118实验四/李圣元-2024150118实验4.docx
+JAVA/李圣元_2024150118实验二/task2.zip
+JAVA/李圣元_2024150118实验二/task3.zip
+JAVA/李圣元_2024150118实验二/task4.zip
+JAVA/李圣元_2024150118实验二/task5.zip
+JAVA/李圣元_2024150118实验二/task6.zip
+JAVA/李圣元_2024150118实验二/李圣元_2024150118实验报告二.docx
+web/2024150118_李圣元_MCQASSIGNMENT.docx
+web/MCQ ASSIGNMENT.docx
+web/web实验2参考效果图.zip
+web/Web实验3要求汇总.zip
+web/李圣元2024150118实验1_HTML综合实验.doc
+web/李圣元2024150118实验2_CSS综合实验.doc
+web/李圣元2024150118实验3_JS综合实验.doc
+web/李圣元2024150118实验一代码.zip
+web/李圣元2024150118实验三js代码.zip
+web/李圣元2024150118实验二css代码.zip
+web/web实验(1)/web实验/实验2_CSS综合实验.doc
+web/web实验(1)/web实验/实验3_JS综合实验.doc
+web/web实验(1)/web实验/王俊涛 2024150140 实验1_HTML综合实验.doc
+人工智能伦理/6-人工智能伦理-期末大作业-李圣元-2024150118--考核专用答题纸.doc
+人工智能伦理/6-人工智能伦理-期末大作业-李圣元-2024150118--考核专用答题纸.pdf
+人工智能伦理/6-人工智能伦理-期末大作业-李圣元-2024150118-考核专用答题纸.docx
+人工智能伦理/6-人工智能伦理-期末大作业-李圣元-2024150118-考核专用答题纸.pdf
+人工智能伦理/AI_Agent_Safety伦理汇报.pptx
+人工智能伦理/深圳大学2026《人工智能伦理》期末大作业-题目.pdf
+人工智能伦理/面向开放复杂环境下AI Agent的安全风险消减-修改版-1.pptx
+人工智能伦理/参考课件/引言-AI伦理-AI 重新定义计算，开启全息计算伦理新纪元-张良杰.pdf
+人工智能伦理/参考课件/第10章-AI伦理-人工智能的经济影响与未来图景（经济篇）-张良杰.pdf
+人工智能伦理/参考课件/第11章-AI伦理-伦理在AI实施中的角色（实施篇）-张良杰.pdf
+人工智能伦理/参考课件/第12章-AI伦理-AI伦理的多学科整合视角（学科篇）-张良杰.pdf
+人工智能伦理/参考课件/第13章-AI伦理-公众在人工智能伦理中的作用（公众篇）-张良杰.pdf
+人工智能伦理/参考课件/第1章-AI伦理-AI伦理入门（基础篇）-张良杰.pdf
+人工智能伦理/参考课件/第2章-AI伦理-AI解决方案设计原则（构建篇）-张良杰.pdf
+人工智能伦理/参考课件/第3章-AI伦理-AI与环境的互动（环境篇）-张良杰.pdf
+人工智能伦理/参考课件/第4章-AI伦理-AI在社会中的角色与挑战（社会篇）-张良杰.pdf
+人工智能伦理/参考课件/第5章-AI伦理-人工智能的制度设计与全球协调（治理篇）-张良杰.pdf
+人工智能伦理/参考课件/第6章-AI伦理-人工智能责任的落实机制与商业实践（责任篇）-张良杰.pdf
+人工智能伦理/参考课件/第7章-AI伦理-AI 职业的伦理与责任（职业篇）-张良杰.pdf
+人工智能伦理/参考课件/第8章-AI伦理-人工智能时代的知识产权重构（法律篇）-张良杰.pdf
+人工智能伦理/参考课件/第9章-AI伦理-对抗AI犯罪与滥用（安全篇）-张良杰.pdf
+人工智能伦理/参考课件/结语-AI伦理-锻造“七彩祥云”下的领袖之志.pdf
+人工智能导论/2024150118李圣元Homework1.zip
+人工智能导论/2024150118李圣元Homework2.zip
+人工智能导论/2024150118李圣元task1.zip
+人工智能导论/2024150118李圣元task2.zip
+人工智能导论/2024150118李圣元task3.zip
+人工智能导论/2024150118李圣元大作业.zip
+人工智能导论/2024150118李圣元Homework1/2024150118李圣元Homework1.docx
+人工智能导论/2024150118李圣元Homework2/2024150118李圣元Homework2.docx
+人工智能导论/2024150118李圣元task1/2024150118李圣元Task1.doc
+人工智能导论/2024150118李圣元task2/2024150118李圣元task2.doc
+人工智能导论/2024150118李圣元task3/2024150118李圣元task3.doc
+人工智能导论/2024150118李圣元大作业/2024150118李圣元大作业.doc
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/cat_dog_cnn_final1.ckpt
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/cat_dog_cnn_final2.ckpt
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/cat_dog_cnn_model.mindir
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/kagglecatsanddogs_3367a.zip
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/ADB/adb.exe
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/ADB/AdbWinApi.dll
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/ADB/AdbWinUsbApi.dll
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/ADB/fastboot.exe
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/converter/converter_lite.exe
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/converter/libgcc_s_seh-1.dll
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/converter/libglog.dll
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/converter/libmslite_converter_plugin.dll
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/converter/libopencv_core451.dll
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/converter/libopencv_imgcodecs451.dll
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/converter/libopencv_imgproc451.dll
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/converter/libssp-0.dll
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/converter/libstdc++-6.dll
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/converter/libwinpthread-1.dll
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/converter/pet2.ms
+人工智能导论/2024150118李圣元大作业/MindSporePetClassification/dataset1/MSR-LA - 3467.docx
+人工智能导论/Project 2 - Pacman/实验二 吃豆人指引.docx
+人工智能综合实训/d2l-zh-pytorch.pdf
+人工智能综合实训/data/FashionMNIST/raw/t10k-images-idx3-ubyte
+人工智能综合实训/data/FashionMNIST/raw/t10k-images-idx3-ubyte.gz
+人工智能综合实训/data/FashionMNIST/raw/t10k-labels-idx1-ubyte.gz
+人工智能综合实训/data/FashionMNIST/raw/train-images-idx3-ubyte
+人工智能综合实训/data/FashionMNIST/raw/train-images-idx3-ubyte.gz
+人工智能综合实训/data/FashionMNIST/raw/train-labels-idx1-ubyte.gz
+人工智能综合实训/作业1/作业1_2024150118_李圣元.pdf
+人工智能综合实训/作业1/作业2_2024150118_李圣元.pdf
+人工智能综合实训/实验1/实验1-2024150118-李圣元-2026.doc
+人工智能综合实训/实验二/实验2数据.zip
+发展心理学/01_李圣元_2024150118_24级人工智能卓越班.doc
+微处理器与机器人/project01_李圣元_2024150118/main.zip
+微处理器与机器人/project01_李圣元_2024150118/Project001_2024150118_李圣元/Project001_2024150118_李圣元.mp4
+微处理器与机器人/project01_李圣元_2024150118/project001_李圣元_2024150118/Project001_2024150118_李圣元.pdf
+微处理器与机器人/project01_李圣元_2024150118/project001_李圣元_2024150118/Project001_2024150118_李圣元.zip
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/实验报告_跑马灯.pdf
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/led_test.elf
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/led_test.map
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Core/Src/beep.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Core/Src/gpio.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Core/Src/key.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Core/Src/led.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Core/Src/main.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Core/Src/stm32f4xx_hal_msp.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Core/Src/stm32f4xx_it.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Core/Src/syscalls.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Core/Src/sysmem.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Core/Src/system_stm32f4xx.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Core/Startup/startup_stm32f429igtx.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o
+微处理器与机器人/project01_李圣元_2024150118/跑马灯实验_孙嘉瑞_2024150087/led_test/Debug/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.o
+微处理器与机器人/实验二定时器/STM32F429 阿波罗开发指南_V1.0.pdf
+微处理器与机器人/实验二定时器/exp/build/debug_led.o
+微处理器与机器人/实验二定时器/exp/build/display.o
+微处理器与机器人/实验二定时器/exp/build/firmware.bin
+微处理器与机器人/实验二定时器/exp/build/firmware.elf
+微处理器与机器人/实验二定时器/exp/build/firmware.hex
+微处理器与机器人/实验二定时器/exp/build/firmware.map
+微处理器与机器人/实验二定时器/exp/build/gtim_ic.o
+微处理器与机器人/实验二定时器/exp/build/gtim_pwm.o
+微处理器与机器人/实验二定时器/exp/build/key.o
+微处理器与机器人/实验二定时器/exp/build/led.o
+微处理器与机器人/实验二定时器/exp/build/main.o
+微处理器与机器人/实验二定时器/exp/build/oled.o
+微处理器与机器人/实验二定时器/exp/build/startup_stm32f429xx.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_cortex.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_dma.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_dma_ex.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_exti.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_flash.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_flash_ex.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_gpio.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_pwr.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_pwr_ex.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_rcc.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_rcc_ex.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_tim.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_hal_tim_ex.o
+微处理器与机器人/实验二定时器/exp/build/stm32f4xx_it.o
+微处理器与机器人/实验二定时器/exp/build/system_stm32f4xx.o
+微处理器与机器人/实验二定时器/exp/build/task1_oled.o
+微处理器与机器人/实验二定时器/exp/build/task2_reaction.o
+微处理器与机器人/实验二定时器/exp/build/task3_breath.o
+微处理器与机器人/实验二定时器/exp/build/task4_freqmeter.o
+微处理器与机器人/实验二定时器/exp/build/tick.o
+思政类/1.docx
+思政类/《毛概》社会实践报告.docx
+思政类/专业英语.doc
+思政类/形策大作业.docx
+思政类/毛概读后感.docx
+思政类/膝盖.docx
+数值计算方法/2024150118李圣元实验二.doc
+数值计算方法/2024150118李圣元实验二.docx
+数值计算方法/实验2.pptx
+数值计算方法/实验一.pptx
+数值计算方法/实验三.pptx
+数值计算方法/实验五.pptx
+数值计算方法/实验四(1).pptx
+数值计算方法/李圣元2024150118实验13.docx
+数值计算方法/李圣元2024150118实验16.docx
+数值计算方法/李圣元2024150118实验16.pdf
+数值计算方法/李圣元2024150118实验一.docx
+数值计算方法/李圣元2024150118实验七.docx
+数值计算方法/李圣元2024150118实验三.docx
+数值计算方法/李圣元2024150118实验九 .docx
+数值计算方法/李圣元2024150118实验五.docx
+数值计算方法/李圣元2024150118实验八.docx
+数值计算方法/李圣元2024150118实验六.docx
+数值计算方法/李圣元2024150118实验十 .docx
+数值计算方法/李圣元2024150118实验十一 .docx
+数值计算方法/李圣元2024150118实验十一_完成.docx
+数值计算方法/李圣元2024150118实验十二 .docx
+数值计算方法/李圣元2024150118实验四.docx
+数值计算方法/深圳大学《数值计算方法》实验报告模板 (1).doc
+数值计算方法/深圳大学《数值计算方法》实验报告模板.doc
+数值计算方法/书本/数值计算方法-第七章(1).pptx
+数值计算方法/书本/数值计算方法-第三章 (1).pptx
+数值计算方法/书本/数值计算方法-第二章 (1).pptx
+数值计算方法/书本/数值计算方法-第五章.pptx
+数值计算方法/书本/数值计算方法-第六章 (1).pptx
+数值计算方法/书本/数值计算方法-第四章.pptx
+数值计算方法/书本/数值计算方法（第2版）(吕同富）.pdf
+数值计算方法/实验13/实验十三.pptx
+数值计算方法/实验13/数值计算方法实验十三_副本.docx
+数值计算方法/实验13/李圣元2024150118实验13.docx
+数值计算方法/实验13/李圣元2024150118实验13_已完成.docx
+数值计算方法/实验14/实验十四.pptx
+数值计算方法/实验14/数值计算方法实验14.docx
+数值计算方法/实验14/李圣元2024150118实验13.docx
+数值计算方法/实验14/李圣元2024150118实验十四.docx
+数值计算方法/实验14/李圣元2024150118实验十四_完成.docx
+数值计算方法/实验15/数值计算实验十五.pdf
+数值计算方法/实验15/数值计算实验十五_副本.docx
+数值计算方法/实验15/李圣元2024150118实验15.docx
+数值计算方法/实验15/李圣元2024150118实验15.pdf
+数值计算方法/实验15/李圣元2024150118实验15_完成.docx
+数值计算方法/实验16/数值计算方法实验十六(2).docx
+数值计算方法/实验16/数值计算方法实验十六.pdf
+数值计算方法/实验16/李圣元2024150118实验16.docx
+数值计算方法/实验十二/李圣元2024150118实验十二 .docx
+数值计算方法/实验十二/李圣元2024150118实验十二_v2 .docx
+数值计算方法/实验十二/李圣元2024150118实验十二_v3 .docx
+数据库/实验报告模板2026(1).doc
+数据库/vds/vastbase-installer/Vastbase-G100-3.0_Build9_31338-Linux-x86_64-no_mot.tar.gz
+数据库/vds/vastbase-installer/vastbase_installer
+数据库/vds/vds/VDS/VDS.exe
+数据库/vds/vds/VDS/VDSc.exe
+数据库/vds/vds/VDS/configuration/org.eclipse.osgi/127/0/.cp/swt-gdip-win32-4948r9.dll
+数据库/vds/vds/VDS/configuration/org.eclipse.osgi/127/0/.cp/swt-win32-4948r9.dll
+数据库/vds/vds/VDS/configuration/org.eclipse.osgi/139/0/.cp/bcprov-jdk15on-1.70.jar
+数据库/vds/vds/VDS/configuration/org.eclipse.osgi/16/0/.cp/javafx.graphics.jar
+数据库/vds/vds/VDS/configuration/org.eclipse.osgi/2/0/.cp/poi-ooxml-schemas-4.1.2.jar
+数据库/vds/vds/VDS/configuration/org.eclipse.osgi/20/0/.cp/javafx.web.jar
+数据库/vds/vds/VDS/db_assistant/xterm/dump/linux.aarch64/lib/libfreebl3.so
+数据库/vds/vds/VDS/db_assistant/xterm/dump/win32.x86/libcrypto-3-x64.dll
+数据库/vds/vds/VDS/db_assistant/xterm/dump/win32.x86/libgcc_s_seh-1.dll
+数据库/vds/vds/VDS/db_assistant/xterm/dump/win32.x86/libiconv-2.dll
+数据库/vds/vds/VDS/db_assistant/xterm/dump/win32.x86/libintl-8.dll
+数据库/vds/vds/VDS/db_assistant/xterm/dump/win32.x86/libstdc++-6.dll
+数据库/vds/vds/VDS/db_assistant/xterm/dump/win32.x86/libwinpthread-1.dll
+数据库/vds/vds/VDS/db_assistant/xterm/dump/win32.x86/vb_dump.exe
+数据库/vds/vds/VDS/db_assistant/xterm/dump/win32.x86/vb_restore.exe
+数据库/vds/vds/VDS/db_assistant/xterm/dump/win32.x86/zlib1.dll
+数据库/vds/vds/VDS/db_assistant/xterm/vsql/win32.x86/libcrypto-1_1-x64.dll
+数据库/vds/vds/VDS/db_assistant/xterm/vsql/win32.x86/libpq.dll
+数据库/vds/vds/VDS/db_assistant/xterm/vsql/win32.x86/libssl-1_1-x64.dll
+数据库/vds/vds/VDS/db_assistant/xterm/vsql/win32.x86/psql.exe
+数据库/vds/vds/VDS/docs/VDS V3.9 User Manual.pdf
+数据库/vds/vds/VDS/docs/VDS V3.9 用户手册.pdf
+数据库/vds/vds/VDS/p2/org.eclipse.equinox.p2.engine/profileRegistry/DefaultProfile.profile/1776679944464.profile.gz
+数据库/vds/vds/VDS/p2/org.eclipse.equinox.p2.engine/profileRegistry/DefaultProfile.profile/1776679944535.profile.gz
+数据库/vds/vds/VDS/p2/org.eclipse.equinox.p2.engine/profileRegistry/DefaultProfile.profile/1776679956960.profile.gz
+数据库/vds/vds/VDS/p2/org.eclipse.equinox.p2.engine/profileRegistry/DefaultProfile.profile/1776679957831.profile.gz
+数据库/vds/vds/VDS/plugins/com.ibm.icu_67.1.0.v20200706-1749.jar
+数据库/vds/vds/VDS/plugins/Common-collection_1.0.0.jar
+数据库/vds/vds/VDS/plugins/openjfx.graphics.win32_64_19.0.0.jar
+数据库/vds/vds/VDS/plugins/openjfx.web.win32_64_19.0.0.jar
+数据库/vds/vds/VDS/plugins/org.bouncycastle.bcprov_1.69.0.v20210923-1401.jar
+数据库/vds/vds/VDS/plugins/org.opengauss.mppdbide.adapter.gauss_1.0.0.202604201010.jar
+数据库/vds/vds/VDS/plugins/org.opengauss.mppdbide.view_1.0.0.202604201010.jar
+数据库/vds/vds/VDS/plugins/org.eclipse.equinox.launcher.win32.win32.x86_64_1.2.400.v20211117-0650/eclipse_11602.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-console-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-datetime-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-debug-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-errorhandling-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-file-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-file-l1-2-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-file-l2-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-handle-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-heap-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-interlocked-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-libraryloader-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-localization-l1-2-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-memory-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-namedpipe-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-processenvironment-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-processthreads-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-processthreads-l1-1-1.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-profile-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-rtlsupport-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-string-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-synch-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-synch-l1-2-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-sysinfo-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-timezone-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-core-util-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-conio-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-convert-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-environment-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-filesystem-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-heap-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-locale-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-math-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-multibyte-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-private-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-process-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-runtime-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-stdio-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-string-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-time-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/api-ms-win-crt-utility-l1-1-0.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/attach.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/awt.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/dt_shmem.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/dt_socket.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/fontmanager.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/freetype.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/instrument.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/j2gss.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/j2pcsc.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/j2pkcs11.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jaas.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jabswitch.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jaccessinspector.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jaccesswalker.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jaotc.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jar.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jarsigner.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/java.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/java.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/javaaccessbridge.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/javac.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/javadoc.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/javajpeg.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/javap.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/javaw.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jawt.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jcmd.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jconsole.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jdb.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jdeprscan.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jdeps.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jdwp.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jhsdb.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jimage.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jimage.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jinfo.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jjs.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jli.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jlink.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jmap.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jmod.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jps.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jrunscript.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jshell.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jsound.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jstack.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jstat.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/jstatd.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/keytool.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/kinit.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/klist.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/ktab.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/lcms.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/le.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/management.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/management_agent.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/management_ext.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/mlib_image.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/msvcp140.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/net.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/nio.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/pack200.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/prefs.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/rmi.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/rmic.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/rmid.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/rmiregistry.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/saproc.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/serialver.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/splashscreen.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/sunec.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/sunmscapi.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/ucrtbase.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/unpack.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/unpack200.exe
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/vcruntime140.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/verify.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/w2k_lsa_auth.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/windowsaccessbridge-64.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/zip.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/bin/server/jvm.dll
+数据库/vds/vds/VDS/tools/jdk-11.0.2/jmods/java.base.jmod
+数据库/vds/vds/VDS/tools/jdk-11.0.2/jmods/java.desktop.jmod
+数据库/vds/vds/VDS/tools/jdk-11.0.2/jmods/jdk.compiler.jmod
+数据库/vds/vds/VDS/tools/jdk-11.0.2/jmods/jdk.internal.vm.compiler.jmod
+数据库/vds/vds/VDS/tools/jdk-11.0.2/jmods/jdk.localedata.jmod
+数据库/vds/vds/VDS/tools/jdk-11.0.2/lib/jawt.lib
+数据库/vds/vds/VDS/tools/jdk-11.0.2/lib/jvm.lib
+数据库/vds/vds/VDS/tools/jdk-11.0.2/lib/modules
+数据库/vds/vds/VDS/tools/jdk-11.0.2/lib/src.zip
+数据库/实验一/实验1&2数据库应用实验（vastbase）.docx
+数据库/实验一/李圣元2024150118实验一.doc
+最优化方法/9 QR Factorization_2025.pptx
+最优化方法/Introduction to Applied Linear Algebra. Vectors, Matrices, and Least Squares.pdf
+最优化方法/train_images.mat
+最优化方法/train_labels.mat
+最优化方法/李圣元2024150118实验1 (2).zip
+最优化方法/李圣元2024150118实验三.zip
+最优化方法/李圣元2024150118实验二.zip
+最优化方法/李圣元2024150118实验1/train_images.mat
+最优化方法/李圣元2024150118实验1/train_labels.mat
+最优化方法/李圣元2024150118实验1/李圣元_2024150118_实验1.doc
+最优化方法/李圣元2024150118实验三/Matrix_A_b.mat
+最优化方法/李圣元2024150118实验三/李圣元2024150118实验三.doc
+最优化方法/李圣元2024150118实验二/MatrixA.mat
+最优化方法/李圣元2024150118实验二/MatrixB.mat
+最优化方法/李圣元2024150118实验二/李圣元2024150118实验二.doc
+机器学习/20241501118李圣元深度神经网络.zip
+机器学习/2024150118李圣元PCA图像降维与可视化.zip
+机器学习/2024150118李圣元SVM.zip
+机器学习/2024150118李圣元线性回归.zip
+机器学习/2024150118李圣元聚类算法.zip
+机器学习/实验3：线性回归.zip
+机器学习/实验4：聚类算法.zip
+机器学习/实验5：SVM算法.zip
+机器学习/实验6：深度神经网络.zip
+机器学习/第4章 线性回归模型.pdf
+机器学习/PPT/第1章 机器学习简介.pdf
+机器学习/PPT/第2章：PCA主成分分析.pdf
+机器学习/PPT/第3章 线性判别分析.pdf
+机器学习/PPT/第4章 线性回归模型.pdf
+机器学习/PPT/第5章 逻辑回归.pdf
+机器学习/PPT/第6章 聚类.pdf
+机器学习/PPT/第7章 神经网络.pdf
+机器学习/PPT/第8章 SVM支持向量机.pdf
+机器学习/大作业/msae.pdf
+机器学习/大作业/msae_rw_uw.pdf
+机器学习/大作业/SubspaceAD.pdf
+机器学习/实验1：PCA降维/2024150118李圣元实验报告.docx
+机器学习/实验1：PCA降维/实验教程一.docx
+机器学习/实验2：LDA/2024150118李圣元LDA算法.zip
+机器学习/实验2：LDA/2024150118李圣元实验二：LDA.docx
+机器学习/实验2：LDA/~$实验教程.docx
+机器学习/实验2：LDA/实验教程.docx
+机器学习/实验3：线性回归/实验3：线性回归/2024150118李圣元实验3：线性回归.docx
+机器学习/实验3：线性回归/实验3：线性回归/实验教程.docx
+机器学习/实验4：聚类算法/2024150118李圣元实验报告.docx
+机器学习/实验4：聚类算法/实验教程.docx
+机器学习/实验5：SVM算法/实验报告.docx
+机器学习/实验5：SVM算法/实验5：SVM算法/实验报告.docx
+机器学习/实验5：SVM算法/实验5：SVM算法/实验报告_已填写.docx
+机器学习/实验5：SVM算法/实验5：SVM算法/实验教程.docx
+机器学习/实验6：深度神经网络/实验6：深度神经网络/实验报告.docx
+机器学习/实验6：深度神经网络/实验6：深度神经网络/实验教程.docx
+机器学习/论文汇报2/16-1-GPT-1.pdf
+算法/PPT.zip
+算法/算法实验报告3.docx
+算法/算法实验报告3.pdf
+算法/算法实验报告4.docx
+算法/算法实验报告4.pdf
+算法/6/六.docx
+算法/6/六.pdf
+算法/6/算法实验六.pdf
+算法/6/算法实验报告六.docx
+算法/Class2/算法设计与分析实验2(1).docx
+算法/Class2/算法设计与分析实验2(1).pdf
+算法/Homework/算法设计与分析实验1.docx
+算法/Homework/算法设计与分析实验1.pdf
+算法/PPT/图论算法.pptx
+算法/PPT/第一章（算法基本概念）.pdf
+算法/PPT/第一章（算法基本概念）.pptx
+算法/PPT/第七章（贪心算法）.ppt
+算法/PPT/第三章（堆和堆排序）.pptx
+算法/PPT/第九章（图论算法） .pptx
+算法/PPT/第二章（递归分治策略）.pptx
+算法/PPT/第五章（散列表）.pptx
+算法/PPT/第八章（摊还分析）.ppt
+算法/PPT/第六章（动态规划）.ppt
+算法/PPT/第十章（NP问题）.pptx
+算法/PPT/第四章（回溯法）.pptx
+算法/PPT/PPT/图论算法.pptx
+算法/PPT/PPT/第一章（算法基本概念）.pdf
+算法/PPT/PPT/第一章（算法基本概念）.pptx
+算法/PPT/PPT/第七章（贪心算法）.ppt
+算法/PPT/PPT/第三章（堆和堆排序）.pptx
+算法/PPT/PPT/第九章（图论算法） .pptx
+算法/PPT/PPT/第二章（递归分治策略）.pptx
+算法/PPT/PPT/第五章（散列表）.pptx
+算法/PPT/PPT/第八章（摊还分析）.ppt
+算法/PPT/PPT/第六章（动态规划）.ppt
+算法/PPT/PPT/第十章（NP问题）.pptx
+算法/PPT/PPT/第四章（回溯法）.pptx
+算法/实验五/largeG.txt
+算法/实验五/算法实验报告实验五(1).docx
+算法/实验五/算法实验报告实验五.docx
+算法/实验五/算法实验报告实验五.pdf
+编译原理/李圣元2024150118实验一.zip
+编译原理/李圣元2024150118实验三.zip
+编译原理/李圣元2024150118实验二.zip
+编译原理/ppt/2. 编译系统概述.pptx
+编译原理/ppt/3. 高级语言及其文法(上).pptx
+编译原理/ppt/3. 高级语言及其文法(下).pptx
+编译原理/ppt/4. 词法分析（1） (1).pptx
+编译原理/ppt/4. 词法分析（2） (1).pptx
+编译原理/ppt/4. 词法分析（3） (1).pptx
+编译原理/ppt/5. 语法分析(1) (2).ppt
+编译原理/ppt/5. 语法分析(2) (2).pptx
+编译原理/ppt/5. 语法分析(3).pptx
+编译原理/ppt/5.4 语法分析(4).pptx
+编译原理/ppt/5.5 语法分析(5).pptx
+编译原理/ppt/5.6 语法分析(6) LR.pptx
+编译原理/ppt/6.1 语义分析(1).ppt
+编译原理/ppt/6.2 语义分析(2).ppt
+编译原理/ppt/7 中间代码生成.ppt
+编译原理/实验/template.docx
+编译原理/实验/实验五：中间代码生成与优化.pdf
+编译原理/实验/实验四：语义分析与类型系统.pdf
+编译原理/实验/李圣元2024150118实验五.zip
+编译原理/实验/李圣元2024150118实验四.zip
+编译原理/实验/李圣元2024150118实验一/grammar_analyzer.exe
+编译原理/实验/李圣元2024150118实验一/language_spec.docx
+编译原理/实验/李圣元2024150118实验一/实验一：语言设计与文法工程.pdf
+编译原理/实验/李圣元2024150118实验一/李圣元2024150118实验一实验报告.doc
+编译原理/实验/李圣元2024150118实验三/实验三：语法分析.pdf
+编译原理/实验/李圣元2024150118实验三/李圣元2024150118实验三实验报告.doc
+编译原理/实验/李圣元2024150118实验三/李圣元2024150118实验报告模板.doc
+编译原理/实验/李圣元2024150118实验二/实验二：词法分析.pdf
+编译原理/实验/李圣元2024150118实验二/李圣元2024150118实验二实验报告.doc
+编译原理/实验/李圣元2024150118实验五/李圣元2024150118实验五.docx
+编译原理/实验/李圣元2024150118实验四/李圣元2024150118实验四.docx
+编译原理/李圣元2024150118实验三/李圣元2024150118实验三实验报告.doc
+脑与认知科学/2024150118_李圣元_认知科学实验设计.doc
+脑与认知科学/2024150118_李圣元_认知科学实验设计.zip
+脑与认知科学/2024150118_李圣元_认知科学实验设计/data/result.xlsx
+脑与认知科学/2024150118_李圣元_认知科学实验设计/image/chose_color.xlsx
+脑与认知科学/2024150118_李圣元_认知科学实验设计/image/chose_dog_or_cat.xlsx
+脑与认知科学/刘雨鑫/2023155024_刘雨鑫_实验报告1.doc
+脑与认知科学/刘雨鑫/2023155024_刘雨鑫_实验报告2_物体识别_2025.doc
+脑与认知科学/刘雨鑫/2023155024_刘雨鑫_实验报告3_工作记忆_2025(1).doc
+脑与认知科学/刘雨鑫/2023155024_刘雨鑫_实验报告4_2025.docx
+脑与认知科学/刘雨鑫/2023155024_刘雨鑫_实验报告5_脑电_2025(1).doc
+脑与认知科学/刘雨鑫/体育部李圣元团学年度工作报告 .docx
+脑与认知科学/刘雨鑫/实验1-2023155024-刘雨鑫.doc
+计算机图形学/实验1.2-发布版.zip
+计算机图形学/实验一_发布版.zip
+计算机图形学/实验1.1/2024150118李圣元实验1.1.docx
+计算机图形学/实验1.1/2024150118李圣元实验1.1.pdf
+计算机图形学/实验1.1/MacOS VScode配置指南.docx
+计算机图形学/实验1.1/VS2019软件包.zip
+计算机图形学/实验1.1/实验1.1 【Linux】OpenGL图形编程环境配置.docx
+计算机图形学/实验1.1/实验1.1 【MacOS】OpenGL图形编程环境配置.docx
+计算机图形学/实验1.1/实验1.1 【Windows】OpenGL图形编程环境配置.docx
+计算机图形学/实验1.1/实验1.1_参考代码.zip
+计算机图形学/实验1.1/VS2019软件包/cmake-3.20.5-windows-x86_64.msi
+计算机图形学/实验1.1/VS2019软件包/downloads.zip
+计算机图形学/实验1.1/VS2019软件包/Git-2.32.0-64-bit.exe
+计算机图形学/实验1.1/VS2019软件包/vcpkg.zip
+计算机图形学/实验1.1/VS2019软件包/downloads/downloads/d7acca2b-nuget.exe
+计算机图形学/实验1.1/VS2019软件包/downloads/downloads/Dav1dde-glad-7ece538856bf124d798ab323c8e1e64ebb83cb50.tar.gz
+计算机图形学/实验1.1/VS2019软件包/downloads/downloads/EGL-Registry-598f20e3b7b7eec3e8d8a83e64b9592a21c55bb6.tar.gz
+计算机图形学/实验1.1/VS2019软件包/downloads/downloads/g-truc-glm-bf71a834948186f4097caa076cd2663c69a10e1e.tar.gz
+计算机图形学/实验1.1/VS2019软件包/downloads/downloads/glfw-814b7929c5add4b0541ccad26fb81f28b71dc4d8.tar.gz
+计算机图形学/实验1.1/VS2019软件包/downloads/downloads/KhronosGroup-EGL-Registry-11478904448bbdf5757b798c856a525aa2b351b1.tar.gz
+计算机图形学/实验1.1/VS2019软件包/downloads/downloads/KhronosGroup-OpenGL-Registry-4594c03239fb76580bc5d5a13acb2a8f563f0158.tar.gz
+计算机图形学/实验1.1/VS2019软件包/downloads/downloads/OpenGL-Registry-3c9ab309994c2baeb5572aa0befd5f405166a275.tar.gz
+计算机图形学/实验1.1/VS2019软件包/downloads/downloads/PowerShell-7.1.3-win-x86.zip
+计算机图形学/实验1.1/实验1.1_参考代码/实验1.1_参考代码/build/CMakeFiles/3.20.5/CMakeDetermineCompilerABI_C.bin
+计算机图形学/实验1.1/实验1.1_参考代码/实验1.1_参考代码/build/CMakeFiles/3.20.5/CMakeDetermineCompilerABI_CXX.bin
+计算机图形学/实验1.1/实验1.1_参考代码/实验1.1_参考代码/build/CMakeFiles/3.20.5/CompilerIdC/a.exe
+计算机图形学/实验1.1/实验1.1_参考代码/实验1.1_参考代码/build/CMakeFiles/3.20.5/CompilerIdCXX/a.exe
+计算机图形学/实验1.1/实验1.1_参考代码/实验1.1_参考代码/lib/libglfw3.a
+计算机图形学/实验1.2-发布版/实验1.2 OpenGL与着色器编程.docx
+计算机图形学/实验1.2-发布版/实验1.2_代码/build/main.exe
+计算机图形学/实验1.2-发布版/实验1.2_代码/lib/libglfw3.a
+计算机图形学/实验2.1-发布版/实验2.1 OpenGL鼠标键盘的交互.docx
+计算机图形学/实验2.1-发布版/实验2.1_代码/build/main.exe
+计算机图形学/实验2.1-发布版/实验2.1_代码/lib/libglfw3.a
+计算机图形学/实验2.2-发布版/实验2.2 OFF格式的模型显示.docx
+计算机图形学/实验2.2-发布版/实验2.2_代码/build/main.exe
+计算机图形学/实验2.2-发布版/实验2.2_代码/lib/libglfw3.a
+计算机图形学/实验2.3-发布版/实验2.3 三维模型的平移缩放和旋转.docx
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/libglfw3.a
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/main.exe
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/CMakeFiles/3.20.5/CMakeDetermineCompilerABI_C.bin
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/CMakeFiles/3.20.5/CMakeDetermineCompilerABI_CXX.bin
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/CMakeFiles/3.20.5/CompilerIdC/CompilerIdC.exe
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/CMakeFiles/3.20.5/CompilerIdC/Debug/CMakeCCompilerId.obj
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/CMakeFiles/3.20.5/CompilerIdCXX/CompilerIdCXX.exe
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/CMakeFiles/3.20.5/CompilerIdCXX/Debug/CMakeCXXCompilerId.obj
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/Debug/glfw3.dll
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/Debug/main.exe
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/Debug/main.pdb
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/main.dir/Debug/glad.obj
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/main.dir/Debug/InitShader.obj
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/main.dir/Debug/main.obj
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/main.dir/Debug/TriMesh.obj
+计算机图形学/实验2.3-发布版/实验2.3_代码/build/main.dir/Debug/vc142.pdb
+计算机图形学/实验2.3-发布版/实验2.3_代码/lib/libglfw3.a
+计算机图形学/实验一_发布版/2024150118_李圣元_实验一.docx
+计算机图形学/实验一_发布版/2024150118李圣元实验一.zip
+计算机图形学/实验一_发布版/实验一 OpenGL基本绘制.docx
+计算机图形学/实验一_发布版/2024150118李圣元实验一/code/build/main.exe
+计算机图形学/实验一_发布版/2024150118李圣元实验一/code/lib/libglfw3.a
+计算机图形学/实验一_发布版/2024150118李圣元实验一/exe/main.exe
+计算机图形学/实验一_发布版/实验一_代码/build/main.exe
+计算机图形学/实验一_发布版/实验一_代码/lib/libglfw3.a
+计算机图形学/期中大作业_发布版/学号_姓名_期中大作业.docx
+计算机图形学/期中大作业_发布版/期中大作业 俄罗斯方块.docx
+计算机图形学/期中大作业_发布版/期中大作业_代码/build/main.exe
+计算机图形学/期中大作业_发布版/期中大作业_代码/lib/libglfw3.a
+计算机图形学/课件/CG_ch01.pptx
+计算机图形学/课件/CG_ch02.pptx
+计算机系统/1.2_1.3.pptx
+计算机系统/2023深圳大学计算机系统1真题.docx
+计算机系统/实验(1).zip
+计算机系统/计算机系统I 第10章.pptx
+计算机系统/计算机系统I 第2章.pptx
+计算机系统/计算机系统I 第4章.pptx
+计算机系统/计算机系统intro25-for student.pptx
+计算机系统/计系一复习题.pdf
+计算机系统/实验/李圣元2024150118实验报告.docx
+计算机系统/实验/LC3/LC3Edit.exe
+计算机系统/实验/LC3/Simulate.exe
+计算机系统/实验/实验1/LC3/ABC.bin
+计算机系统/实验/实验1/LC3/ABC.hex
+计算机系统/实验/实验1/LC3/ABC.lst
+计算机系统/实验/实验1/LC3/ABC.obj
+计算机系统/实验/实验1/LC3/addnum.bin
+计算机系统/实验/实验1/LC3/addnum.obj
+计算机系统/实验/实验1/LC3/date.bin
+计算机系统/实验/实验1/LC3/date.hex
+计算机系统/实验/实验1/LC3/date.lst
+计算机系统/实验/实验1/LC3/date.obj
+计算机系统/实验/实验1/LC3/MAIN.bin
+计算机系统/实验/实验1/LC3/MAIN.hex
+计算机系统/实验/实验1/LC3/MAIN.lst
+计算机系统/实验/实验1/LC3/MAIN.obj
+计算机系统/实验/实验1/LC3/nim.bin
+计算机系统/实验/实验1/LC3/nim.hex
+计算机系统/实验/实验1/LC3/nim.lst
+计算机系统/实验/实验1/LC3/nim.obj
+计算机系统/实验/实验1/LC3/RUPT.bin
+计算机系统/实验/实验1/LC3/RUPT.hex
+计算机系统/实验/实验1/LC3/RUPT.lst
+计算机系统/实验/实验1/LC3/RUPT.obj
+计算机系统/实验/实验1/LC3/LC3/LC3WinGuide.pdf
+计算机系统/实验/实验1/LC3/LC3/LC3使用指南.pdf
+计算机系统/实验/实验1/LC3/LC3/仿真器/LC301.exe
+计算机系统/实验2/实验二 LC-3机器码编程实验.pptx
+计算机系统/实验2/李圣元2024150118实验二报告.docx
+计算机系统/实验6中断/实验六 LC-3中断实验.pptx
+计算机系统/实验6中断/李圣元2024150118实验报告.docx
+计算机系统/实验三/实验三 LC-3汇编语言实验 求成绩等级.pptx
+计算机系统/实验三/李圣元2024150118实验报告.docx
+计算机系统/实验四五NIM游戏/2024150118李圣元实验四五nim游戏实验报告.docx
+计算机系统/实验四五NIM游戏/实验四和五 Nim游戏.docx
+计算机系统2/2021192010 王曦 计系2实验5.docx
+计算机系统2/20241501118李圣元实验五.docx
+计算机系统2/实验三/bomb.zip
+计算机系统2/实验三/实验3_逆向工程实验.pptx
+计算机系统2/实验三/李圣元2024150118实验3_逆向工程_实验报告.docx
+计算机系统2/实验二/5-2实验二 数据表示实验.pptx
+计算机系统2/实验二/5-4实验二 datalab-handout.tar
+计算机系统2/实验二/李圣元2024150118实验二.docx
+计算机系统2/实验二/5-4实验二 datalab-handout/datalab-handout/nothing.exe
+计算机系统2/实验五/注意事项.docx
+计算机系统2/实验四/2021192010 王曦 计系2实验4.docx
+计算机系统2/实验四/2024150118李圣元实验4 实验报告.docx
+计算机系统2/实验四/buflab-handout.tar
+计算机系统2/实验四/学生使用材料.zip
+计算机系统2/实验四/实验四 缓冲区溢出攻击实验.pptx
+计算机系统2/实验四/学生使用材料/buflab-handout.tar
+计算机系统2/实验四/学生使用材料/实验4 实验报告模版.docx
+计算机系统2/实验四/学生使用材料/实验四 缓冲区溢出攻击实验.pptx
+计算机系统2/李圣元2024150118实验1/李圣元2024150118实验一 实验环境配置与使用 .docx
+计算机系统2/计系/姚健文 2023150131  实验一  实验环境配置与使用.docx
+计算机系统2/计系/姚健文 2023150131 实验3_逆向工程.docx
+计算机系统2/计系/姚健文 2023150131 实验4 缓冲区溢出攻击实验.docx
+计算机系统2/计系/姚健文 2023150131 实验二.docx
+计算机系统2/计系/姚健文 2023150131 实验五_Cache实验.docx
+计算机系统3/Chapter_01_计算机概要与技术(1).pptx
+计算机系统3/Chapter_02_-指令.pptx
+计算机系统3/网上/RISC-V-Reader-Chinese-v1.pdf
+计算机系统3组成设计/Chisel-数字系统设计基础-ppt/Chisel-数字系统设计基础-ppt.zip
+计算机系统3组成设计/Chisel-数字系统设计基础-ppt/chisel工程搭建-完整示例.docx
+计算机系统3组成设计/Chisel-数字系统设计基础-ppt/Chisel语言入门-01-Chisel简介.pdf
+计算机系统3组成设计/Chisel-数字系统设计基础-ppt/Chisel语言入门-01-Chisel简介.pptx
+计算机系统3组成设计/Chisel-数字系统设计基础-ppt/Chisel语言入门-02-Chisel的信号与运算.pdf
+计算机系统3组成设计/Chisel-数字系统设计基础-ppt/Chisel语言入门-02-Chisel的信号与运算.pptx
+计算机系统3组成设计/Chisel-数字系统设计基础-ppt/Chisel语言入门-03-Chisel设计基础.pdf
+计算机系统3组成设计/Chisel-数字系统设计基础-ppt/Chisel语言入门-03-Chisel设计基础.pptx
+计算机系统3组成设计/ripes/d3dcompiler_47.dll
+计算机系统3组成设计/ripes/libEGL.dll
+计算机系统3组成设计/ripes/libGLESv2.dll
+计算机系统3组成设计/ripes/Qt5Charts.dll
+计算机系统3组成设计/ripes/Qt5Core.dll
+计算机系统3组成设计/ripes/Qt5Gui.dll
+计算机系统3组成设计/ripes/Qt5Svg.dll
+计算机系统3组成设计/ripes/Qt5Widgets.dll
+计算机系统3组成设计/ripes/Ripes.exe
+计算机系统3组成设计/ripes/iconengines/qsvgicon.dll
+计算机系统3组成设计/ripes/imageformats/qgif.dll
+计算机系统3组成设计/ripes/imageformats/qicns.dll
+计算机系统3组成设计/ripes/imageformats/qico.dll
+计算机系统3组成设计/ripes/imageformats/qjpeg.dll
+计算机系统3组成设计/ripes/imageformats/qsvg.dll
+计算机系统3组成设计/ripes/imageformats/qtga.dll
+计算机系统3组成设计/ripes/imageformats/qtiff.dll
+计算机系统3组成设计/ripes/imageformats/qwbmp.dll
+计算机系统3组成设计/ripes/imageformats/qwebp.dll
+计算机系统3组成设计/ripes/platforms/qwindows.dll
+计算机系统3组成设计/ripes/styles/qwindowsvistastyle.dll
+计算机系统3组成设计/RISC-V-mini处理器Chisel源码分析-ppt/RISC-V-mini处理器Chisel源码分析-chap01-简介.pptx
+计算机系统3组成设计/RISC-V-mini处理器Chisel源码分析-ppt/RISC-V-mini处理器Chisel源码分析-chap02-编译RISC-V程序.pptx
+计算机系统3组成设计/RISC-V-mini处理器Chisel源码分析-ppt/RISC-V-mini处理器Chisel源码分析-chap03-riscv-mini项目概览.pptx
+计算机系统3组成设计/RISC-V-mini处理器Chisel源码分析-ppt/RISC-V-mini处理器Chisel源码分析-chap04-riscv-mini指令处理全过程.pptx
+计算机系统3组成设计/RISC-V-mini处理器Chisel源码分析-ppt/riscv-tools-priv1.7.tar.gz
+计算机系统3组成设计/RISC-V-mini处理器Chisel源码分析-ppt/正芯一号处理器实验指导书2.0(1).docx
+计算机系统3组成设计/RISC-V-mini处理器Chisel源码分析-ppt/第四周实验‘.docx
+计算机系统3组成设计/RISC-V-mini处理器Chisel源码分析-ppt/龙芯XV6与RISC-V实验系统镜像使用说明(1).docx
+计算机系统3组成设计/RISC-V-mini处理器Chisel源码分析-ppt/实验要求/2024150118李圣元作业2.docx
+计算机系统3组成设计/RISC-V-mini处理器Chisel源码分析-ppt/实验要求/实验2 RISCV MINI 观测实验(1).docx
+计算机系统3组成设计/RISC-V指令集基础ppt/RISC-V指令集基础-Chap1-简介.pptx
+计算机系统3组成设计/RISC-V指令集基础ppt/RISC-V指令集基础-Chap2-RV32I基础整数指令集.pptx
+计算机系统3组成设计/RISC-V指令集基础ppt/RISC-V指令集基础-Chap3-RISC-V虚拟机-Ripes+(钟毅文修改).pptx
+计算机系统3组成设计/RISC-V指令集基础ppt/RISC-V指令集基础-Chap3-RISC-V虚拟机-Ripes.pptx
+计算机系统3组成设计/RISC-V指令集基础ppt/RISC-V汇编入门/Ripes-v2.2.3-win-x86_64.zip
+计算机系统3组成设计/RISC-V指令集基础ppt/RISC-V汇编入门/Ripes仿真器的使用.docx
+计算机系统3组成设计/RISC-V指令集基础ppt/RISC-V汇编入门/RISC-V 汇编练习-答案.docx
+计算机系统3组成设计/RISC-V指令集基础ppt/RISC-V汇编入门/RISC-V 汇编练习-题目.docx
+计算机系统3组成设计/RISC-V指令集基础ppt/RISC-V汇编入门/RISC-V-Reader-Chinese-v2p1.pdf
+计算机系统3组成设计/RISC-V指令集基础ppt/RISC-V汇编入门/作业布置.docx
+计算机系统3组成设计/实验一/chisel工程搭建-完整示例(1).docx
+计算机系统3组成设计/实验一/李圣元2024150118.docx
+计算机系统3组成设计/实验课实验一/李圣元2024150118实验一.docx
+计算机系统3组成设计/实验课实验一/理论课配套实验-实验一：RISC-V仿真器ripes实验(1).docx
+计算机系统3组成设计/实验课实验二/李圣元-2024150118-实验二：浮点加法器设计实验.docx
+计算机系统3组成设计/理论课-实验-实践/ripes一章.docx
+计算机系统3组成设计/理论课-实验-实践/risc-v+ripes前3章.docx
+计算机系统3组成设计/理论课-实验-实践/实验1~4.zip
+计算机系统3组成设计/理论课-实验-实践/新旧实验迁移安排.xlsx
+计算机系统3组成设计/理论课-实验-实践/实验一 RISC-V仿真器ripes实验/实验一的关键流程图及数据 ：RISC-V仿真器ripes实验.docx
+计算机系统3组成设计/理论课-实验-实践/实验一 RISC-V仿真器ripes实验/李圣元2024150118实验一.docx
+计算机系统3组成设计/理论课-实验-实践/实验三 五级流水与数据冒险实验/实验三：五级流水与数据冒险实验关键截图.docx
+计算机系统3组成设计/理论课-实验-实践/实验三 五级流水与数据冒险实验/理论课配套实验-实验三：五级流水与数据冒险实验.docx
+计算机系统3组成设计/理论课-实验-实践/实验二 浮点加法器设计实验/实验二（分发给学生的 code）：浮点加法器框架+测试器代码.docx
+计算机系统3组成设计/理论课-实验-实践/实验二 浮点加法器设计实验/实验二：仿真运行结果截屏.docx
+计算机系统3组成设计/理论课-实验-实践/实验二 浮点加法器设计实验/李圣元-2024150118-实验二：浮点加法器设计实验.docx
+计算机系统3组成设计/理论课-实验-实践/实验二 浮点加法器设计实验/浮点加法器（教师-答案）-参考实现代码.docx
+计算机系统3组成设计/理论课-实验-实践/实验四 五级流水与控制冒险实验/实验四（教师用）：循环展开代码.docx
+计算机系统3组成设计/理论课-实验-实践/实验四 五级流水与控制冒险实验/实验四：五级流水与控制冒险实验关键截图.docx
+计算机系统3组成设计/理论课-实验-实践/实验四 五级流水与控制冒险实验/理论课配套实验-实验四：五级流水与控制冒险实验.docx
+计算机网络/763587 计算机网络自顶向下方法第8版.pdf
+计算机网络/acn.zip
+计算机网络/cn.zip
+计算机网络/计算机网络-自顶向下方法第七版.pdf
+计算机视觉/2024150118_李圣元__实验一.zip
+计算机视觉/2024150118_李圣元_实验二.doc
+计算机视觉/2024150118_李圣元_实验二.zip
+计算机视觉/实验一指导书-学生.pdf
+计算机视觉/2024150118_李圣元__实验一/2024150118-李圣元-实验一.docx
+计算机视觉/2024150118_李圣元_实验二/2024150118_李圣元_实验二.docx
+计网/李圣元2024150118实验2 常用的网络命令.doc
+计网/李圣元2024150118实验3 数据包抓取与分析.doc
+计网/李圣元2024150118实验4.doc
+计网/李圣元2024150118实验5 交换机与VLAN配置.docx
+计网/李圣元2024150118实验6 路由器与静态路由配置.doc
+计网/李圣元2024150118实验7 IPV6隧道.doc
+计网/第3章 2. 传输层协议与进程通信 - UDP报文.ppt
+计网/第3章 3. 传输层协议与进程通信 - TCP报文.ppt
+计网/第3章 4. 传输层协议与进程通信 - TCP连接.ppt
+计网/第3章 5. 传输层协议与进程通信 - 滑动窗口.ppt
+计网/第3章 6. 传输层协议与进程通信 - 拥塞控制.ppt
+计网/配置文件.zip
+计网/复习资料/算法设计/期末卷2/2022算法期末真题.docx
+计网/复习资料/编译原理/编译原理202102试题A.docx
+计网/复习资料/编译原理/编译原理202102试题A参考答案.docx
+计网/复习资料/编译原理/编译原理202102试题B.docx
+计网/复习资料/编译原理/编译原理202102试题B参考答案.docx
+计网/复习资料/计算机系统2/计系2试卷.docx
+计网/复习资料/计算机网络/计算机网络试卷 (1).pdf
+计网/复习资料/计算机网络/计网2021年试卷.pdf
+计网/第2章课件-更新/第2章 1. 互联网应用技术与应用层协议-intro.pptx
+计网/第2章课件-更新/第2章 2. 互联网应用技术与应用层协议-web.pptx
+计网/第2章课件-更新/第2章 3. 互联网应用技术与应用层协议-email.pptx
+计网/第2章课件-更新/第2章 4. 互联网应用技术与应用层协议-FTP.pptx
+计网/第2章课件-更新/第2章 5. 互联网应用技术与应用层协议-DNS etc.pptx
+计网/第3章课件-更新/第3章 1. 传输层协议与进程通信 - intro.ppt
+计网/第3章课件-更新/第3章 2. 传输层协议与进程通信 - UDP报文.ppt
+计网/第3章课件-更新/第3章 3. 传输层协议与进程通信 - TCP报文.ppt
+计网/第3章课件-更新/第3章 4. 传输层协议与进程通信 - TCP连接.ppt
+计网/第3章课件-更新/第3章 5. 传输层协议与进程通信 - 滑动窗口.ppt
+计网/第3章课件-更新/第3章 6. 传输层协议与进程通信 - 拥塞控制.ppt
+计网/第4章 课件/第4章 1. 网络层与IP协议-intro&IP地址.ppt
+计网/第4章 课件/第4章 2. 网络层与IP协议-IP分组.ppt
+计网/第4章 课件/第4章 3. 网络层与IP协议-路由.ppt
+计网/第4章 课件/第4章 4. 网络层与IP协议-ICMP.ppt
+计网/第4章 课件/第4章 5. 网络层与IP协议-ARP.ppt
+计网/第4章课件-更新/第4章 1. 网络层与IP协议-intro&IP地址.ppt
+计网/第4章课件-更新/第4章 2. 网络层与IP协议-IP分组.ppt
+计网/第4章课件-更新/第4章 3. 网络层与IP协议-路由表.ppt
+计网/第4章课件-更新/第4章 4. 网络层与IP协议-路由协议.ppt
+计网/第4章课件-更新/第4章 5. 网络层与IP协议-ICMP.ppt
+计网/第4章课件-更新/第4章 6. 网络层与IP协议-ARP.ppt
+计网/第5章 课件/5.0 数据链路层协议-intro.pptx
+计网/第5章 课件/5.1 数据链路层协议.pptx
+计网/第5章 课件/5.2 局域网技术.pptx
+计网/第5章 课件/6. 数据通信与物理层协议.pptx
+计网/第5章 课件/第7章 7. 下一代互联网与 IPv6.ppt
+计网/第5章课件-更新/5.0 数据链路层协议-intro.pptx
+计网/第5章课件-更新/5.1 数据链路层协议.pptx
+计网/第5章课件-更新/5.2 局域网技术 - 更新.pptx
+计网/计网/姚健文 2023150131 实验2-常用网络命令实验.doc
+计网/计网/姚健文 2023150131 实验3-Wireshark抓包.doc
+计网/计网/姚健文 2023150131 实验4-Socket编程.doc
+计网/计网/姚健文 2023150131 实验5：交换机与虚拟局域网.doc
+计网/计网/姚健文 2023150131 实验6-网络互连路由.doc
+计网/计网/姚健文 2023150131 实验7-IPv6隧道实验.doc

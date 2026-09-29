@@ -1,0 +1,10 @@
+// T4-2: 函数调用参数类型错误
+fn(int) add -> a@int, b@int:
+    return a@int + b@int
+
+fn(void) main ->:
+    int x
+    string s
+    s@string = "10"
+    x@int = add->(s@string, 5)
+    print->(x@int)

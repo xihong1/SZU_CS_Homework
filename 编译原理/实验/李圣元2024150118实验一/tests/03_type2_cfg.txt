@@ -1,0 +1,8 @@
+# Context-free grammar (not regular)
+N: S A B
+T: a b
+P:
+S -> A B
+A -> a A | a
+B -> b B | b
+START: S

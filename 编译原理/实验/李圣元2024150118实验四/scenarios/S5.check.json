@@ -1,0 +1,14 @@
+{
+  "errors": [],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "sumArray", "type": "int(int[5])", "scope": "global", "line": 4 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 16 },
+    { "name": "arr", "type": "int[5]", "scope": "function", "line": 4 },
+    { "name": "i", "type": "int", "scope": "function", "line": 5 },
+    { "name": "s", "type": "int", "scope": "function", "line": 6 },
+    { "name": "a", "type": "int[5]", "scope": "function", "line": 17 },
+    { "name": "one", "type": "int", "scope": "function", "line": 18 },
+    { "name": "all", "type": "int", "scope": "function", "line": 19 }
+  ]
+}

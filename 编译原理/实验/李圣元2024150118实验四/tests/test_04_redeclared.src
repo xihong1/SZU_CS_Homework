@@ -1,0 +1,8 @@
+// T2-2: 同一作用域重复声明
+fn(void) testRedeclared ->:
+    int x
+    float x
+    x@float = 3.14
+
+fn(void) main ->:
+    testRedeclared->()

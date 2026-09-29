@@ -1,0 +1,20 @@
+{
+  "ast": {
+    "type": "Program", "line": 2, "col": 1,
+    "funcs": [
+      {
+        "type": "FuncDecl", "name": "main", "return_type": "void", "line": 2, "col": 1,
+        "params": [],
+        "body": [
+          { "type": "VarDecl", "var_type": "int", "name": "x", "line": 3, "col": 5 },
+          {
+            "type": "AssignStmt", "line": 4, "col": 5,
+            "target": { "type": "TypedVarRef", "name": "x", "ref_type": "int", "line": 4, "col": 5 },
+            "value": { "type": "IntLiteral", "value": "5", "line": 4, "col": 13 }
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>SQL助手</title>
+    <link href="css/demo.css" rel="stylesheet">
+    <link href="css/scrollBar.css" rel="stylesheet">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/suggestionParser.js"></script>
+    <script src="js/errorcodeParser.js"></script>
+    <script src="js/stringReader.js"></script>
+    <script src="js/scrollBar.js"></script>
+    <script src="Vastbase%20G100/zh/suggestionJson.js"></script>
+    <link href="css/index.css" rel="stylesheet">
+
+    <style type="text/css">
+        /*定义滚动条宽高及背景，宽高分别对应横竖滚动条的尺寸*/
+        ::-webkit-scrollbar {
+            width: 10px; /*对垂直流动条有效*/
+            height: 10px; /*对水平流动条有效*/
+            background-color: #BDBDBD;
+        }
+        /*定义滚动条的轨道颜色、内阴影及圆角*/
+        ::-webkit-scrollbar-track{
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: #fff;
+            border-radius: 3px;
+        }
+        /*定义滑块颜色、内阴影及圆角*/
+        ::-webkit-scrollbar-thumb{
+            border-radius: 7px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: #BDBDBD;
+        }
+        /*定义两端按钮的样式*/
+        ::-webkit-scrollbar-button {
+            background-color: #fff;
+        }
+
+        /*定义右下角汇合处的样式*/
+        ::-webkit-scrollbar-corner {
+            background: #fff;
+        }
+
+        .align-center{
+            text-align: center;
+            height: 32px;
+            line-height: 32px;'
+        }
+
+    </style>
+
+</head>
+
+<body style="width: 566px;">
+    <div class="safe_area">
+        <div class="buttontitlearea">
+            <div id="grammar" class="button-title-Item button-title-Item-sm center" style="text-align: center;height: 23px;line-height: 23px;">语法</div>
+            <div id="operationList" class="button-title-Item button-title-Item-md center active" style="text-align: center;height: 23px;line-height: 23px;">操作列表</div>
+            <!-- <div id="beginnerGuide" class="button-title-Item button-title-Item-md center">新手入门</div>
+            <div id="case" class="button-title-Item button-title-Item-sm center">案列</div> -->
+        </div>
+        <div class="contentArea">
+            <div id="operationListContent">
+                <div class="operationTip">
+                    <p class="operationTipTnfo">通过操作列表，您只需要知道自己要“做什么”，就可以快速找到所需命令，而不需要事先知道命令名称。</p>
+                    <div class="operationTipselect" style="width: 200px"><b>选择您要做哪类操作?</b></div>
+                    <div class="operationName" id="operNameC"></div>
+                </div>
+                <div>
+                    <div class="functionalDimension hidden">
+                        <div class="contentTitle is-func-deime">
+                            <b>功能维度</b>
+                        </div>
+                        <div id="funcDimen">
+                        </div>
+                    </div>
+                    <div class="sceneDimension hidden">
+                        <div class="contentTitle">
+                            <b>场景维度</b>
+                        </div>
+                        <div id="scenDimen">
+                        </div>
+
+                    </div>
+                    <div class="operationalDimension hidden">
+                        <div class="contentTitle">
+                            <b>操作维度</b>
+                        </div>
+                        <div id="operDimen">
+                        </div>
+                    </div>
+                </div>
+                <div id="beginnerContent" class="hidden">
+                    <input type="file" id="excel-file">
+                </div>
+                <div id="caseContent" class="hidden">
+                </div>
+            </div>
+            <script src="js/index.js"></script>
+            <!-- <script type="text/javascript" src="js/data.js"></script> -->
+            <script src="js/operationList.js"></script>
+        </div>
+</body>

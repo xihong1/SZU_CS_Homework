@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>英雄快跑</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+        button {
+            display: block;
+            padding: 10px;
+            background-color: #2196f3;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 3px;
+            margin: 2px auto;
+            cursor: pointer;
+        }
+        .info {
+            margin: 10px 0;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+        }
+        .info .info-box{
+            display: flex;
+            justify-content: center;
+            margin: 0 10px;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>英雄快跑</h1>
+    <div class="info">
+        <div class="info-box">
+            <p>坚持时间：<span id="timeCounter">0</span> 秒</p>
+            <p>历史最佳时间：<span id="bestTime">0</span> 秒</p>
+        </div>
+        <div class="info-box">
+            <button id="startButton">开始游戏</button>
+        </div>
+    </div>
+    <canvas id="gameCanvas" width="800" height="300"></canvas>
+
+    <script>
+    // 这里写js代码，不要删除此行注释
+        class JumpPitGame {
+            constructor() {
+                this.canvas = document.getElementById("gameCanvas");
+                this.ctx = this.canvas.getContext("2d");
+                this.startButton = document.getElementById("startButton");
+                this.timeCounterElement = document.getElementById("timeCounter");
+                this.bestTimeElement = document.getElementById("bestTime");
+                this.status = "ready";
+
+                this.timeCounter = 0;
+                this.bestTime = 0;
+                this.timerInterval = null;
+
+                this.player = {
+                    x: 50,
+                    y: 250,
+                    width: 20,
+                    height: 20,
+                    velocityY: 0,
+                    gravity: 1,
+                    jumpStrength: -15,
+                    onGround: true,
+                };
+
+                this.pits = [];
+                this.pitWidthRange = [30, 50];
+                this.pitCount = 5;
+                this.groundSpeed = 3;
+
+                this.frameID = null;
+
+                var self = this;
+                this.startButton.addEventListener("click", function () {
+                    self.startGame();
+                });
+                document.addEventListener("keydown", function (event) {
+                    self.handleJump(event);
+                });
+
+                this.loadBestTime();
+            }
+
+            initGame() {
+                this.status = "ready";
+                this.pits = this.generateInitialPits();
+                this.player.y = 250;
+                this.player.velocityY = 0;
+                this.player.onGround = true;
+
+                this.timeCounter = 0;
+                this.updateTimer();
+
+                this.loadBestTime();
+                this.render();
+            }
+
+            startGame() {
+                if (this.status === "running") return;
+                this.initGame();
+                this.status = "running";
+                this.startButton.style.display = "none";
+
+                this.startTimer();
+                this.gameLoop();
+            }
+
+            startTimer() {
+                this.stopTimer();
+                var self = this;
+                this.timerInterval = setInterval(function () {
+                    self.timeCounter++;
+                    self.updateTimer();
+                }, 1000);
+            }
+
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+
+            updateTimer() {
+                this.timeCounterElement.textContent = this.timeCounter;
+            }
+
+            saveBestTime() {
+                localStorage.setItem("bestTime", this.bestTime);
+            }
+
+            loadBestTime() {
+                var saved = localStorage.getItem("bestTime");
+                if (saved) {
+                    this.bestTime = parseInt(saved, 10);
+                    this.bestTimeElement.textContent = this.bestTime;
+                }
+            }
+
+            updateBestTime() {
+                this.bestTimeElement.textContent = this.bestTime;
+            }
+
+            generateInitialPits() {
+                var pits = [];
+                var currentX = 310;
+                for (var i = 0; i < this.pitCount; i++) {
+                    var pitWidth = Math.random() * (this.pitWidthRange[1] - this.pitWidthRange[0]) + this.pitWidthRange[0];
+                    pits.push({ x: currentX, width: pitWidth });
+                    currentX += pitWidth + 150;
+                }
+                return pits;
+            }
+
+            generateNewPit() {
+                var lastPit = this.pits[this.pits.length - 1];
+                var newPitWidth = Math.random() * (this.pitWidthRange[1] - this.pitWidthRange[0]) + this.pitWidthRange[0];
+                var newPitX = lastPit.x + lastPit.width + 150;
+                return { x: newPitX, width: newPitWidth };
+            }
+
+            render() {
+                var ctx = this.ctx;
+
+                ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                ctx.fillStyle = "lightblue";
+                ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                ctx.fillStyle = "green";
+                ctx.fillRect(0, 270, this.canvas.width, 30);
+
+                for (var i = 0; i < this.pits.length; i++) {
+                    ctx.fillStyle = "black";
+                    ctx.fillRect(this.pits[i].x, 270, this.pits[i].width, 30);
+                }
+
+                ctx.fillStyle = "red";
+                ctx.fillRect(this.player.x, this.player.y, this.player.width, this.player.height);
+            }
+
+            gameLoop() {
+                if (this.status !== "running") return;
+
+                this.updatePlayer();
+                this.updatePits();
+
+                if (this.checkCollision()) {
+                    this.gameOver();
+                    return;
+                }
+
+                this.render();
+
+                var self = this;
+                this.frameID = requestAnimationFrame(function () {
+                    self.gameLoop();
+                });
+            }
+
+            updatePlayer() {
+                this.player.y += this.player.velocityY;
+                this.player.velocityY += this.player.gravity;
+
+                if (this.player.y >= 250) {
+                    this.player.y = 250;
+                    this.player.velocityY = 0;
+                    this.player.onGround = true;
+                }
+            }
+
+            updatePits() {
+                var self = this;
+                this.pits.forEach(function (pit) {
+                    pit.x -= self.groundSpeed;
+                });
+
+                while (this.pits.length > 0 && this.pits[0].x + this.pits[0].width < 0) {
+                    this.pits.shift();
+                    this.pits.push(this.generateNewPit());
+                }
+            }
+
+            handleJump(event) {
+                if (event.code === "Space" && this.player.onGround && this.status === "running") {
+                    event.preventDefault();
+                    this.player.velocityY = this.player.jumpStrength;
+                    this.player.onGround = false;
+                }
+            }
+
+            checkCollision() {
+                var p = this.player;
+                for (var i = 0; i < this.pits.length; i++) {
+                    var pit = this.pits[i];
+                    if (p.x + p.width > pit.x && p.x < pit.x + pit.width && p.y + p.height >= 270) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            gameOver() {
+                this.status = "over";
+                cancelAnimationFrame(this.frameID);
+                this.stopTimer();
+
+                if (this.timeCounter >= this.bestTime) {
+                    this.bestTime = this.timeCounter;
+                    this.saveBestTime();
+                    this.updateBestTime();
+                }
+
+                alert("游戏结束！你坚持了 " + this.timeCounter + " 秒");
+                this.startButton.style.display = "block";
+            }
+        }
+
+        var game = new JumpPitGame();
+        game.initGame();
+
+        window.game = game;
+    </script>
+</body>
+</html>

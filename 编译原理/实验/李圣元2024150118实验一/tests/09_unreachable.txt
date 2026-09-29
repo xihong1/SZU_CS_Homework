@@ -1,0 +1,8 @@
+# D is unreachable
+N: S A D
+T: a d
+P:
+S->A
+A->a
+D->d
+START: S

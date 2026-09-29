@@ -1,0 +1,8 @@
+// T4-1: 函数调用参数个数错误
+fn(int) multiply -> a@int, b@int, c@int:
+    return a@int * b@int * c@int
+
+fn(void) main ->:
+    int x
+    x@int = multiply->(2, 3)
+    print->(x@int)

@@ -1,0 +1,15 @@
+// T4: Function definition and call
+fn(int) add -> a@int, b@int:
+    return a@int + b@int
+
+fn(int) mul -> a@int, b@int:
+    return a@int * b@int
+
+fn(void) main ->:
+    int x
+    int y
+    int z
+    x@int = add->(3, 4)
+    y@int = mul->(5, 6)
+    z@int = add->(x@int, y@int)
+    print->(z@int)

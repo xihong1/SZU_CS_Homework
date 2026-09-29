@@ -1,0 +1,1 @@
+{"fileName":"20092026104739554.hist","query":"SELECT e.ENAME, e.SAL \nFROM EMP2024150118 e \nJOIN DEPT2024150118 d ON e.DEPTNO \u003d d.DEPTNO \nWHERE d.LOC \u003d \u0027LUTON\u0027;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 10:47:39.529 CST","elapsedTime":"24 ms","isPinned":false,"finalStatus":true,"resultSetSize":3,"querySizeToStore":1000}

@@ -1,0 +1,9 @@
+﻿{
+  "tokens": [
+    {"type": "NUM", "value": "123.456", "line": 1, "col": 1},
+    {"type": "NUM", "value": "0", "line": 1, "col": 9},
+    {"type": "NUM", "value": "1", "line": 1, "col": 11},
+    {"type": "EOF", "value": "", "line": 2, "col": 1}
+  ],
+  "errors": []
+}

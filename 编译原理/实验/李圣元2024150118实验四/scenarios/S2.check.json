@@ -1,0 +1,13 @@
+{
+  "errors": [],
+  "symbols": [
+    { "name": "print", "type": "void(any)", "scope": "global", "line": 0 },
+    { "name": "scopeDemo", "type": "int(int)", "scope": "global", "line": 4 },
+    { "name": "main", "type": "void()", "scope": "global", "line": 21 },
+    { "name": "x", "type": "int", "scope": "function", "line": 4 },
+    { "name": "value", "type": "int", "scope": "function", "line": 5 },
+    { "name": "value", "type": "int", "scope": "block", "line": 9 },
+    { "name": "value", "type": "int", "scope": "block", "line": 13 },
+    { "name": "r", "type": "int", "scope": "function", "line": 22 }
+  ]
+}

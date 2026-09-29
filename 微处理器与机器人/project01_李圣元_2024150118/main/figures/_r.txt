@@ -1,0 +1,7 @@
+L492   inListing=False  U+00F7 ÷  | \texttt{25\,MHz ÷ PLLM(25) = 1\,MHz;\quad 1\,MHz × PLLN(360) = 360\,MHz;\quad 360\,MHz ÷ PLLP(2) = 1
+L492   inListing=False  U+00D7 ×  | \texttt{25\,MHz ÷ PLLM(25) = 1\,MHz;\quad 1\,MHz × PLLN(360) = 360\,MHz;\quad 360\,MHz ÷ PLLP(2) = 1
+L222   inListing=False  textasciitilde  | 8 路 LED 与引脚的对应关系为：\texttt{PB3}、\texttt{PB4}、\texttt{PB5}、\texttt{PB6}、\texttt{PB7}、\texttt{PB8}、\tex
+L261   inListing=False  textasciitilde  | 板载蜂鸣器并不是直接接在 MCU 引脚上，而是接在 I2C 扩展芯片 PCF8574 的 \texttt{P0} 脚上。要让它发声，必须通过 I2C 总线给 PCF8574 写数据。板上的 I2C 总
+L538   inListing=False  textasciitilde  | \textbf{步骤 3：配置 GPIO。}在 \texttt{Pinout \& Configuration} 视图中，依次点击 \texttt{PB0}、\texttt{PB3} \textasc
+L548   inListing=False  textasciitilde  | 配置完成后的引脚视图见图\,\ref{fig:pinout}。可以看到 8 个引脚的 \texttt{User Label} 依次是 \texttt{LED7}、\texttt{LED0} \text
+L1226  inListing=False  textasciitilde  | \item \textbf{观察现象。}复位后应当看到 8 个 LED 按第 1 种特效（单灯流水）循环点亮；依次按下 \texttt{KEY0} \textasciitilde{} \texttt{

@@ -1,0 +1,474 @@
+
+
+========== PAGE 181 ==========
+ 
+ 
+ 
+ 181 
+阿波罗 STM32F429 开发指南 
+ 正点原子 阿波罗 STM32F429 开发板教程 
+ 第十一章 STM32时钟系统 
+ 
+MCU 都是基于时序控制的一个系统。这一讲将结合 《STM32F4xx 参考手册 _V4（中文
+版）.pdf》和《Cortex M3 与 M4 权威指南》的知识，对 STM32F4 的整体架构做一个简单的介
+绍，帮助大家更全面、系统地认识 STM32F4系统的主控结构。了解时钟系统在整个 STM32系
+统的贯穿和驱动作用，学会设置 STM32的系统时钟。 
+本章将分为如下几个小节： 
+11.1 认识时钟树 
+11.2 如何修改主频 
+ 
+ 
+11.1 认识时钟树 
+数字电路的知识告诉我们：任意复杂的电路控制系统都可以经由门电路组成的组合电路实
+现。回顾《第五章 STM32基础知识入门》的知识点，我们知道 STM32内部也是由多种多样的
+电路模块组合在一起实现的。当一个电路越复杂，在达到正确的输出结果前，它可能因为延时
+会有一些短暂的中间状态，而这些中间状态有时会导致输出结果会有一个短暂的错误，这叫做
+电路中的“毛刺现象”，如果电路需要运行得足够快，那么这些错误状态会被其它电路作为输入
+采样，最终形成一系列的系统错误。为了解决这个问题，在单片机系统中，设计时以时序电路
+控制替代纯粹的组合电路，在每一级输出结果前对各个信号进行采样，从而使得电路中某些信
+号即使出现延时也可以保证各个信号的同步，可以避免电路中发生的“毛刺现象”，达到精确控
+制输出的效果。 
+由于时序电路的重要性，因此在 MCU 设计时就设计了专门用于控制时序的电路，在芯片
+设计中称为时钟树设计。由此设计出来的时钟，可以精确控制我们的单片机系统，这也是我们
+这节要展开分析的时钟分析。为什么是时钟树而不是时钟呢？一个 MCU 越复杂，时钟系统也
+会相应地变得复杂，如 STM32F4的时钟系统比较复杂，不像简单的 51单片机一个系统时钟就
+可以解决一切。对于 STM32F4系列的芯片，正常工作的主频可以达到 180Mhz，但并不是所有
+外设都需要系统时钟这么高的频率，比如看门狗以及 RTC只需要几十 kHZ 的时钟即可。同一
+个电路，时钟越快功耗越大，同时抗电磁干扰能力也会越弱，所以对于较为复杂的 MCU 一般
+都是采取多时钟源的方法来解决这些问题。 
+STM32 本身非常复杂，外设非常的多，为了保持低功耗工作，STM32 的主控默认不开启
+这些外设功能。用户可以根据自己的需要决定 STM32 芯片要使用的功能，这个功能开关在
+STM32主控中也就是各个外设的时钟。 
+下面来看一下 STM32F4时钟系统图。STM32F4时钟系统图看起来有点多且复杂，但是分
+开几部分各个理解其实没有那么难了。 
+
+========== PAGE 182 ==========
+ 
+ 
+ 
+ 182 
+阿波罗 STM32F429 开发指南 
+ 正点原子 阿波罗 STM32F429 开发板教程 
+ 
+ 
+图 11.1.1 STM32F429时钟系统图 
+ 我们将时钟系统分为：时钟源，锁相环 PLL，系统时钟 SYSCLK，时钟信号输出 MCO四
+个部分展开介绍。 
+11.1.1 时钟源 
+对于 STM32F4，输入时钟源（Input Clock）主要包括 HSI、HSE、LSI、LSE。其中，从时
+钟频率来分可以分为高速时钟源和低速时钟源，其中 HSI、HSE是高速时钟，LSI和 LSE是低
+速时钟。从来源可分为外部时钟源和内部时钟源，外部时钟源就是从外部通过接晶振的方式获
+取时钟源，其中 HSE 和 LSE 是外部时钟源，其他是内部时钟源，芯片上电即可产生，不需要
+借助外部电路。下面我们看看 STM32的时钟源。 
+（1）2个外部时钟源： 
+⚫ 高速外部振荡器 (HSE) 
+ 支持 4 MHz 到 26 MHz 频率范围内的晶振。本开发板使用的是 25MHz。 
+
+
+========== PAGE 183 ==========
+ 
+ 
+ 
+ 183 
+阿波罗 STM32F429 开发指南 
+ 正点原子 阿波罗 STM32F429 开发板教程 
+ ⚫ 低速外部振荡器 (LSE) 
+ 一般是 32.768 kHz 晶振，可用于看门狗和 RTC实时时钟。 
+ 2个外部时钟源都是芯片外部晶振产生的时钟频率，故而都有精度高的优点。 
+（2）2个内部时钟源： 
+⚫ 高速内部振荡器 (HSI) 
+  频率 16MHz 的高速 RC振荡器，可用于系统时钟。 
+⚫ 低速内部振荡器 (LSI) 
+ 频率约 32 kHz的低速 RC 振荡器，可用于 RTC实时时钟、独立看门狗和自动唤醒。 
+芯片上电时默认由内部的 HSI时钟启动，如果用户进行了硬件和软件的配置，芯片才会根
+据用户配置调试尝试切换到对应的外部时钟源，所以同时了解这几个时钟源信号还是很有必要
+的。如何设置时钟的方法我们会在后文提到。 
+11.1.2 锁相环 PLL 
+锁相环是自动控制系统中常用的一个反馈电路，在 STM32 主控中，锁相环的作用主要有
+两个部分：输入时钟净化和倍频。前者是利用锁相环电路的反馈机制实现，后者我们用于使芯
+片在更高且频率稳定的时钟下工作。 
+在 STM32 中，锁相环的输出也可以作为芯片系统的时钟源。根据图 11.1.1 的时钟结构，
+使用锁相环时只需要进行三个部分的配置。为了方便查看，截取了使用 PLL 作为系统时钟源
+的配置部分，如图 11.1.2.1所示。 
+ 
+图 11.1.2.1 PLL 时钟配置图 
+图 11.1.2.1借用了在 CubeMX 下用锁相环配置 180MHz 时钟的一个示例： 
+◆ PLL Source Mux: PLL 时钟源的选择器 
+图中标号①表示的是 PLL 时钟源的选择器，同样的，参考 F429参考手册： 
+ 
+图 11.1.2.2 PLLSRC 锁相环时钟源选择 
+它有两种可选择的输入源：一个是内部时钟 HSI信号，另一个是外部时钟 HSE信号。 
+◆ PLLM：HSE分频器作为 PLL输入（HSE divider for PLL entry） 
+即图 11.1.2.1 在标号②的地方，主  PLL 输入时钟的分频系数，并把它的控制功能放 在
+RCC_PLLCFGR 寄存器中，我们引用 11.1.2.2。 
+ 
+图 11.1.2.3 PLLXTPRE设置选项值 
+
+
+========== PAGE 184 ==========
+ 
+ 
+ 
+ 184 
+阿波罗 STM32F429 开发指南 
+ 正点原子 阿波罗 STM32F429 开发板教程 
+ 从 F429参考手册可知它的值有 63个：0~63。 
+◆ PLLMUL：PLL倍频系数（PLL multiplication factor） 
+图中③所表示的配置锁相环倍频系数，同样地可以查到在 STM32F4系列中，ST设置它的
+有效倍频范围为 2~16倍。 
+结合图 11.1.2.1，要实现 180MHz的主频率，我们通过选择 HSE分配作为 PLL输入的时钟
+信号，输入 25MHz，4分频，通过标号③选择倍频因子，我们选择 180倍频，这样就可以得到
+时钟信号为 2*180=360MHz，然后经过 2分频，得到 180 MHz。 
+11.1.3 系统时钟 SYSCLK 
+STM32的系统时钟 SYSCLK为整个芯片提供了时序信号。我们已经大致知道 STM32主控
+是时序电路连接起来的。对于相同的稳定运行的电路，时钟频率越高，指令的执行速度越快，
+单位时间能处理的功能越多。STM32 的系统时钟是可配置的，在 STM32F4系列中，它可以为
+HSI、PLLCLK、HSE中的一个，通过 CFGR的位 SW[1:0]设置。 
+讲解 PLL作为系统时钟时，根据我们开发板的资源，可以把主频通过PLL设置为 180MHz。
+仍使用 PLL 作为系统时钟源，如果使用 HSI/2，那么可以得到最高主频 16MHz/2*8=64MHz。
+从上面的图 11.1.1时钟树图可知，AHB、APB1、APB2、内核时钟等时钟通过系统时钟分频得
+到。根据得到的这个系统时钟，下面我们结合外设来看一看各个外设时钟源。 
+ 
+图 11.1.3.1 STM32F429系统时钟生成图 
+大家看图 11.1.3.1 STM32F429系统时钟生成图，标号④为系统时钟输入选择，可选时钟信
+号有外部高速时钟 HSE(25M)、内部高速时钟 HSI(16M)和经过倍频的 PLL CLK(180M)，选择
+PLL CLK 作为系统时钟，此时系统时钟的频率为 180MHz。系统时钟来到标号⑤的 AHB 预分
+频器，其中可选择的分频系数为 1，2，4，8，16，64，128，256，512，我们选择不分频，所
+以 AHB总线时钟达到最大的 180MHz。 
+下面介绍一下由 AHB总线时钟得到的时钟：  
+APB1总线时钟，由 HCLK经过标号⑥的低速 APB1预分频器得到，分频因子可以选择1，
+2，4，8，16，这里我们选择的是 4 分频，所以 APB1 总线时钟为 45M。由于 APB1 是低速总
+线时钟，所以 APB1总线最高频率为 45MHz，片上低速的外设就挂载在该总线上，例如有看门
+狗定时器、定时器 2/3/4/5/6/7、RTC 时钟、USART2/3/4/5、SPI2(I2S2)与 SPI3(I2S3)、I2C1 与
+I2C2、CAN、USB设备和 2个 DAC。 
+APB2总线时钟，由 HCLK经过标号⑦的高速 APB2预分频器得到，分频因子可以选择1，
+2，4，8，16，这里我们选择的是 2即是 2分频，所以 APB2总线时钟频率为 90M。与 APB2高
+速总线连接的外设有外部中断与唤醒控制、 7 个通用目的输入/输出口(PA、PB、PC、PD、PE、
+PF 和 PG)、定时器 1、定时器 8、SPI1、USART1、3 个 ADC和内部温度传感器。其中标号⑧
+是 ADC的预分频器在后面 ADC实验中详细说明。 
+此外，AHB总线时钟直接作为 SDIO、FMC、AHB总线、Cortex内核、存储器和 DMA的
+
+
+========== PAGE 185 ==========
+ 
+ 
+ 
+ 185 
+阿波罗 STM32F429 开发指南 
+ 正点原子 阿波罗 STM32F429 开发板教程 
+ HCLK时钟，并作为 Cortex内核自由运行时钟 FCLK。 
+ 
+图 11.1.3.2 RTC相关时钟 
+ 
+图 11.1.3.3 MACO相关时钟 
+图 11.1.3.2标号⑨是 RTC定时器，其时钟源为 HSE/2、LSE或 LSI。 
+图 11.1.3.3标号⑩是 MCO输出内部时钟，STM32 的一个时钟输出 IO，它可以选择一个时
+钟信号输出，可以选择为 PLL 输出不分频、HSI、HSE、或者系统时钟。这个时钟可以用来给
+外部其他系统提供时钟源。 
+11.1.4 MCO时钟输出 
+STM32 允许通过设置，通过 MCO 引脚输出一个稳定的时钟信号。在图 11.1.1 中标注为
+“F”的部分。以下四个时钟信号可被选作 MCO时钟： 
+● SYSCLK 
+● HSI 
+● HSE 
+● 分频后的 PLL时钟 
+时钟的选择由时钟配置寄存器(RCC_CFGR)中的 MCO1[1:0]和 MCO2[1:0]位控制。 
+我们可以通过 MCO 引脚来输出时钟信号，测试输出时钟的频率，或作为其它需要时钟信
+号的外部电路的时钟。 
+11.2 如何修改主频 
+STM32F429 默认的情况下（比如：串口 IAP 时或者是未初始化时钟时） ，使用的是内部
+16M的 HSI作为时钟源，所以不需要外部晶振也可以下载和运行代码的。 
+
+
+========== PAGE 186 ==========
+ 
+ 
+ 
+ 186 
+阿波罗 STM32F429 开发指南 
+ 正点原子 阿波罗 STM32F429 开发板教程 
+ 下面我们来讲解如何让 STM32F429芯片在 180MHZ的频率下工作，这是官方推荐使用的
+最高的稳定时钟频率。正点原子的阿波罗 STM32F429开发板的外部高速晶振的频率是 25MHZ，
+我们就是在这个晶振频率的基础上，通过各种倍频和分频得到180MHZ的系统工作频率。 
+11.2.1 STM32F4时钟系统配置 
+下面我们将分几步给大家讲解 STM32F4 时钟系统配置过程，这部分内容很重要，请大家
+认真阅读。 
+第 1步：配置 HSE_VALUE 
+讲解 stm32f4xx_hal_conf.h文件的时候，我们知道需要宏定义 HSE_VALUE匹配我们实际
+硬件的高速晶振频率（这里是 25MHZ），代码如下： 
+#if !defined  (HSE_VALUE)  
+#define HSE_VALUE    25000000U /* 外部高速振荡器的值，单位HZ */ 
+#endif /* HSE_VALUE */ 
+第 2步：调用 SystemInit函数 
+我们介绍启动文件的时候就知道，在系统启动之后，程序会先执行 SystemInit 函数，进行
+系统一些初始化配置。启动代码调用 SystemInit函数如下： 
+Reset_Handler    PROC 
+                 EXPORT  Reset_Handler                    [WEAK] 
+        IMPORT  SystemInit 
+        IMPORT  __main 
+ 
+                 LDR     R0, =SystemInit 
+                 BLX     R0 
+                 LDR     R0, =__main 
+                 BX      R0 
+                 ENDP 
+下面我们来看看 system_stm32f4xx.c 文件下定义的 SystemInit 程序，源码在 167 行到 182
+行，简化函数如下。 
+void SystemInit(void) 
+{ 
+  /* FPU settings ----------------------------------------------------*/ 
+  #if (__FPU_PRESENT == 1) && (__FPU_USED == 1) 
+SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));   
+/* set CP10 and CP11 Full Access */ 
+  #endif 
+ 
+#if defined (DATA_IN_ExtSRAM) || defined (DATA_IN_ExtSDRAM) 
+   SystemInit_ExtMemCtl();  
+#endif /* DATA_IN_ExtSRAM || DATA_IN_ExtSDRAM */ 
+ 
+  /* Configure the Vector Table location -----------------------------*/ 
+#if defined(USER_VECT_TAB_ADDRESS) 
+   SCB->VTOR = VECT_TAB_BASE_ADDRESS | VECT_TAB_OFFSET;  
+/* Vector Table Relocation in Internal SRAM */ 
+#endif /* USER_VECT_TAB_ADDRESS */ 
+} 
+从上面代码可以看出，SystemInit主要做了如下两个方面工作： 
+1) 外部存储器配置 
+2) 中断向量表地址配置 
+然而我们的代码中实际并没有定义 DA TA_IN_ExtSRAM和 USER_VECT_TAB_ADDRESS
+这两个宏，实际上 SystemInit 对于正点原子的例程并没有起作用，但我们保留了这个接口。从
+而避免了去修改启动文件。另外，是可以把一些重要的初始化放到SystemInit这里，在 main函
+数运行前就把重要的一些初始化配置好（如ST这里是在运行 main函数前先把外部的 SRAM初
+始化） ，这个我们一般用不到，直接到main 函数中处理即可，但也有厂商（如 RT-Thread）就
+
+========== PAGE 187 ==========
+ 
+ 
+ 
+ 187 
+阿波罗 STM32F429 开发指南 
+ 正点原子 阿波罗 STM32F429 开发板教程 
+ 采取了这样的做法，使得 main函数更加简单，但对于初学者，我们暂时不建议这种用法。 
+HAL库的 SystemInit函数并没有任何时钟相关配置，所以后续的初始化步骤，我们还必须
+编写自己的时钟配置函数。 
+第 3步：在 main函数里调用用户编写的时钟设置函数 
+我们打开 HAL库例程实验 1跑马灯实验，看看我们在工程目录 Drivers\SYSTEM分组下面
+定义的 sys.c文件中的时钟设置函数 sys_stm32_clock_init的内容： 
+/** 
+ * @brief       时钟设置函数 
+ * @param       plln: PLL1 倍频系数(PLL 倍频), 取值范围: 64~432. 
+ * @param       pllm: PLL1 预分频系数(进PLL 之前的分频), 取值范围: 2~63. 
+ * @param       pllp: PLL1 的p 分频系数(PLL 之后的分频), 分频后作为系统时钟, 取值范围: 
+           2,4,6,8.(仅限这4 个值!) 
+ * @param       pllq: PLL1 的q 分频系数(PLL 之后的分频), 取值范围: 2~15. 
+ * @note 
+ * 
+ *              Fvco: VCO 频率 
+ *              Fsys: 系统时钟频率, 也是PLL1 的p 分频输出时钟频率 
+ *              Fq:   PLL1 的q 分频输出时钟频率 
+ *              Fs:   PLL 输入时钟频率, 可以是HSI, CSI, HSE 等. 
+ *              Fvco = Fs * (plln / pllm); 
+ *              Fsys = Fvco / pllp = Fs * (plln / (pllm * pllp)); 
+ *              Fq   = Fvco / pllq = Fs * (plln / (pllm * pllq)); 
+ * 
+ *              外部晶振为25M 的时候, 推荐值: plln = 360, pllm = 25, 
+ *                                           pllp = 2, pllq = 8. 
+ *              得到:Fvco = 25 * (360 / 25) = 360Mhz 
+ *                   Fsys = pll1_p_ck = 360 / 2 = 180Mhz 
+ *                   Fq   = pll1_q_ck = 360 / 8 = 45 
+ * 
+ * @retval      错误代码: 0, 成功; 1, 错误; 
+ */ 
+uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm,  
+        uint32_t pllp,  uint32_t pllq) 
+{ 
+    HAL_StatusTypeDef ret = HAL_OK; 
+    RCC_ClkInitTypeDef rcc_clk_init = {0}; 
+    RCC_OscInitTypeDef rcc_osc_init = {0}; 
+     
+    __HAL_RCC_PWR_CLK_ENABLE();                         /* 使能PWR 时钟 */ 
+     
+/* 下面这个设置用来设置调压器输出电压级别，以便在器件未以最大频率工作 
+ 时使性能与功耗实现平衡 */ 
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);            
+ /* 调压器输出电压级别选择：级别1 模式 */ 
+ 
+    /* 使能HSE，并选择HSE 作为PLL 时钟源，配置PLL1，开启USB 时钟 */ 
+    rcc_osc_init.OscillatorType= RCC_OSCILLATORTYPE_HSE;/* 时钟源为HSE */ 
+    rcc_osc_init.HSEState = RCC_HSE_ON;                 /* 打开HSE */ 
+    rcc_osc_init.PLL.PLLState = RCC_PLL_ON;             /* 打开PLL */ 
+    rcc_osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSE;/* PLL 时钟源选择HSE */ 
+    rcc_osc_init.PLL.PLLN = plln; 
+    rcc_osc_init.PLL.PLLM = pllm; 
+    rcc_osc_init.PLL.PLLP = pllp; 
+    rcc_osc_init.PLL.PLLQ = pllq; 
+    ret=HAL_RCC_OscConfig(&rcc_osc_init);               /* 初始化RCC */ 
+    if (ret != HAL_OK) 
+    { 
+        return 1;                     /* 时钟初始化失败，可以在这里加入自己的处理 */ 
+    } 
+
+========== PAGE 188 ==========
+ 
+ 
+ 
+ 188 
+阿波罗 STM32F429 开发指南 
+ 正点原子 阿波罗 STM32F429 开发板教程 
+  
+    /* 选中PLL 作为系统时钟源并且配置HCLK,PCLK1 和PCLK2*/ 
+    rcc_clk_init.ClockType = ( RCC_CLOCKTYPE_SYSCLK \ 
+                                    | RCC_CLOCKTYPE_HCLK \ 
+                                    | RCC_CLOCKTYPE_PCLK1 \ 
+                                    | RCC_CLOCKTYPE_PCLK2); 
+ 
+    rcc_clk_init.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;                       
+ /* 设置系统时钟时钟源为PLL */ 
+rcc_clk_init.AHBCLKDivider = RCC_SYSCLK_DIV1; 
+/* AHB 分频系数为1 */ 
+rcc_clk_init.APB1CLKDivider = RCC_HCLK_DIV4; 
+/* APB1 分频系数为4 */ 
+rcc_clk_init.APB2CLKDivider = RCC_HCLK_DIV2; 
+/* APB2 分频系数为2 */ 
+ 
+ret = HAL_RCC_ClockConfig(&rcc_clk_init, FLASH_LATENCY_5); 
+/* 同时设置FLASH 延时周期为5WS，也就是6 个CPU 周期 */ 
+    if (ret != HAL_OK) 
+    { 
+        return 1;  /* 时钟初始化失败 */ 
+    } 
+     
+    return 0; 
+} 
+函数 sys_stm32_clock_init 就是用户的时钟系统配置函数，除了配置 PLL 相关参数确定
+SYSCLK值之外，还配置了 AHB、APB1和 APB2的分频系数，也就是确定了 HCLK，PCLK1
+和 PCLK2的时钟值。 
+我们首先来看看使用 HAL库配置 STM32F4时钟系统的一般步骤： 
+1) 配置时钟源相关参数：调用函数 HAL_RCC_OscConfig()。 
+2) 配置系统时钟源以及 SYSCLK、AHB、APB1 和 APB2 的分频系数：调用函数
+HAL_RCC_ClockConfig()。 
+下面我们详细讲解这个 2个步骤。 
+步骤 1：配置时钟源相关参数，使能并选择 HSE 作为 PLL 时钟源，配置 PLL，我们调用
+的函数为 HAL_RCC_OscConfig()，该函数在 HAL 库头文件 stm32f4xx_hal_rcc.h中声明，在文
+件 stm32f4xx_hal_rcc.c中定义。首先我们来看看该函数声明： 
+HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef *RCC_OscInitStruct); 
+该函数只有一个形参，就是结构体 RCC_OscInitTypeDef 类型指针。接下来我们看看结构
+体 RCC_OscInitTypeDef的定义： 
+typedef struct 
+{ 
+  uint32_t OscillatorType;          /* 需要选择配置的振荡器类型 */ 
+  uint32_t HSEState;                 /* HSE 状态 */ 
+  uint32_t LSEState;                 /* LSE 状态 */ 
+  uint32_t HSIState;                 /* HIS 状态 */ 
+  uint32_t HSICalibrationValue;     /* HIS 校准值 */ 
+  uint32_t LSIState;                 /* LSI 状态 */ 
+  RCC_PLLInitTypeDef PLL;           /* PLL 配置 */ 
+}RCC_OscInitTypeDef; 
+该结构体前面几个参数主要是用来选择配置的振荡器类型。比如我们要开启HSE，那么我
+们会设置 OscillatorType 的值为 RCC_OSCILLATORTYPE_HSE，然后设置 HSEState 的值为
+RCC_HSE_ON开启 HSE。对于其他时钟源：HSI、LSI、LSE，配置方法类似。 
+RCC_OscInitTypeDef 这个结构体还有一个很重要的成员变量是 PLL，它是结构体
+RCC_PLLInitTypeDef类型。它的作用是配置 PLL相关参数，我们来看看它的定义： 
+typedef struct 
+{ 
+  uint32_t PLLState;    /* PLL 状态 */ 
+  uint32_t PLLSource;     /* PLL 时钟源 */ 
+
+========== PAGE 189 ==========
+ 
+ 
+ 
+ 189 
+阿波罗 STM32F429 开发指南 
+ 正点原子 阿波罗 STM32F429 开发板教程 
+   uint32_t PLLM;         /* PLL 倍频系数M */ 
+  uint32_t PLLN;         /* PLL 倍频系数N */ 
+  uint32_t PLLP;         /* PLL 倍频系数P */ 
+  uint32_t PLLQ;         /* PLL 倍频系数Q */ 
+}RCC_PLLInitTypeDef; 
+从 RCC_PLLInitTypeDef结构体的定义很容易看出该结构体主要用来设置 PLL时钟源以及
+相关分频倍频参数。这个结构体的定义的相关内容请结合时钟树中红色框的内容一起理解。 
+接下来我们看看我们的时钟初始化函数 sys_stm32_clock_init中的配置内容： 
+    /* 使能HSE，并选择HSE 作为PLL 时钟源，配置PLL1，开启USB 时钟 */ 
+    rcc_osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSE;/* 时钟源为HSE */ 
+    rcc_osc_init.HSEState = RCC_HSE_ON;                  /* 打开HSE */ 
+    rcc_osc_init.PLL.PLLState = RCC_PLL_ON;              /* 打开PLL */ 
+    rcc_osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSE;      /* PLL 时钟源选择HSE */ 
+    rcc_osc_init.PLL.PLLN = plln; 
+    rcc_osc_init.PLL.PLLM = pllm; 
+    rcc_osc_init.PLL.PLLP = pllp; 
+    rcc_osc_init.PLL.PLLQ = pllq; 
+    ret = HAL_RCC_OscConfig(&rcc_osc_init);              /* 初始化RCC */ 
+通过函数的该段程序，我们开启了 HSE 时钟源，同时选择 PLL 时钟源为 HSE，然后把
+sys_stm32_clock_init的形参直接设置作为 PLL的参数 M的值，这样就达到了设置 PLL时钟源
+相关参数的目的。 
+设置好 PLL时钟源参数之后，也就是确定了 PLL的时钟频率，然后到我们的步骤 2。 
+步骤 2：配置系统时钟源，以及 SYSCLK、AHB、APB1 和 APB2 相关参数，用函数
+HAL_RCC_ClockConfig()，声明如下： 
+HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef *RCC_ClkInitStruct,  
+uint32_t FLatency); 
+该函数有两个形参，第一个形参 RCC_ClkInitStruct 是结构体 RCC_ClkInitTypeDef类型指
+针变量，用于设置 SYSCLK时钟源以及 SYSCLK、AHB、APB1和 APB2的分频系数。第二个
+形参 FLatency用于设置 FLASH延迟。 
+RCC_ClkInitTypeDef结构体类型定义比较简单，我们来看看其定义： 
+typedef struct 
+{ 
+  uint32_t ClockType;        /* 要配置的时钟 */ 
+  uint32_t SYSCLKSource;     /* 系统时钟源 */ 
+  uint32_t AHBCLKDivider;    /* AHB 分频系数 */ 
+  uint32_t APB1CLKDivider;  /* APB1 分频系数 */ 
+  uint32_t APB2CLKDivider;   /* APB2 分频系数 */ 
+}RCC_ClkInitTypeDef; 
+我们在 sys_stm32_clock_init函数中的实际应用配置内容如下： 
+/* 选中PLL 作为系统时钟源并且配置HCLK,PCLK1 和PCLK2*/ 
+    rcc_clk_init_handle.ClockType = ( RCC_CLOCKTYPE_SYSCLK \ 
+                                    | RCC_CLOCKTYPE_HCLK \ 
+                                    | RCC_CLOCKTYPE_PCLK1 \ 
+                                    | RCC_CLOCKTYPE_PCLK2); 
+ 
+    rcc_clk_init_handle.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;               
+ /* 设置系统时钟时钟源为PLL */ 
+    rcc_clk_init_handle.AHBCLKDivider = RCC_SYSCLK_DIV1;                      
+ /* AHB 分频系数为1 */ 
+    rcc_clk_init_handle.APB1CLKDivider = RCC_HCLK_DIV4;                       
+ /* APB1 分频系数为4 */ 
+    rcc_clk_init_handle.APB2CLKDivider = RCC_HCLK_DIV2;                            
+ /* APB2 分频系数为2 */ 
+ 
+    ret = HAL_RCC_ClockConfig(&rcc_clk_init_handle, FLASH_LATENCY_5);         
+ /* 同时设置FLASH 延时周期为5WS，也就是6 个CPU 周期 */ 
+sys_stm32_clock_init函数中的 RCC_ClkInitTypeDef结构体配置内容： 
+第一个参数 ClockType配置表示我们要配置的是 SYSCLK、HCLK、PCLK1和 PCLK四个
+
+========== PAGE 190 ==========
+ 
+ 
+ 
+ 190 
+阿波罗 STM32F429 开发指南 
+ 正点原子 阿波罗 STM32F429 开发板教程 
+ 时钟。 
+第二个参数 SYSCLKSource配置选择系统时钟源为 PLL。 
+第三个参数 AHBCLKDivider配置 AHB分频系数为 1。 
+第四个参数 APB1CLKDivider配置 APB1分频系数为 4。 
+第五个参数 APB2CLKDivider配置 APB2分频系数为 2。 
+ 根据我们在 mian函数中调用 sys_stm32_clock_init(360, 25, 2, 8)时设置的形参数值，我们可
+以计算出，PLL时钟为： 
+PLLCLK =(25*360)/(25*2) = 180MHz 
+同时我们选择系统时钟源为 PLL，所以系统时钟 SYSCLK=180MHz。AHB分频系数为 1，
+故 频 率 为 HCLK=SYSCLK/1=180MHz。APB1 分 频 系 数 为 4， 故 其 频 率 为
+PCLK1=HCLK/2=45MHz。APB2分频系数为 2，故其频率为 PCLK2=HCLK/1=90MHz。我们总
+结一下通过调用函数 sys_stm32_clock_init(360, 25, 2, 8)之后的关键时钟频率值： 
+SYSCLK(系统时钟)                        =180MHz 
+PLL主时钟                                         =180MHz 
+AHB总线时钟（HCLK=SYSCLK/2）          =180MHz 
+APB1总线时钟（PCLK1=HCLK/2）  =45MHz 
+APB2总线时钟（PCLK2=HCLK/2）  =90MHz 
+最后我们来看看函数 HAL_RCC_ClockConfig 第二个入口参数 FLatency 的含义，对于
+STM32F4系列，FLASH延迟配置参数值是通过下表来确定的： 
+ 
+表 11.2.1.1 FLASH推荐的等待状态和编程延迟数 
+为了使 FLASH读写正确（因为 180Mhz的时钟比 Flash的操作速度要快得多，操作速度不
+匹配容易导致 Flash操作失败） ，所以需要设置延时时间。 
+我们 可以通过 FLASH_ACR 寄存器来修改 FLASH 的延迟参数值，具体可以参考
+《STM32F4xx参考手册_V4（中文版）.pdf》中 3.8 Flash接口寄存器。 

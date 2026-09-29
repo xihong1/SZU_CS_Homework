@@ -1,0 +1,47 @@
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Anomaly Detection in Industrial Inspection}
+
+Anomaly detection in visual data has been extensively studied, with methods broadly categorized into three paradigms: reconstruction-based, memory-bank-based, and vision-language model (VLM) approaches.
+
+\textbf{Reconstruction-based methods} learn to reproduce only normal samples by training autoencoders~\cite{Bergmann2019MVTec}, variational autoencoders, or generative adversarial networks on defect-free images.
+Anomalies are identified through reconstruction errors, under the assumption that the model cannot accurately reconstruct unseen defect patterns.
+Recent extensions incorporate diffusion models~\cite{He2023FastRecon}, feature regression with distribution regularization, and perceptual losses to mitigate the common over-generalization problem where anomalous regions are inadvertently reconstructed well.
+
+\textbf{Memory-bank-based methods} store representative patch features extracted from normal images and detect anomalies via nearest-neighbor retrieval in feature space.
+SPADE~\cite{Cohen2022SPADE} pioneered this approach using multi-resolution feature correspondences.
+PatchCore~\cite{Roth2022PatchCore} improved efficiency through coreset selection to reduce memory footprint while maintaining coverage.
+AnomalyDINO~\cite{Deng2024AnomalyDINO} leverages DINOv2 features and demonstrates state-of-the-art few-shot performance through a sophisticated nearest-neighbor mechanism.
+However, these methods typically require storing and searching through thousands to millions of patch descriptors, incurring substantial memory and computational overhead.
+
+\textbf{VLM-based approaches} leverage vision-language models like CLIP~\cite{Radford2021CLIP} to enable text-guided anomaly detection.
+WinCLIP~\cite{Huang2022WinCLIP} introduced manual text prompts with multi-scale windows for zero-shot and few-shot detection.
+PromptAD~\cite{Li2024PromptAD} and IIPAD~\cite{Zhang2024IIPAD} automate prompt engineering or learn prompt adapters from normal instances.
+While flexible, these methods often require auxiliary datasets, careful prompt design, or domain-specific textual priors.
+
+\subsection{SubspaceAD: A Minimalist Baseline}
+
+SubspaceAD~\cite{Lendering2025SubspaceAD} recently demonstrated that a remarkably simple pipeline can match or exceed these complex approaches.
+It consists of only two stages: (1) extracting patch-level features from a small set of normal images using a frozen DINOv2-G backbone with multi-layer feature aggregation (layers 22--28), and (2) fitting a PCA model to estimate the low-dimensional linear subspace of normal variation.
+At inference, anomaly scores are derived from the reconstruction residual with respect to this subspace.
+Despite its simplicity, SubspaceAD achieves state-of-the-art results, with 1-shot image-level AUROC of 98.0\% on MVTec-AD and 93.3\% on VisA.
+
+The success of SubspaceAD motivates our work: if a linear PCA subspace can achieve such strong performance, can a more expressive nonlinear model further improve anomaly discrimination?
+Our MSAE-AD framework directly addresses this question by replacing PCA with a hierarchical sparse autoencoder that learns multi-granularity representations of normality.
+
+\subsection{Sparse Autoencoders and MSAE}
+
+Sparse autoencoders (SAEs) have emerged as powerful tools for discovering interpretable features in deep neural network representations~\cite{Bricken2023SAE,Templeton2024SAE}.
+Traditional SAE variants---ReLU-based with L1 sparsity regularization and TopK-based with hard sparsity constraints---face a fundamental trade-off between reconstruction fidelity and sparsity.
+ReLU SAEs achieve good reconstruction but struggle with sparsity control, while TopK SAEs enforce strict sparsity but suffer from dead neurons and degraded reconstruction quality.
+
+Matryoshka SAE (MSAE)~\cite{Zaigrajew2025MSAE} was recently proposed to overcome this limitation.
+MSAE introduces a nested (Matryoshka-style) architecture that learns hierarchical representations at multiple granularities simultaneously.
+Instead of optimizing a single sparsity level, MSAE trains the autoencoder to reconstruct inputs from multiple subsets of latent neurons ordered by magnitude, enabling flexible sparsity control during inference through a weighting coefficient $\alpha$.
+Two weighting strategies are proposed: uniform weighting (UW), where all granularity levels contribute equally, and reverse weighting (RW), which emphasizes higher-sparsity (fewer active neurons) reconstructions.
+MSAE establishes a new state-of-the-art Pareto frontier between reconstruction quality and sparsity for interpreting CLIP embeddings, achieving 0.99 cosine similarity with 80\% sparsity.
+
+Our work adapts MSAE from the interpretability domain to the anomaly detection task.
+We hypothesize that MSAE's hierarchical sparse representations can capture the fine-grained structure of normal feature manifolds more effectively than a single linear subspace, leading to improved anomaly localization.
+To the best of our knowledge, this is the first work to apply hierarchical sparse autoencoders to visual anomaly detection.

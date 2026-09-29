@@ -1,0 +1,22 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+In this paper, we introduced MSAE-AD, a novel few-shot anomaly detection framework that extends the minimalist SubspaceAD paradigm by replacing its linear PCA subspace with a Matryoshka Sparse Autoencoder (MSAE).
+Our approach preserves the simplicity and efficiency of the original framework---frozen DINOv2 feature extraction followed by model fitting on normal samples---while introducing nonlinear, hierarchical sparse representations for more expressive normality modeling.
+
+We evaluated two MSAE training strategies on the MVTec-AD and VisA benchmarks.
+The reverse-weighted (RW) variant achieved average image-level AUROC scores of 98.72\% on MVTec-AD and 95.58\% on VisA, with pixel-level AUROC of 97.71\% and 98.46\%, respectively.
+The uniform-weighted (UW) variant delivered competitive performance, achieving 98.07\% and 95.08\% image-level AUROC.
+These results demonstrate that hierarchical sparse autoencoders offer a compelling alternative to linear subspace methods for few-shot anomaly detection.
+
+Our per-category analysis revealed that MSAE-AD performs exceptionally well on structurally regular categories (achieving 100\% AUROC on several MVTec-AD classes) while facing challenges on categories with subtle, fine-grained anomalies.
+The RW variant generally provides superior image-level detection, while UW shows advantages on specific categories with complex normal variation, suggesting that the optimal weighting strategy may be category-dependent.
+
+Several directions for future work emerge from this study.
+First, category-adaptive weighting strategies could combine the strengths of RW and UW by learning the optimal $\alpha$ coefficients from validation data.
+Second, exploring higher expansion factors and deeper MSAE hierarchies (more granularity levels) may further improve representation capacity.
+Third, the computational efficiency of MSAE training could be enhanced through optimized CUDA kernels enabling parallel multi-granularity processing.
+Finally, investigating the complementary nature of PCA and MSAE anomaly scores---for example, through score-level fusion---could yield a hybrid approach that leverages the strengths of both linear and nonlinear modeling.
+
+In summary, MSAE-AD provides a principled and effective extension of the SubspaceAD framework, demonstrating that hierarchical sparse representations can serve as powerful normality models for industrial anomaly detection.
+We hope this work encourages further exploration of representation learning techniques for practical, data-efficient visual inspection systems.

@@ -1,0 +1,7 @@
+# Start symbol not in N
+N: S A
+T: a
+P:
+S->A
+A->a
+START: X

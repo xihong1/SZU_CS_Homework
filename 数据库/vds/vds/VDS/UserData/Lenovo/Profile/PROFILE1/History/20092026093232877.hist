@@ -1,0 +1,1 @@
+{"fileName":"20092026093232877.hist","query":"SELECT ENAME, JOB, EMPNO \nFROM EMP2024150118 \nWHERE DEPTNO \u003d 20 AND SAL \u003e 25000;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 09:32:32.593 CST","elapsedTime":"63 ms","isPinned":false,"finalStatus":true,"resultSetSize":1,"querySizeToStore":1000}

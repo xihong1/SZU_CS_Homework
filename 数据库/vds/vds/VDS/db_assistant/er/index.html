@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="g6.js"></script>
+    <script src="util.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script>
+        // 捕获右键点击事件
+        window.addEventListener('contextmenu', function (e) {
+            // 阻止事件的默认行为，即取消右键点击
+            e.preventDefault();
+        });
+    </script>
+</head>
+<body>
+<div id="container"
+     style="background-color: white; width: 1200px; height: 900px;
+     --darkreader-inline-bgcolor: #1a1b1a;
+     --darkreader-inline-border-top: #938875;
+     --darkreader-inline-border-right: #938875;
+     --darkreader-inline-border-bottom: #938875;
+     --darkreader-inline-border-left: #938875;
+     position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0); cursor: auto;"
+     data-darkreader-inline-bgcolor="" data-darkreader-inline-border-top="" data-darkreader-inline-border-right=""
+     data-darkreader-inline-border-bottom="" data-darkreader-inline-border-left="">
+</div>
+<script>
+    const ICON_MAP = {
+        primary: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0RDBFMzg3NzQwODYxMUVEQjcwNEEyRkE0NTRCRjI2QyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0RDBFMzg3ODQwODYxMUVEQjcwNEEyRkE0NTRCRjI2QyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjREMEUzODc1NDA4NjExRURCNzA0QTJGQTQ1NEJGMjZDIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjREMEUzODc2NDA4NjExRURCNzA0QTJGQTQ1NEJGMjZDIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+g7jk/gAAAnVJREFUeNqkU11IFFEYPXdmdNzdelAqfwq3QNDItU22SKMeKh9kLcQXFRYhfMyEEF8qVwkRAuuhIEVjewgkCXNJAouC2CUNtdVKRfEns80f2JzV/ZnZvTM7jVQPkW5CH9z7PdzvnO+ec79LVFXF/wTndrvR0tKy5eEmN0cUcrkku+KIKbdc5XhepRHJ4/n40PFy5pmssuC8Xi/6+/u3a8A22vIdhadNVQZ9FAwEMAyP5F3ZpaMjA3ebu8bqOC22vV6NNcvW0FhTxZJFRP0L+DzrE1eWhHXLqdw0+/Xq2tmvd94w8fSZ8w5XsbuDiASWQWDAbcdEa9mN4bNj76a8CbpVnDmZU83FdUjdMIA3QGH3gUZWUFSQeSwtmfel7t+TDOoHlIAhLoG4IYjaBn1KJsL0O4qt2SUXL5hKwGnuyjKIIjHbSshNTzQezTl0gK4tIEaD0Kfmg+gzAJ5DQpIOcohifEZ4vyWBKZ01PmiqcBaWlmYpioqQbxqICdDtTUGCLglhnx+tbUOvO17M3+L+BjPGzsZK5wlrkTkqDIPSCEJrAvqejs4FQjSsElZ2eZb7Hru9bZqQ1T8ITGmMscNe6TyugQNLLkTWw1AiIjq7p57YH03WaSXBTWu1tf4ra4P2W3OqBm4od1qKz2udB0HEMC5dfX7/i0AHJr+FXmklq1uOskRjyMtIPNh+razXYj1npsJbyEERvT3j8x6v2L7sj3yK91KMJEVxpcJyr8BWZOakIcgbAfR0f5ird0za/gX+KYEhxDUy7RPrmyeiCqPKEqU3uxZrw8DgTn4jcbtdxN7UbJDlGL9pDCFESeLZAEMQ2wnBDwEGAPliEN1jNJUQAAAAAElFTkSuQmCC',
+        normal: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFEmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDIgNzkuMTYwOTI0LCAyMDE3LzA3LzEzLTAxOjA2OjM5ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgKFdpbmRvd3MpIiB4bXA6Q3JlYXRlRGF0ZT0iMjAyMi0wOS0zMFQxMjoxNzo0OCswODowMCIgeG1wOk1vZGlmeURhdGU9IjIwMjItMTAtMTBUMTQ6MDk6NTcrMDg6MDAiIHhtcDpNZXRhZGF0YURhdGU9IjIwMjItMTAtMTBUMTQ6MDk6NTcrMDg6MDAiIGRjOmZvcm1hdD0iaW1hZ2UvcG5nIiBwaG90b3Nob3A6Q29sb3JNb2RlPSIzIiBwaG90b3Nob3A6SUNDUHJvZmlsZT0ic1JHQiBJRUM2MTk2Ni0yLjEiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6ODhiNDRmNDYtZDI4ZS1iYTQ1LThiMzktMDlkZDIwM2JjOTMyIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjg4YjQ0ZjQ2LWQyOGUtYmE0NS04YjM5LTA5ZGQyMDNiYzkzMiIgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOjg4YjQ0ZjQ2LWQyOGUtYmE0NS04YjM5LTA5ZGQyMDNiYzkzMiI+IDx4bXBNTTpIaXN0b3J5PiA8cmRmOlNlcT4gPHJkZjpsaSBzdEV2dDphY3Rpb249ImNyZWF0ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6ODhiNDRmNDYtZDI4ZS1iYTQ1LThiMzktMDlkZDIwM2JjOTMyIiBzdEV2dDp3aGVuPSIyMDIyLTA5LTMwVDEyOjE3OjQ4KzA4OjAwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgQ0MgKFdpbmRvd3MpIi8+IDwvcmRmOlNlcT4gPC94bXBNTTpIaXN0b3J5PiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PoH0bhQAAAIkSURBVDiNpZM9aFNhFIaf76a5l9ubWKMNKTWikC4iGLo5KeigQ6cWdHR2c3Pv4GB2RZCOCk4OIk5CxU2wS0Q6RNAWQhrtX0h78/0dh5jbhrr1TN9w3sPzvi+fEhFOMxMAjUbj5fz8/L3JOCKOI6x1pANLEAQopbLlIAgYDAZ0Op2dZrP5ZHl5+QUiwurqqozmYK8v3g/fzjlxzom1VowxkqZptreysrImIkMCEekDydNnb3n1bp1qtcij+1fw9hBtPN57rLVYa6nX69RqNfL5/HZmQUQ8QLu7z/ofRc/s4KynkMSoQ4uI4L0niiKUUlhr8d777MBolu7WmZspMnX+DNWLs+jBAWHkcc6hlKJQKADgnDvKBciCctYRRRFhmMc5h3hh1JIxhna7jdZ6LNwxgjfvv/L68wHlyZTGw6tMFUP6hwYAay3GGMrl8lgzE8cJLs2WmCvtMVOOiSdjrNMAeO/J5XKZBe/9/wluXa8xd04xVSlTKhXY290ljoeeR0Ee93+C4MOn73xc22f67DYP7lTJ5z1a+0yotaZYLKKUyjRjIf749Zu1nwO+fGvT6/WQfyKtNdZacrkcaZqetBCGYQFg4fY1SkmL6coFarXLeDsgKR5hB0FApVIhSRKCIChkB1qtVq9er59ZXLjB4sJNALTWiIBSjFUZhiEbGxtsbm52sgPNZvNxv99fiqIwQxuKj+oa+TbG0O12t7e2tp4DqNN+57+dBjxsjVqXIQAAAABJRU5ErkJggg==',
+        foreign: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpDRkRENDlGNjQwODYxMUVEQUY2OUY0RUMyRDk2QzkxMiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpDRkRENDlGNzQwODYxMUVEQUY2OUY0RUMyRDk2QzkxMiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkNGREQ0OUY0NDA4NjExRURBRjY5RjRFQzJEOTZDOTEyIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkNGREQ0OUY1NDA4NjExRURBRjY5RjRFQzJEOTZDOTEyIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+eKaa8AAAApdJREFUeNp8U11IVEEYPXP33v1zd93VjbSVJVYwobSQoJcgE2JdpAiyILCn6I8efKmggpIoCbLeBOsh8K2HHnqUeihE+kUw0wJdcF3UanXd2v97785Mc9c1Wl37Lhdm5pvvzPnOnCGcc3S0H8J8PNt5pe/hC0p1C8RaMQiByaSoQwO3j0++fzOCDTE6OgrZGNT5GxtDPaHB1ma/hTJWtskkSZaLvdcGb0XCnSs/FmY3ghQB7E5X0+GDBwKeahckApTOhxiCiUmtyFntzmYxrQzAGWPpbB4z338hr2qCOSkmjfasFjOafF4xpgwVQl7bCRQoRb3HUSz6NwwwIwcObAnAxSdIIJHMQtUKKBEoamkxy/DVOreqLzEQoRUoapx20Q4v04AIUYwcY5z/twUmaMaTOWh6Ya2ytG5WZLgddiiyiezxVe2XFcWxmtZmoyvZxbIWdHGK2yUYcGWTBqlMHte7A/09obZWxWbH3Ew8dvrmyAlNZ2PS+kbKKFI5HasZtfinsgSJPEecW1GVi6L7iLvVuWM7Ltx49WglR7XLJ3ff03UKaf26DAaapkJV8yhoFOHEB2SWvsE+8QmccJiJuAm5Gl3BlvbALp9QlbnLRNSFBnVeG6gAkogCVbFjm2qDxyRjOZMAVVRA/Y1TZ/a2YSGGjxOLY/4u6S8AKYhCr8cFs6wI9zH4SQc0iw2xyCSawo9Rs8+L6bfT7N340tSX+dT409c/7/b0mdYACAhN51REFpZBDdMYFhYslFQULckn8NdTPBueiw48Dz8YjySHRVo1bt6wfRFgNbb4uf/qpbMCyrzuIcol/f4x651Ad71v+muO9g5NnYultZebjGAIGAwGK7psZ60SamlwnG/wWI4aD7PSc/4jwACW7zBU90NvegAAAABJRU5ErkJggg=='
+    };
+    const {
+        Util,
+        registerBehavior,
+        registerEdge,
+        registerNode
+    } = G6;
+
+    const itemHeight = 30;
+    registerBehavior("dice-er-scroll", {
+        getDefaultCfg() {
+            return {
+                multiple: true,
+            };
+        },
+        getEvents() {
+            return {
+                itemHeight: 50,
+                wheel: "scorll",
+                click: "click",
+                "node:mouseover": "move",
+            };
+        },
+        scorll(e) {
+            e.preventDefault();
+            const {
+                graph
+            } = this;
+            const nodes = graph.getNodes().filter((n) => {
+                const bbox = n.getBBox();
+
+                let inBBox = isInBBox(graph.getPointByClient(e.clientX, e.clientY), bbox)
+                let arr = graph.cfg.modes.default
+                let flag = false;
+                for (let i = 0; i < arr.length; i++) {
+                        let name = arr[i].type
+                        if (name == 'scroll-canvas') {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (inBBox) {
+                        if (flag) {
+                            graph.removeBehaviors('scroll-canvas');
+                        }
+                    } else {
+                        if (!flag) {
+                            graph.addBehaviors([
+                                {
+                                    type: 'scroll-canvas',
+                                    direction: 'y',
+                                    // enableOptimize: true,
+                                },
+                            ]);
+                        }
+                    }
+                return inBBox
+            });
+            if (nodes) {
+                nodes.forEach((node) => {
+                    const model = node.getModel();
+                    if (model.attrs.length < 9) {
+                        return;
+                    }
+                    const idx = model.startIndex || 0;
+                    let startX = model.startX || 0.5;
+                    let startIndex = idx + e.deltaY * 0.02;
+                    startX -= e.deltaX;
+                    if (startIndex < 0) {
+                        startIndex = 0;
+                    }
+                    if (startX > 0) {
+                        startX = 0;
+                    }
+                    if (startIndex > model.attrs.length - 1) {
+                        startIndex = model.attrs.length - 1;
+                    }
+                    graph.update(node, {
+                        startIndex,
+                        startX,
+                        scorllNode: true,
+                    });
+                });
+            }
+        },
+        click(e) {
+            const {
+                graph
+            } = this;
+            const {
+                y
+            } = e;
+            const item = e.item;
+            const shape = e.shape;
+            if (!item) {
+                return;
+            }
+            const model = item.getModel();
+
+            if (shape.get("name") === "collapse") {
+                graph.updateItem(item, {
+                    clicked: true,
+                    collapsed: true,
+                    size: [300, 50],
+                });
+                setTimeout(() => graph.layout(), 100);
+            } else if (shape.get("name") === "expand") {
+                graph.updateItem(item, {
+                    clicked: true,
+                    collapsed: false,
+                    size: calculateNodeSize(item),
+                });
+                setTimeout(() => graph.layout(), 100);
+            }
+        },
+        move(e) {
+            const name = e.shape.get("name");
+            const item = e.item;
+
+            if (name && name.startsWith("item")) {
+                this.graph.updateItem(item, {
+                    selectedIndex: Number(name.split("-")[1]),
+                });
+            } else {
+                this.graph.updateItem(item, {
+                    selectedIndex: NaN,
+                });
+            }
+        },
+    });
+
+    registerEdge("dice-er-edge", {
+        draw(cfg, group) {
+            const edge = group.cfg.item;
+            const sourceNode = edge.getSource().getModel();
+            const targetNode = edge.getTarget().getModel();
+
+            const sourceIndex = sourceNode.attrs.findIndex(
+                (e) => e.key === cfg.sourceKey
+            );
+
+            const sourceStartIndex = sourceNode.startIndex || 0;
+
+            let sourceY = 15;
+
+            let source_height = sourceNode.attrs.length >= 9 ? 300 : (sourceNode.attrs.length - 1 ) * 30
+            if (!sourceNode.collapsed && sourceIndex > sourceStartIndex - 1) {
+                sourceY = 30 + (sourceIndex - sourceStartIndex + 0.5) * 30;
+                sourceY = Math.min(sourceY, source_height);
+            }
+
+            const startPoint = {
+                ...cfg.startPoint
+            };
+            const endPoint = {
+                ...cfg.endPoint
+            };
+
+            startPoint.y = sourceNode.y + sourceY ;
+
+            let shape;
+            if (sourceNode.id !== targetNode.id) {
+                shape = group.addShape("path", {
+                    attrs: {
+                        stroke: "#5B8FF9",
+                        path: [
+                            ['M', startPoint.x, startPoint.y],
+                            ['L', endPoint.x, endPoint.y],
+                        ],
+                        endArrow: true,
+                    },
+                    name: "path-shape",
+                });
+            } else if (!sourceNode.collapsed) {
+                let gap = Math.abs((startPoint.y - endPoint.y) / 3);
+                if (startPoint["index"] === 1) {
+                    gap = -gap;
+                }
+                shape = group.addShape("path", {
+                    attrs: {
+                        stroke: "#5B8FF9",
+                        path: [
+                            ['M', startPoint.x, startPoint.y],
+                            ['L', endPoint.x, endPoint.y],
+                        ],
+                        endArrow: true,
+                    },
+                    name: "path-shape",
+                });
+            }
+            return shape;
+        },
+        afterDraw(cfg, group) {
+            const labelCfg = cfg.labelCfg || {};
+            const edge = group.cfg.item;
+            const sourceNode = edge.getSource().getModel();
+            const targetNode = edge.getTarget().getModel();
+            if (sourceNode.collapsed && targetNode.collapsed) {
+                return;
+            }
+            const path = group.find(
+                (element) => element.get("name") === "path-shape"
+            );
+
+            const labelStyle = Util.getLabelPosition(path, 0.5, 0, 0, true);
+            const label = group.addShape("text", {
+                attrs: {
+                    ...labelStyle,
+                    text: cfg.label || '',
+                    fill: "#000",
+                    textAlign: "center",
+                    stroke: "#fff",
+                    lineWidth: 1,
+                },
+            });
+            label.rotateAtStart(labelStyle.rotate);
+        },
+    });
+
+    registerNode("dice-er-box", {
+        draw(cfg, group) {
+            const width = 240;
+            const itemCount = 10;
+            const boxStyle = {
+                stroke: "#096DD9",
+                radius: 4,
+            };
+
+            const {
+                attrs = [],
+                startIndex = 0,
+                selectedIndex,
+                collapsed,
+                clicked,
+                scorllNode,
+                icon,
+            } = cfg;
+            const list = attrs;
+            const afterList = list.slice(
+                Math.floor(startIndex),
+                Math.floor(startIndex + itemCount - 1)
+            );
+            const offsetY = (0.5 - (startIndex % 1)) * itemHeight + 30;
+
+            group.addShape("rect", {
+                attrs: {
+                    fill: boxStyle.stroke,
+                    height: 30,
+                    width,
+                    radius: [boxStyle.radius, boxStyle.radius, 0, 0],
+                },
+                draggable: true,
+            });
+
+            let fontLeft = 12;
+
+            group.addShape("text", {
+                attrs: {
+                    y: 22,
+                    x: fontLeft,
+                    fill: "#fff",
+                    text: cfg.label,
+                    fontSize: 16,
+                    fontWeight: 500,
+                },
+            });
+            let box_height = list.length >= 9 ? 300 : (list.length + 1) * 30
+            const height = box_height + 16 ;
+            group.addShape("rect", {
+                attrs: {
+                    x: 0,
+                    y: collapsed ? 30 : box_height,
+                    height: 15,
+                    width,
+                    fill: "#eee",
+                    radius: [0, 0, boxStyle.radius, boxStyle.radius],
+                    cursor: "pointer",
+                },
+                name: collapsed ? "expand" : "collapse",
+            });
+
+            group.addShape("text", {
+                attrs: {
+                    x: width / 2 - 6,
+                    y: (collapsed ? 30 : box_height) + 12,
+                    text: collapsed ? "+" : "-",
+                    width,
+                    fill: "#000",
+                    radius: [0, 0, boxStyle.radius, boxStyle.radius],
+                    cursor: "pointer",
+                },
+                name: collapsed ? "expand" : "collapse",
+            });
+
+            const keyshape = group.addShape("rect", {
+                attrs: {
+                    x: 0,
+                    y: 0,
+                    width,
+                    height: collapsed ? 45 : height,
+                    ...boxStyle,
+                },
+                draggable: true,
+            });
+
+            if (collapsed) {
+                return keyshape;
+            }
+
+            const listContainer = group.addGroup({});
+            listContainer.setClip({
+                type: "rect",
+                attrs: {
+                    x: -8,
+                    y: 30,
+                    width: width + 16,
+                    height: box_height - 30,
+                },
+            });
+            listContainer.addShape({
+                type: "rect",
+                attrs: {
+                    x: 1,
+                    y: 30,
+                    width: width - 2,
+                    height: box_height - 30,
+                    fill: "#fff",
+                },
+                draggable: true,
+            });
+
+            if (list.length > itemCount) {
+                const barStyle = {
+                    width: 4,
+                    padding: 0,
+                    boxStyle: {
+                        stroke: "#00000022",
+                    },
+                    innerStyle: {
+                        fill: "#00000022",
+                    },
+                };
+
+                listContainer.addShape("rect", {
+                    attrs: {
+                        y: 30,
+                        x: width - barStyle.padding - barStyle.width,
+                        width: barStyle.width,
+                        height: height - 30,
+                        ...barStyle.boxStyle,
+                    },
+                });
+
+                const indexHeight =
+                    afterList.length > itemCount ?
+                        (afterList.length / list.length) * height :
+                        10;
+
+                listContainer.addShape("rect", {
+                    attrs: {
+                        y: 30 +
+                            barStyle.padding +
+                            (startIndex / list.length) * (height - 30),
+                        x: width - barStyle.padding - barStyle.width,
+                        width: barStyle.width,
+                        height: Math.min(height, indexHeight),
+                        ...barStyle.innerStyle,
+                    },
+                });
+            }
+            if (afterList) {
+                afterList.forEach((e, i) => {
+                    const isSelected =
+                        Math.floor(startIndex) + i === Number(selectedIndex);
+                    let {
+                        columnKey = "", columnType, imageType = 'normal'
+                    } = e;
+
+                    columnKey = columnKey.length > 12 ? columnKey.slice(0, 9) + "..." : columnKey;
+                    columnType = columnType.length > 15 ? columnType.slice(0, 12) + "..." : columnType;
+                    listContainer.addShape("rect", {
+                        attrs: {
+                            x: 1,
+                            y: i * itemHeight - itemHeight / 2 + offsetY,
+                            width: width - 4,
+                            height: itemHeight,
+                            radius: 2,
+                            lineWidth: 1,
+                            cursor: "pointer",
+                        },
+                        name: `item-${Math.floor(startIndex) + i}content`,
+                        draggable: true,
+                    });
+
+                    // left icon
+                    group.addShape('image', {
+                        attrs: {
+                            x: 4,
+                            y: i * itemHeight + offsetY  - 10,
+                            height: 16,
+                            width: 16,
+                            cursor: 'pointer',
+                            img: ICON_MAP[imageType],
+                        },
+                        // must be assigned in G6 3.3 and later versions. it can be any string you want, but should be unique in a custom item type
+                        name: 'node-icon',
+                    });
+
+                    listContainer.addShape("text", {
+                        attrs: {
+                            x: 12 + 16,
+                            y: i * itemHeight + offsetY + 6,
+                            text: columnKey,
+                            fontSize: 16,
+                            fill: "#000",
+                            fontFamily: "Avenir,-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol",
+                            full: e,
+                            fontWeight: isSelected ? 700 : 300,
+                            cursor: "pointer",
+                        },
+                        name: `item-key-${Math.floor(startIndex) + i}`,
+                    });
+                    listContainer.addShape("text", {
+                        attrs: {
+                            x: 120 + 16,
+                            y: i * itemHeight + offsetY + 6,
+                            text: columnType,
+                            fontSize: 16,
+                            fill: "#000",
+                            fontFamily: "Avenir,-apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol",
+                            full: e,
+                            fontWeight: isSelected ? 700 : 300,
+                            cursor: "pointer",
+                        },
+                        name: `item-type-${Math.floor(startIndex) + i}`,
+                    });
+                });
+            }
+            return keyshape;
+        },
+        getAnchorPoints() {
+            return [
+                ...generateArrayTop(50),
+                ...generateArrayButton(50),
+                ...generateArrayLeft(100),
+                ...generateArrayRight(100),
+            ];
+        },
+        update(cfg, node) {
+            if (cfg.clicked || cfg.scorllNode){
+                cfg.clicked = false;
+                cfg.scorllNode = false;
+                node.draw();
+            }
+        },
+    });
+
+    // 实例化 minimap 插件
+    const minimap = new G6.Minimap({
+        container: 'minimap-container', // Minimap 的容器 ID // 放置在主图表的 container 内
+        size: [130, 130],
+        className: 'minimap',
+        type: 'delegate',
+    });
+
+    const animateCfg = { duration: 200, easing: 'easeCubic' }
+
+    const toolbar = new G6.ToolBar({
+        position: { x: 10, y: 20 },
+        getContent: () => `
+  <ul class='g6-component-toolbar' style="padding: 0; border: none;">
+    <li  code='zoomOut' style="display: flex; align-items: center;">
+    <button width="45" height="45">
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+        <path d="M658.432 428.736a33.216 33.216 0 0 1-33.152 33.152H525.824v99.456a33.216 33.216 0 0 1-66.304 0V461.888H360.064a33.152 33.152 0 0 1 0-66.304H459.52V296.128a33.152 33.152 0 0 1 66.304 0V395.52H625.28c18.24 0 33.152 14.848 33.152 33.152z m299.776 521.792a43.328 43.328 0 0 1-60.864-6.912l-189.248-220.992a362.368 362.368 0 0 1-215.36 70.848 364.8 364.8 0 1 1 364.8-364.736 363.072 363.072 0 0 1-86.912 235.968l192.384 224.64a43.392 43.392 0 0 1-4.8 61.184z m-465.536-223.36a298.816 298.816 0 0 0 298.432-298.432 298.816 298.816 0 0 0-298.432-298.432A298.816 298.816 0 0 0 194.24 428.8a298.816 298.816 0 0 0 298.432 298.432z"></path>
+      </svg>
+      </button>
+    </li>
+    <li code='zoomIn' style="display: flex; align-items: center;">
+    <button width="45" height="45">
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+        <path d="M639.936 416a32 32 0 0 1-32 32h-256a32 32 0 0 1 0-64h256a32 32 0 0 1 32 32z m289.28 503.552a41.792 41.792 0 0 1-58.752-6.656l-182.656-213.248A349.76 349.76 0 0 1 480 768 352 352 0 1 1 832 416a350.4 350.4 0 0 1-83.84 227.712l185.664 216.768a41.856 41.856 0 0 1-4.608 59.072zM479.936 704c158.784 0 288-129.216 288-288S638.72 128 479.936 128a288.32 288.32 0 0 0-288 288c0 158.784 129.216 288 288 288z" p-id="3853"></path>
+      </svg>
+      </button>
+    </li>
+    <li code='realZoom' style="display: flex; align-items: center;">
+    <button width="45" height="45">
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="24">
+        <path d="M384 320v384H320V320h64z m256 0v384H576V320h64zM512 576v64H448V576h64z m0-192v64H448V384h64z m355.968 576H92.032A28.16 28.16 0 0 1 64 931.968V28.032C64 12.608 76.608 0 95.168 0h610.368L896 192v739.968a28.16 28.16 0 0 1-28.032 28.032zM704 64v128h128l-128-128z m128 192h-190.464V64H128v832h704V256z"></path>
+      </svg>
+      </button>
+    </li>
+    <li code='autoZoom' style="display: flex; align-items: center;">
+     <button width="45" height="45">
+      <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="24">
+        <path d="M684.288 305.28l0.128-0.64-0.128-0.64V99.712c0-19.84 15.552-35.904 34.496-35.712a35.072 35.072 0 0 1 34.56 35.776v171.008h170.944c19.648 0 35.84 15.488 35.712 34.432a35.072 35.072 0 0 1-35.84 34.496h-204.16l-0.64-0.128a32.768 32.768 0 0 1-20.864-7.552c-1.344-1.024-2.816-1.664-3.968-2.816-0.384-0.32-0.512-0.768-0.832-1.088a33.472 33.472 0 0 1-9.408-22.848zM305.28 64a35.072 35.072 0 0 0-34.56 35.776v171.008H99.776A35.072 35.072 0 0 0 64 305.216c0 18.944 15.872 34.496 35.84 34.496h204.16l0.64-0.128a32.896 32.896 0 0 0 20.864-7.552c1.344-1.024 2.816-1.664 3.904-2.816 0.384-0.32 0.512-0.768 0.768-1.088a33.024 33.024 0 0 0 9.536-22.848l-0.128-0.64 0.128-0.704V99.712A35.008 35.008 0 0 0 305.216 64z m618.944 620.288h-204.16l-0.64 0.128-0.512-0.128c-7.808 0-14.72 3.2-20.48 7.68-1.28 1.024-2.752 1.664-3.84 2.752-0.384 0.32-0.512 0.768-0.832 1.088a33.664 33.664 0 0 0-9.408 22.912l0.128 0.64-0.128 0.704v204.288c0 19.712 15.552 35.904 34.496 35.712a35.072 35.072 0 0 0 34.56-35.776V753.28h170.944c19.648 0 35.84-15.488 35.712-34.432a35.072 35.072 0 0 0-35.84-34.496z m-593.92 11.52c-0.256-0.32-0.384-0.768-0.768-1.088-1.088-1.088-2.56-1.728-3.84-2.688a33.088 33.088 0 0 0-20.48-7.68l-0.512 0.064-0.64-0.128H99.84a35.072 35.072 0 0 0-35.84 34.496 35.072 35.072 0 0 0 35.712 34.432H270.72v171.008c0 19.84 15.552 35.84 34.56 35.776a35.008 35.008 0 0 0 34.432-35.712V720l-0.128-0.64 0.128-0.704a33.344 33.344 0 0 0-9.472-22.848zM512 374.144a137.92 137.92 0 1 0 0.128 275.84A137.92 137.92 0 0 0 512 374.08z"></path>
+      </svg>
+      </button>
+    </li>
+  </ul>`,
+        handleClick: (code, graph) => {
+            switch (code) {
+                case 'zoomOut':
+                    graph.zoom(1.2, undefined, true, animateCfg);
+                    break;
+                case 'zoomIn':
+                    graph.zoom(0.8, undefined, true, animateCfg);
+                    break;
+                case 'realZoom':
+                    graph.zoomTo(1, undefined, true, animateCfg);
+                    break;
+                case 'autoZoom':
+                    graph.fitView(20, undefined, true, animateCfg);
+                    break;
+            }
+        }
+    })
+
+    const container = document.getElementById('container');
+
+    const width = container.scrollWidth;
+    const height = container.scrollHeight;
+
+    const graph = new G6.Graph({
+        container: 'container',
+        width,
+        height,
+        defaultNode: {
+            size: [300, 400],
+            type: 'dice-er-box',
+            color: '#5B8FF9',
+            style: {
+                fill: '#9EC9FF',
+                lineWidth: 3,
+            },
+            labelCfg: {
+                style: {
+                    fill: 'black',
+                    fontSize: 22,
+                },
+            },
+        },
+        defaultEdge: {
+            type: 'dice-er-edge',
+            style: {
+                stroke: '#e2e2e2',
+                lineWidth: 8,
+                endArrow: true,
+            },
+        },
+        modes: {
+                default: [{
+                    type: 'drag-canvas',
+                    // enableOptimize: true,
+                    // ... 其他配置
+                }, {
+                    type: 'scroll-canvas',
+                    // enableOptimize: true,
+                    direction: 'y',
+                    // ... 其他配置
+                }, {
+                    type: 'drag-node'
+                }, {
+                    type: 'dice-er-scroll',
+                }]
+                // 允许拖拽画布、放缩画布、拖拽节点
+            },
+        // layout: getLayout(node_layout),
+        animate: true,
+            fitView: false, // 禁用自动适应视图
+            zoom: 2, // 设置初始缩放级别
+        plugins: [minimap, toolbar], // 将 minimap 实例配置到图上
+    })
+
+    graph.on('node:dragend', (ev) => {
+        const shape = ev.target
+        const node = ev.item
+        const edges = node.getEdges()
+        const x = ev.x
+        edges.forEach((edge) => {
+            const sourceNode = edge.getSource()
+            const targetNode = edge.getTarget()
+
+            if (node === sourceNode) {
+                const edgeModel = edge.getModel()
+                const isTo = x < targetNode.getModel().x
+                if (sourceNode !== targetNode) {
+                    graph.updateItem(edge, {
+                        targetAnchor: isTo ? (edgeModel.endPoint.anchorIndex < 200 ? edgeModel.endPoint.anchorIndex : edgeModel.endPoint.anchorIndex - 100) :
+                            (edgeModel.endPoint.anchorIndex > 200 ? edgeModel.endPoint.anchorIndex : edgeModel.endPoint.anchorIndex + 100)
+                    })
+                }
+            } else {
+                if (sourceNode !== targetNode) {
+                    const edgeModel = edge.getModel()
+                    const isTo = sourceNode.getModel().x < x
+                    graph.updateItem(edge, {
+                        targetAnchor: isTo ? (edgeModel.endPoint.anchorIndex < 200 ? edgeModel.endPoint.anchorIndex : edgeModel.endPoint.anchorIndex - 100) :
+                            (edgeModel.endPoint.anchorIndex > 200 ? edgeModel.endPoint.anchorIndex : edgeModel.endPoint.anchorIndex + 100)
+                    })
+                }
+            }
+        })
+    });// ----获取所有的边
+
+
+    function sendToJs() {
+        const data = dataTransform(rawData);
+        graph.data(data);
+        graph.render();
+
+        const nodeMap = new Map();
+        const hasEdgeNodeSet = new Set();
+        const edges = data.edges;
+
+        data.nodes.forEach((node) => {
+            nodeMap.set(node.id, node);
+        });
+
+        edges.forEach(function (edge) {
+            const sourceId = edge.source;
+            const targetId = edge.target;
+            if (nodeMap.get(sourceId) !== undefined && nodeMap.get(targetId) !== undefined) {
+                hasEdgeNodeSet.add(nodeMap.get(sourceId));
+                hasEdgeNodeSet.add(nodeMap.get(targetId));
+            }
+        });
+        let hasEdgeNodeList = [...hasEdgeNodeSet];
+
+        let minX = 0;
+        let maxY = 0;
+
+        function hasEdge(node) {
+            let flag = false;
+            node.attrs.forEach((attr) => {
+                if (hasEdgeNodeSet.has(node)) {
+                    minX = Math.min(minX, node.x);
+                    maxY = Math.max(maxY, node.y);
+                    flag = true;
+                    return flag;
+                }
+            });
+            return flag;
+        }
+
+        // 当只有一个节点的时候，让节点变小一点而不是占满屏幕
+        if (data.nodes.length == 1) {
+            var node = data.nodes[0]
+            node.x = 500;
+            node.y = 500;
+        } else {
+            const subForceLayout = new G6.Layout['dagre']({
+                rankdir: 'TB', // 垂直方向布局，Top to Bottom
+                // align: 'DL', // 左上角对齐
+                controlPoints: true,
+                nodesep: 30,
+                ranksep: 30,
+            });
+            subForceLayout.init({
+                nodes: hasEdgeNodeList,
+                edges: edges
+            });
+            subForceLayout.execute();
+
+            const newNodes = [];
+            // add the nodes which should be re-layout
+            data.nodes.forEach(function (node) {
+                if (!hasEdge(node)) {
+                    node.order = - node.attrs.length;
+                    newNodes.push(node);
+                }
+            });
+
+            const subForceLayout1 = new G6.Layout['grid']({
+                begin: [minX, maxY + 100],
+                sortBy: "order",
+                condense: true,
+            });
+            subForceLayout1.init({
+                nodes: newNodes,
+                edges: []
+            });
+            subForceLayout1.execute();
+            // 图实例根据数据更新节点位置
+            graph.positionsAnimate();
+        }
+    }
+</script>
+</body>
+</html>

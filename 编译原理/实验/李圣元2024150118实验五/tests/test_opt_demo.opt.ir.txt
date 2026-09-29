@@ -1,0 +1,72 @@
+func_demo:
+# --- Function: demo (1 params) ---
+    alloc a:int
+    alloc x:int
+    alloc y:int
+    alloc z:int
+    t0 = 2
+    t1 = 3
+    t2 = t0 * t1
+    t3 = a + t2
+    t4 = 4
+    t5 = t3 + t4
+    x = t5
+    t6 = 1
+    t7 = x * t6
+    t8 = 0
+    t9 = t7 + t8
+    y = t9
+    alloc unused:int
+    t10 = 999
+    unused = t10
+    t11 = x > y
+    if_false t11 goto else0
+    t12 = 100
+    z = t12
+    goto endif1
+else0:
+    t13 = 200
+    z = t13
+endif1:
+    return z
+func_main:
+# --- Function: main (0 params) ---
+    alloc r:int
+    t14 = 5
+    param t14
+    t15 = call func_demo, 1
+    r = t15
+    print r
+    return
+
+// ====== OPTIMIZED ======
+func_demo:
+# --- Function: demo (1 params) ---
+    alloc a:int
+    alloc x:int
+    alloc y:int
+    alloc z:int
+    t3 = a + 6
+    t5 = t3 + 4
+    x = t5
+    t7 = x
+    t9 = t7
+    y = t9
+    alloc unused:int
+    unused = 999
+    t11 = x > y
+    if_false t11 goto else0
+    z = 100
+    goto endif1
+else0:
+    z = 200
+endif1:
+    return 200
+func_main:
+# --- Function: main (0 params) ---
+    alloc r:int
+    param 5
+    t15 = call func_demo, 1
+    r = t15
+    print r
+    return

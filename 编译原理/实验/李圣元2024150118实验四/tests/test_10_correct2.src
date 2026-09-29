@@ -1,0 +1,17 @@
+// T5-2: 正确程序（含类型转换方法调用）
+fn(float) computeAvg -> a@int, b@int:
+    float result
+    result@float = a@int.toFloat() / 2.0 + b@int.toFloat() / 2.0
+    return result@float
+
+fn(int) roundDown -> f@float:
+    int r
+    r@int = f@float.toInt()
+    return r@int
+
+fn(void) main ->:
+    float avg
+    int intResult
+    avg@float = computeAvg->(7, 10)
+    intResult@int = roundDown->(avg@float)
+    print->(intResult@int)

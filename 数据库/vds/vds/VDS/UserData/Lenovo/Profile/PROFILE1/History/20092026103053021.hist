@@ -1,0 +1,1 @@
+{"fileName":"20092026103053021.hist","query":"SELECT ENAME, JOB, SAL, HIREDATE, DEPTNO \nFROM EMP2024150118 \nORDER BY ENAME ASC;","databaseName":"2024150118","profileId":"1","executionTime":"2026-09-20 10:30:52.832 CST","elapsedTime":"17 ms","isPinned":false,"finalStatus":true,"resultSetSize":17,"querySizeToStore":1000}

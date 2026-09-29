@@ -1,0 +1,313 @@
+clear; clc; close all;
+
+%% 给定数据
+xi = [-1.0, -0.5, 0, 0.5, 1.0, 1.5, 2.0]';
+yi = [-4.447, -0.452, 0.551, 0.048, -0.447, 0.549, 4.552]';
+n = length(xi);
+m = 3;                   % 三次多项式
+a_domain = -1.0;
+b_domain = 2.0;
+
+fprintf('数据点:\n');
+fprintf('  x: '); fprintf('%8.4f', xi); fprintf('\n');
+fprintf('  y: '); fprintf('%8.4f', yi); fprintf('\n\n');
+
+%% ============================================================
+%% 方法一：一般多项式最小二乘拟合（基函数: 1, x, x^2, x^3）
+%% ============================================================
+fprintf('---------- 方法一：一般多项式拟合 ----------\n');
+
+Phi = zeros(n, m+1);
+for j = 1:(m+1)
+    Phi(:, j) = xi.^(j-1);
+end
+
+G_poly = Phi' * Phi;
+b_poly = Phi' * yi;
+c_poly = G_poly \ b_poly;
+
+fprintf('拟合多项式系数 (a0 + a1*x + a2*x^2 + a3*x^3):\n');
+for j = 1:(m+1)
+    fprintf('  a%d = %12.8f\n', j-1, c_poly(j));
+end
+
+y_fit_poly = Phi * c_poly;
+res_poly = yi - y_fit_poly;
+sq_err_poly = sum(res_poly.^2);
+fprintf('平方误差: %.8f\n', sq_err_poly);
+fprintf('法方程条件数: %.4e\n\n', cond(G_poly));
+
+%% ============================================================
+%% 方法二：正交多项式拟合
+%% 在 [-1,2] 上用 Gram-Schmidt 构造连续正交多项式
+%% 在离散点上建立法方程（系数矩阵条件数改善）
+%% ============================================================
+fprintf('---------- 方法二：正交多项式拟合 ----------\n');
+
+syms x_sym;
+
+% 原始基函数: 1, x, x^2, x^3
+basis_sym = cell(m+1, 1);
+basis_sym{1} = sym(1);
+for k = 2:(m+1)
+    basis_sym{k} = x_sym^(k-1);
+end
+
+% Gram-Schmidt 正交化（连续内积: ∫_a^b f(x)*g(x) dx）
+phi_sym = cell(m+1, 1);
+phi_sym{1} = basis_sym{1};
+for k = 2:(m+1)
+    phi_sym{k} = basis_sym{k};
+    for j = 1:(k-1)
+        num = int(basis_sym{k} * phi_sym{j}, x_sym, a_domain, b_domain);
+        den = int(phi_sym{j} * phi_sym{j}, x_sym, a_domain, b_domain);
+        coef = num / den;
+        phi_sym{k} = phi_sym{k} - coef * phi_sym{j};
+    end
+    phi_sym{k} = simplify(phi_sym{k});
+end
+
+fprintf('构造的正交多项式:\n');
+for k = 1:(m+1)
+    fprintf('  φ%d(x) = %s\n', k-1, char(phi_sym{k}));
+end
+
+% 在数据点上生成法方程 (使用正交基，矩阵条件数好于Hilbert矩阵)
+Phi_ortho = zeros(n, m+1);
+for j = 1:(m+1)
+    phi_func = matlabFunction(phi_sym{j}, 'Vars', x_sym);
+    Phi_ortho(:, j) = phi_func(xi);
+end
+
+G_ortho = Phi_ortho' * Phi_ortho;
+b_ortho = Phi_ortho' * yi;
+c_ortho = G_ortho \ b_ortho;
+
+fprintf('\n正交基组合系数:\n');
+for k = 1:(m+1)
+    fprintf('  c%d = %12.8f\n', k-1, c_ortho(k));
+end
+
+y_fit_ortho = Phi_ortho * c_ortho;
+res_ortho = yi - y_fit_ortho;
+sq_err_ortho = sum(res_ortho.^2);
+fprintf('平方误差: %.8f\n', sq_err_ortho);
+fprintf('法方程条件数: %.4e\n', cond(G_ortho));
+
+% 等价标准多项式
+poly_std_ortho = sym(0);
+for k = 1:(m+1)
+    poly_std_ortho = poly_std_ortho + c_ortho(k) * phi_sym{k};
+end
+poly_std_ortho = simplify(poly_std_ortho);
+fprintf('等价标准多项式:\n  P(x) = %s\n\n', char(vpa(poly_std_ortho, 8)));
+
+%% ============================================================
+%% 方法三：离散正交多项式拟合（三项递推公式）
+%% ============================================================
+fprintf('---------- 方法三：离散正交多项式拟合 ----------\n');
+
+omega = ones(n, 1);
+inner_d = @(f, g) sum(omega .* f .* g);
+
+P_vals = cell(m+1, 1);
+alpha = zeros(m+1, 1);
+beta  = zeros(m+1, 1);
+
+% P_0(x) = 1
+P_vals{1} = ones(n, 1);
+
+% alpha_0 = <x*P_0, P_0> / <P_0, P_0>
+alpha(1) = inner_d(xi .* P_vals{1}, P_vals{1}) / inner_d(P_vals{1}, P_vals{1});
+
+% P_1(x) = (x - alpha_0) * P_0(x)
+if m >= 1
+    P_vals{2} = (xi - alpha(1)) .* P_vals{1};
+end
+
+% 三项递推: P_{k+1} = (x - alpha_k) * P_k - beta_k * P_{k-1}
+for k = 2:(m+1)
+    % 计算 alpha_{k-1}
+    alpha(k) = inner_d(xi .* P_vals{k}, P_vals{k}) / inner_d(P_vals{k}, P_vals{k});
+
+    % 计算 beta_{k-1}
+    if k == 2
+        beta(2) = inner_d(P_vals{2}, P_vals{2}) / inner_d(P_vals{1}, P_vals{1});
+    else
+        beta(k) = inner_d(P_vals{k}, P_vals{k}) / inner_d(P_vals{k-1}, P_vals{k-1});
+    end
+
+    % 生成 P_{k+1}
+    if k < (m+1)
+        P_vals{k+1} = (xi - alpha(k)) .* P_vals{k} - beta(k) * P_vals{k-1};
+    end
+end
+
+fprintf('三项递推系数:\n');
+fprintf('  k     alpha_k         beta_k\n');
+fprintf('  %d    %12.8f     ---\n', 0, alpha(1));
+for k = 2:(m+1)
+    fprintf('  %d    %12.8f    %12.8f\n', k-1, alpha(k), beta(k));
+end
+
+% 系数: c_k = <y, P_k>_d / <P_k, P_k>_d （离散内积下 Gram 矩阵为对角阵）
+c_disc = zeros(m+1, 1);
+for k = 1:(m+1)
+    c_disc(k) = inner_d(yi, P_vals{k}) / inner_d(P_vals{k}, P_vals{k});
+end
+
+fprintf('\n离散正交多项式系数:\n');
+for k = 1:(m+1)
+    fprintf('  c%d = %12.8f\n', k-1, c_disc(k));
+end
+
+y_fit_disc = zeros(n, 1);
+for k = 1:(m+1)
+    y_fit_disc = y_fit_disc + c_disc(k) * P_vals{k};
+end
+res_disc = yi - y_fit_disc;
+sq_err_disc = sum(res_disc.^2);
+fprintf('平方误差: %.8f\n\n', sq_err_disc);
+
+%% ============================================================
+%% 方法四：三次 Lagrange 插值（节点: x = -1, 0, 1, 2）
+%% ============================================================
+fprintf('---------- 方法四：Lagrange 插值 ----------\n');
+
+xi_lag3_idx = [1, 3, 5, 7];
+xi_lag3 = xi(xi_lag3_idx);
+yi_lag3 = yi(xi_lag3_idx);
+
+% Lagrange 插值求值
+lagrange_eval = @(x_eval, x_nodes, y_nodes) lagrange_interp(x_eval, x_nodes, y_nodes);
+
+y_lag3 = zeros(n, 1);
+for i = 1:n
+    y_lag3(i) = lagrange_eval(xi(i), xi_lag3, yi_lag3);
+end
+
+% 符号形式 L3 多项式
+L3_sym = lagrange_symbolic(xi_lag3, yi_lag3, x_sym);
+L3_sym = simplify(L3_sym);
+fprintf('三次 Lagrange 插值多项式（节点: x=-1,0,1,2）:\n');
+fprintf('  L3(x) = %s\n', char(vpa(L3_sym, 8)));
+
+res_lag3 = yi - y_lag3;
+sq_err_lag3 = sum(res_lag3.^2);
+fprintf('平方误差: %.8f\n', sq_err_lag3);
+
+%% ============================================================
+%% 结果汇总
+%% ============================================================
+fprintf('\n==================== 结果汇总 ====================\n');
+fprintf('%-24s %12s %12s\n', '方法', '平方误差', '矩阵条件数');
+fprintf('%-24s %12.8f %12.4e\n', '一般多项式拟合', sq_err_poly, cond(G_poly));
+fprintf('%-24s %12.8f %12.4e\n', '正交多项式拟合', sq_err_ortho, cond(G_ortho));
+fprintf('%-24s %12.8f %12s\n', '离散正交多项式拟合', sq_err_disc, 'N/A（对角）');
+fprintf('%-24s %12.8f %12s\n', '三次Lagrange插值', sq_err_lag3, 'N/A');
+
+%% ============================================================
+%% 绘图
+%% ============================================================
+x_plot = linspace(a_domain - 0.2, b_domain + 0.2, 300)';
+
+% 方法一：一般多项式拟合值
+y_plot_poly = polyval(flip(c_poly), x_plot);
+
+% 方法二：正交多项式拟合值
+poly_ortho_func = matlabFunction(poly_std_ortho, 'Vars', x_sym);
+y_plot_ortho = poly_ortho_func(x_plot);
+
+% 方法三：离散正交多项式拟合值 (使用三项递推系数在任意点求值)
+y_plot_disc = zeros(size(x_plot));
+Q_plot = cell(m+1, 1);
+Q_plot{1} = ones(size(x_plot));
+if m >= 1
+    Q_plot{2} = (x_plot - alpha(1)) .* Q_plot{1};
+end
+for k = 3:(m+1)
+    Q_plot{k} = (x_plot - alpha(k-1)) .* Q_plot{k-1} - beta(k) .* Q_plot{k-2};
+end
+for k = 1:(m+1)
+    y_plot_disc = y_plot_disc + c_disc(k) * Q_plot{k};
+end
+
+% 方法四：三次 Lagrange 插值
+y_plot_lag3 = zeros(size(x_plot));
+for i_eval = 1:length(x_plot)
+    y_plot_lag3(i_eval) = lagrange_eval(x_plot(i_eval), xi_lag3, yi_lag3);
+end
+
+% ---- 图1：四种方法对比 ----
+figure('Position', [100, 100, 960, 640]);
+plot(xi, yi, 'ko', 'MarkerSize', 11, 'MarkerFaceColor', 'k', ...
+    'DisplayName', '离散数据点');
+hold on;
+h1 = plot(x_plot, y_plot_poly, 'b-', 'LineWidth', 1.8);
+h2 = plot(x_plot, y_plot_ortho, 'r--', 'LineWidth', 1.8);
+h3 = plot(x_plot, y_plot_disc, 'g-.', 'LineWidth', 1.8);
+h4 = plot(x_plot, y_plot_lag3, 'm:', 'LineWidth', 2.2);
+
+xlabel('x', 'FontSize', 14);
+ylabel('y', 'FontSize', 14);
+title('最小二乘拟合与插值对比 (三次多项式)', 'FontSize', 16);
+legend([h1, h2, h3, h4], ...
+    {'一般多项式拟合', '正交多项式拟合', '离散正交多项式拟合', '三次Lagrange插值'}, ...
+    'Location', 'northwest', 'FontSize', 11);
+grid on;
+hold off;
+saveas(gcf, '/Users/a.16/Desktop/fig1_fitting_comparison.png');
+
+% ---- 图2：残差对比柱状图 ----
+figure('Position', [100, 100, 960, 500]);
+bar_width = 0.18;
+x_bar = 1:n;
+
+bar(x_bar - 1.5*bar_width, res_poly, bar_width, 'FaceColor', [0.2 0.4 0.8]);
+hold on;
+bar(x_bar - 0.5*bar_width, res_ortho, bar_width, 'FaceColor', [0.8 0.2 0.2]);
+bar(x_bar + 0.5*bar_width, res_disc, bar_width, 'FaceColor', [0.2 0.7 0.3]);
+bar(x_bar + 1.5*bar_width, res_lag3, bar_width, 'FaceColor', [0.7 0.2 0.7]);
+
+xlabel('数据点序号', 'FontSize', 14);
+ylabel('残差 y_{fit} - y_{obs}', 'FontSize', 14);
+title('四种方法残差对比', 'FontSize', 16);
+legend({'一般多项式', '正交多项式', '离散正交多项式', '三次Lagrange'}, ...
+    'Location', 'best', 'FontSize', 10);
+set(gca, 'XTick', 1:n);
+set(gca, 'XTickLabel', arrayfun(@(v) sprintf('%.1f', v), xi, 'UniformOutput', false));
+xlabel('x_i', 'FontSize', 14);
+grid on;
+hold off;
+saveas(gcf, '/Users/a.16/Desktop/fig2_residuals.png');
+%% ============================================================
+%% 辅助函数
+%% ============================================================
+function y_val = lagrange_interp(x_eval, x_nodes, y_nodes)
+    n_pts = length(x_nodes);
+    y_val = 0;
+    for i = 1:n_pts
+        Li = 1;
+        for j = 1:n_pts
+            if j ~= i
+                Li = Li * (x_eval - x_nodes(j)) / (x_nodes(i) - x_nodes(j));
+            end
+        end
+        y_val = y_val + y_nodes(i) * Li;
+    end
+end
+
+function L_poly = lagrange_symbolic(x_nodes, y_nodes, x_var)
+    n_pts = length(x_nodes);
+    L_poly = sym(0);
+    for i = 1:n_pts
+        Li = sym(1);
+        for j = 1:n_pts
+            if j ~= i
+                Li = Li * (x_var - x_nodes(j)) / (x_nodes(i) - x_nodes(j));
+            end
+        end
+        L_poly = L_poly + y_nodes(i) * Li;
+    end
+end
+
